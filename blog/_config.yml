@@ -4,16 +4,16 @@
 
 # Site
 title: 白杨左书 
-subtitle: 一个程序员的自我修养
-description: 一个程序员的自我修养
+subtitle: 没有品性的丰满，知识就是伪装
+description: 没有品性的丰满，知识就是伪装
 keywords:
-author: John Doe
+author: 白杨左书 
 language: en
 timezone: ''
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
+url: https://baiyangzuoshu.github.io
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -110,5 +110,7 @@ categories:
   - 历史
   - cocoscreator
   - 体育
+  - 图形渲染
+  - 读书
 
 
