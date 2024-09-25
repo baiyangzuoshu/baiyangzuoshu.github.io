@@ -104,3 +104,11 @@ deploy:
   type: git
   repo: https://github.com/baiyangzuoshu/baiyangzuoshu.github.io #https://bitbucket.org/JohnSmith/johnsmith.bitbucket.io
   branch: master #published
+
+categories:
+  - 周刊
+  - 历史
+  - cocoscreator
+  - 体育
+  
+
