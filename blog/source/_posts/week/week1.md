@@ -14,3 +14,6 @@ tags:
 [OpenAI全面发布类人ChatGPT语音助手，会说中文等50多种语言](https://wallstreetcn.com/articles/3728808#from=ios?ivk=1)
 
 [月饼事件三只羊想让女主播帮忙背锅，结果对方反手就将录音曝光](https://c.m.163.com/news/a/JCUB085K0552RR09.html?spss=backflow-index-hotlist)
+
+[扶不扶？服！摔倒老人诬陷好心搀扶小伙被行拘](https://www.toutiao.com/article/7418013402481656332/?tt_from=weixin&utm_campaign=client_share&app=news_article&utm_source=weixin&iid=0&utm_medium=toutiao_ios&share_token=35A217EE-72F0-4A1A-8304-D27881C97A60&wxshare_count=1&wid=1727333748542)
+
