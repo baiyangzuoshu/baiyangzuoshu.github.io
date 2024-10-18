@@ -6,9 +6,10 @@ categories:
 tags:
 - 见闻
 ---
-## 新闻
 
 ![沪指涨超10% 创业板指涨超18%](/images/2024-10-8.jpg)
+
+## 新闻
 
 [A股收评：沪指涨8.06%站上3300点，两市成交额近2.6万亿元创历史新高，券商股集体涨停](https://www.toutiao.com/article/7420328236531319311/?tt_from=weixin&utm_campaign=client_share&app=news_article&utm_source=weixin&iid=0&utm_medium=toutiao_ios&share_token=16360872-D337-4DD7-B54A-E64FFAF8C9F3&wxshare_count=1&wid=1728350550238)
 
