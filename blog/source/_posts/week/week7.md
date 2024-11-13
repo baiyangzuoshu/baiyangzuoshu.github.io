@@ -11,28 +11,28 @@ tags:
 ![](/images/2024110704.webp)
 
 ## 新闻
-[姜萍初赛成绩违反规则](https://m.weibo.cn/search?containerid=231522type%3D1%26t%3D10%26q%3D%23%E5%A7%9C%E8%90%8D%E5%88%9D%E8%B5%9B%E6%88%90%E7%BB%A9%E8%BF%9D%E5%8F%8D%E8%A7%84%E5%88%99%23&extparam=%23%E5%A7%9C%E8%90%8D%E5%88%9D%E8%B5%9B%E6%88%90%E7%BB%A9%E8%BF%9D%E5%8F%8D%E8%A7%84%E5%88%99%23)
+[1.姜萍初赛成绩违反规则](https://m.weibo.cn/search?containerid=231522type%3D1%26t%3D10%26q%3D%23%E5%A7%9C%E8%90%8D%E5%88%9D%E8%B5%9B%E6%88%90%E7%BB%A9%E8%BF%9D%E5%8F%8D%E8%A7%84%E5%88%99%23&extparam=%23%E5%A7%9C%E8%90%8D%E5%88%9D%E8%B5%9B%E6%88%90%E7%BB%A9%E8%BF%9D%E5%8F%8D%E8%A7%84%E5%88%99%23)
 
-[英伟达将取代英特尔被纳入道指](https://cn.wsj.com/articles/%E8%8B%B1%E4%BC%9F%E8%BE%BE%E5%B0%86%E5%8F%96%E4%BB%A3%E8%8B%B1%E7%89%B9%E5%B0%94%E5%8A%A0%E5%85%A5%E9%81%93%E6%8C%87-228cfb55)
+[2.英伟达将取代英特尔被纳入道指](https://cn.wsj.com/articles/%E8%8B%B1%E4%BC%9F%E8%BE%BE%E5%B0%86%E5%8F%96%E4%BB%A3%E8%8B%B1%E7%89%B9%E5%B0%94%E5%8A%A0%E5%85%A5%E9%81%93%E6%8C%87-228cfb55)
 
-[OpenAI推出ChatGPT网络搜索](https://www.wired.com/story/chatgpt-ai-search-update-openai/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=openai-chatgpt-meta)
+[3.OpenAI推出ChatGPT网络搜索](https://www.wired.com/story/chatgpt-ai-search-update-openai/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=openai-chatgpt-meta)
 
-[Python成为最受欢迎的编程语言](https://github.blog/news-insights/octoverse/octoverse-2024/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=openai-chatgpt-meta)
+[4.Python成为最受欢迎的编程语言](https://github.blog/news-insights/octoverse/octoverse-2024/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=openai-chatgpt-meta)
 
-[谷歌AI代理发现SQLite漏洞](https://au.pcmag.com/ai/108079/googles-big-sleep-ai-project-uncovers-real-software-vulnerabilities)
+[5.谷歌AI代理发现SQLite漏洞](https://au.pcmag.com/ai/108079/googles-big-sleep-ai-project-uncovers-real-software-vulnerabilities)
 1.谷歌的AI项目“Big Sleep”是模拟人类安全研究员工作流程的AI代理，最近发现了SQLite数据库引擎中的一个漏洞，SQLite因此在上个月发布了补丁；
 2.这是首个AI自主发现软件安全漏洞的公开案例，展示了大语言模型在查找软件漏洞方面的潜力。
 
-[Perplexity提出用AI替代《纽约时报》的罢工员工](https://techcrunch.com/2024/11/04/perplexity-ceo-offers-ai-companys-services-to-replace-striking-nyt-staff/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-sqlite-uber-gps)
+[6.Perplexity提出用AI替代《纽约时报》的罢工员工](https://techcrunch.com/2024/11/04/perplexity-ceo-offers-ai-companys-services-to-replace-striking-nyt-staff/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-sqlite-uber-gps)
 1.纽约时报技术工会宣布罢工，要求2.5%的年薪增长和保留每周仅需在办公室工作两天的政策；
 2.Perplexity AI的CEO提出，可以在这次罢工期间向《纽约时报》提供AI服务，暂时替代参加罢工的员工，保证总统选举期间的新闻服务；
 3.该提议在社交媒体上受到抨击，认为这将削弱工会的谈判能力。
 
-[特朗普赢得美国大选](https://news.ifeng.com/c/8eIBMI3Wvl5)
+[7.特朗普赢得美国大选](https://news.ifeng.com/c/8eIBMI3Wvl5)
 
-[突发！乌克兰遭大规模袭击，持续8个小时](https://mp.weixin.qq.com/s/HS9Fx1Nwg_IAT24bAJAXLw)
+[8.突发！乌克兰遭大规模袭击，持续8个小时](https://mp.weixin.qq.com/s/HS9Fx1Nwg_IAT24bAJAXLw)
 
-[史上最大的质数“M136279841”被发现，长达4102万4320位数](https://www.163.com/dy/article/JF9HFDUG0514B52J.html)
+[9.史上最大的质数“M136279841”被发现，长达4102万4320位数](https://www.163.com/dy/article/JF9HFDUG0514B52J.html)
 
 
 
