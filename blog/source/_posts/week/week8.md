@@ -7,7 +7,7 @@ tags:
 - 见闻
 ---
 
-![](/images/2024110704.webp)
+![](/images/2024-11-15.gif)
 
 ## 新闻
 [1.中国政府印钞6万亿](https://wallstreetcn.com/articles/3733412#from=ios?ivk=1)
@@ -28,9 +28,11 @@ tags:
 
 [6.自2025年1月1日起，全体公民放假的假日增加2天，其中春节、劳动节各增加1天](https://www.gov.cn/zhengce/content/202411/content_6986382.htm#:~:text=%E4%BA%8C%E3%80%81%E6%98%A5%E8%8A%82%EF%BC%9A1%E6%9C%8828,%E6%97%A5%EF%BC%88%E5%91%A8%E6%97%A5%EF%BC%89%E4%B8%8A%E7%8F%AD%E3%80%82)
 
-[7.]()
+[7.一名62岁男子驾驶一辆小型SUV闯闸强行进入珠海体育中心，冲撞正在体育中心内部锻炼的市民，造成35人死亡，数十人受伤](https://cn.wsj.com/articles/%E4%B8%AD%E5%9B%BD%E4%B8%80%E7%94%B7%E5%AD%90%E9%A9%BE%E8%BD%A6%E5%86%B2%E6%92%9E%E4%BD%93%E8%82%B2%E4%B8%AD%E5%BF%83%E4%BA%BA%E7%BE%A4-%E9%80%A0%E6%88%9035%E4%BA%BA%E6%AD%BB%E4%BA%A1-146fa045)
 
+[8.马斯克将上任美国政府效率部](https://techcrunch.com/2024/11/12/donald-trump-announces-elon-musk-will-co-lead-department-of-government-efficiency/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=perplexity-20)
 
+[9.世预赛-张玉宁90分钟反上演绝杀 国足1-0巴林](https://k.sina.com.cn/article_1767412865_m69589481033018hey.html?cre=tianyi&mod=pcspth&loc=7&r=0&rfunc=92&tj=cxvertical_pc_spth&tr=181&from=sports&subch=osport)
 
 
 ## 简语
@@ -39,7 +41,7 @@ tags:
 
 2.免费的东西，恰恰它不便宜。
 
-
+3.遵循规律，遵守规则。
 
 
 ## 书籍
