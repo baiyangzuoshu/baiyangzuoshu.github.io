@@ -1,9 +1,9 @@
 ---
 title: Hello World
 ---
-<img src="/images/1.png" alt="我的照片" width="500" />
+<img src="/images/2024/1.png" alt="我的照片" width="500" />
 
-![我的照片](/images/skynet_metro.jpg)
+![我的照片](/images/2024/skynet_metro.jpg)
 
 Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
 

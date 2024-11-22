@@ -8,7 +8,7 @@ tags:
 - 见闻
 ---
 
-![](/images/2024-10-30.avif)
+![](/images/2024/2024-10-30.avif)
 
 ## 新闻
 [保时捷售价跌破40万！前三季度在华销量暴跌近30%](https://mp.weixin.qq.com/s/K83kNyX00kfpJjsszUV8lA)

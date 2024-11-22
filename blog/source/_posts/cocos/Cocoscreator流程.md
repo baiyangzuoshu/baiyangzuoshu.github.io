@@ -7,7 +7,7 @@ tags:
 ---
 平台：Web
 版本:3.8.x
-![Cocoscreator流程](/images/cocoscreator.png)
+![Cocoscreator流程](/images/2024/cocoscreator.png)
 
     当我们打出web后，在build目录下会生成一个web-mobile文件夹，里面就是我们发布后的项目了。
 在web-mobile文件夹下，有一个index.html文件，这个文件就是我们项目的入口文件。在index.html文件

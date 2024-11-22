@@ -7,7 +7,7 @@ tags:
 - 见闻
 ---
 
-![](/images/20241021.avif)
+![](/images/2024/20241021.avif)
 
 ## 新闻
 [家里被子没叠也要罚款，基层工作哪里出问题了？](https://thirdpage.thepaper.cn/h5/jrtt/29097635)

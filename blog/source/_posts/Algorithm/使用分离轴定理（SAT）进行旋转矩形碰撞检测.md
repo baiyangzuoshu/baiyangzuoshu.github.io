@@ -6,7 +6,7 @@ categories:
 tags:
 - 碰撞检测
 ---
-![](/images/SAT.webp)
+![](/images/2024/SAT.webp)
 
 平台：cocoscreator 3.8.x
 语言：typescript

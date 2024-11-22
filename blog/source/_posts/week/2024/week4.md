@@ -7,7 +7,7 @@ tags:
 - 见闻
 ---
 
-![筷子回收](/images/2024-10-14.jpeg)
+![筷子回收](/images/2024/2024-10-14.jpeg)
 [首试即成功，SpaceX星舰的“筷子”式回收强在哪？](https://www.jiemian.com/article/11824869.html)
 
 ## 新闻

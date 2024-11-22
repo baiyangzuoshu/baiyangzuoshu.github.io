@@ -8,7 +8,7 @@ tags:
 - 见闻
 ---
 
-![](/images/2024110704.webp)
+![](/images/2024/2024110704.webp)
 
 ## 新闻
 [1.姜萍初赛成绩违反规则](https://m.weibo.cn/search?containerid=231522type%3D1%26t%3D10%26q%3D%23%E5%A7%9C%E8%90%8D%E5%88%9D%E8%B5%9B%E6%88%90%E7%BB%A9%E8%BF%9D%E5%8F%8D%E8%A7%84%E5%88%99%23&extparam=%23%E5%A7%9C%E8%90%8D%E5%88%9D%E8%B5%9B%E6%88%90%E7%BB%A9%E8%BF%9D%E5%8F%8D%E8%A7%84%E5%88%99%23)
@@ -48,7 +48,7 @@ tags:
 
 ## 书籍
 
-![文学回忆录](/images/wenxuehuiyilu.jfif)
+![文学回忆录](/images/2024/wenxuehuiyilu.jfif)
 
 文学是可爱的。生活是好玩的。艺术是要有所牺牲的。
 
