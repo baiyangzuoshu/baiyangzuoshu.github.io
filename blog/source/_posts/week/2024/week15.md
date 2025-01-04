@@ -6,33 +6,34 @@ categories:
 tags:
 - 见闻
 ---
-![](/images/2024/)
+![](/images/2024/bg2025010104.webp)
 
 ## 新闻
-[1.]()
+[1.苹果6.96亿和解Siri偷听集体诉讼](https://weibo.com/6004281123/5118622024599447?wm=3333_2001&from=10EC293010&sourcetype=weixin&s_trans=7890743507_5118622024599447&s_channel=4)
 
-[2.]()
+[2.刘强东又给老家村民发现金了！“每家有几千元礼品，60岁以上老人有一万元”](https://mp.weixin.qq.com/s/zBs24ehjAuSSqvyIeE24RA)
 
-[3.]()
+[3.网传紫龙游戏裁员50%，UI需求或外包](https://mp.weixin.qq.com/s/Ef6G4XftTO6E1TN49g3daA)
 
-[4.]()
+[4.AI搜索极容易受操控和欺骗](https://mp.weixin.qq.com/s/TeQiGdSclhZLuZHFz0mhsQ)
 
-[5.]()
+[5.樊维秋死刑！珠海驾车冲撞市民重大恶性案件一审宣判](https://mp.weixin.qq.com/s/5Q7xCYy3B2HGevOjZOWXaw)
 
-[6.]()
+[6.结婚两年多次实施暴力！成都家暴男子获刑11年](https://mp.weixin.qq.com/s/TzSKFHFq9GSXbzMfLXkAhA)
 
-[7.]()
+[7.西蒙·威利森的年终总结](https://www.163.com/dy/article/JKTHVG4C0511AQHO.html)
 
-[8.]()
+[8.揭秘DeepSeek:一个更极致的中国技术理想主义故事](https://mp.weixin.qq.com/s/r9zZaEgqAa_lml_fOEZmjg)
 
-[9.]()
+[9.疯狂的幻方：一家隐形AI巨头的大模型之路](https://mp.weixin.qq.com/s/Cajwfve7f-z2Blk9lnD0hA)
 
-[10.]()
+[10.2024年9月30日开始，新加坡公民通过樟宜机场出入境，不再需要护照](https://www.ica.gov.sg/news-and-publications/newsroom/media-release/passport-less-clearance-fully-rolled-out-at-changi-airport)
 
 
 ## 简语
-1.
+1.遇上喜爱一件事情，30岁之后不容易
 
+2.微信公众号是我获取新闻最多的地方，以前是报纸，后来是手机app，到现在的短视频。
 
 ## 书籍
 
