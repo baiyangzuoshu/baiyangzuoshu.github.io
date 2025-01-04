@@ -6,7 +6,7 @@ categories:
 tags:
 - 见闻
 ---
-![](/images/2025/bg2023092901.webp)
+![](/images/2025/leonard.jpg)
 
 ## 新闻
 [1.]()
