@@ -9,25 +9,25 @@ tags:
 ![](/images/2025/leonard.jpg)
 
 ## 新闻
-[1.]()
+[1.据巴基斯坦媒体4日报道，该国西南部俾路支省一辆车当天遭爆炸袭击，已造成至少3人死亡、数十人受伤](https://mp.weixin.qq.com/s/KQeJ0clPI0P5UKt7zgcU9Q)
 
-[2.]()
+[2.马斯克斥资1亿美元建立私立学校，将于2025年正式开课！面向全球3-9岁儿童，首年最多收21人](https://mp.weixin.qq.com/s/VAPAkadt1Wgb6BT8sEm_-g)
 
-[3.]()
+[3.腾讯和宁德时代在美国当地时间 1 月 6 日晚间被美国国防部列入 “中国军工企业清单”（1260H 清单）](https://mp.weixin.qq.com/s/xfQ99cTl6j8ORuXhX4KUfg)
 
-[4.]()
+[4.苹果补缴近110亿欧元欠税](https://mp.weixin.qq.com/s/0xI7qXXEd37KWj40xHAy4A)
 
-[5.]()
+[5.微软打响裁员第一枪！AI智能体引爆2025失业潮，硅谷巨头停招程序员](https://wallstreetcn.com/articles/3738745#from=ios?ivk=1)
 
-[6.]()
+[6.倒在2024年的1749家游戏公司](https://mp.weixin.qq.com/s/9v-eKky0fxvBuefVi9bKEw)
 
-[7.]()
+[7.加州大火进展：18万人连夜撤离](https://mp.weixin.qq.com/s/K30T-8Bz7o4tqaD-1K96kQ)
 
-[8.]()
+[8.一天发电4000度 这个“超级充电宝”成功并网运行](http://www.ce.cn/xwzx/gnsz/gdxw/202501/07/t20250107_39258657.shtml)
 
-[9.]()
+[9.840万人涌入，韩国人挤爆上海](https://m.thepaper.cn/newsDetail_forward_29845512)
 
-[10.]()
+[10.江苏省首辆陆空一体飞行汽车](https://www.yzwb.net/zncontent/4240401.html)
 
 
 ## 简语
