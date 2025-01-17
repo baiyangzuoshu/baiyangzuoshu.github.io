@@ -6,12 +6,12 @@ categories:
 tags:
 - 见闻
 ---
-![](/images/2025/)
+![](/images/2025/640.webp)
 
 ## 新闻
-[1.]()
+[1.段永平浙大师生见面会问答实录（中文）](https://mp.weixin.qq.com/s/EulYyzGU5fuA3Lv0wgS8hw)
 
-[2.]()
+[2.世界第一高桥——贵州六安高速花江峡谷大桥成功合龙](https://mp.weixin.qq.com/s/38lnSvGM9TyRxILgx4guag)
 
 [3.]()
 
@@ -30,7 +30,7 @@ tags:
 
 
 ## 简语
-1.
+1.健康的项目是不断优化，但不是叠加功能。
 
 
 ## 影视剧
