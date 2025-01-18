@@ -75,6 +75,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-cocos/Cocoscreator流程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2024-09-26T03:29:57.000Z" itemprop="datePublished">2024-09-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Cocoscreator/">Cocoscreator</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/">Cocoscreator流程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>平台：Web<br>版本:3.8.x<br><img src="/images/2024/cocoscreator.png" alt="Cocoscreator流程"></p>
+<pre><code>当我们打出web后，在build目录下会生成一个web-mobile文件夹，里面就是我们发布后的项目了。
+</code></pre>
+<p>在web-mobile文件夹下，有一个index.html文件，这个文件就是我们项目的入口文件。在index.html文件<br>中会加载index.js文件，在index.js文件中会加载application.js文件，在application.js文件中会<br>调用init函数和start函数。<br>    在init函数中会初始化游戏引擎，在start函数中会启动游戏引擎。都是通过game.js文件来调用的。<br>game.ts在被加载时，就会</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export const game = cclegacy.game = new Game();</span><br></pre></td></tr></table></figure>
+
+<p>在game:init函数中，会做好启动引擎之前的工作，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">screen.init();</span><br><span class="line">assetManager.init();</span><br><span class="line">director.init();</span><br></pre></td></tr></table></figure>
+
+<p>在game:step函数中，会调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public step () &#123;</span><br><span class="line">    director.tick(this._calculateDT(true));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里是游戏的主循环，每一帧都会调用一次。<br>    在director:tick函数中，主要看this._root!.frameMove(dt);这行代码，用于每帧执行渲染流程的入口函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this._frameMoveBegin();</span><br><span class="line">this._frameMoveProcess();</span><br><span class="line">this._frameMoveEnd();</span><br></pre></td></tr></table></figure>
+
+<p>_frameMoveBegin()清空场景和相机,<br>_frameMoveProcess()重新生成快照,主要看this._batcher.update()这行代码，用于更新所有节点的渲染信息<br>_frameMoveEnd()渲染，this._pipeline.render(cameraList)这行代码，forwardStage:render(camera),<br>函数里面会调用this._uiPhase.render(camera, renderPass)，用于渲染UI</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const pso = PipelineStateManager.getOrCreatePipelineState(device, pass, shader, renderPass, inputAssembler);</span><br><span class="line">cmdBuff.bindPipelineState(pso);</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, pass.descriptorSet);</span><br><span class="line">const ds = batch.descriptorSet!;</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.LOCAL, ds);</span><br><span class="line">cmdBuff.bindInputAssembler(inputAssembler);</span><br><span class="line">cmdBuff.draw(inputAssembler);</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" data-id="cm61kozfx0007xwu4h17wejoq" data-title="Cocoscreator流程" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-book/浅谈《文学回忆录》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/09/25/book/%E6%B5%85%E8%B0%88%E3%80%8A%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95%E3%80%8B/" class="article-date">
@@ -119,7 +179,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/09/25/book/%E6%B5%85%E8%B0%88%E3%80%8A%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95%E3%80%8B/" data-id="cm5sdepha0007gou4bezpetsh" data-title="浅谈《文学回忆录》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/09/25/book/%E6%B5%85%E8%B0%88%E3%80%8A%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95%E3%80%8B/" data-id="cm61kozfz000bxwu40bflandi" data-title="浅谈《文学回忆录》" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -175,7 +235,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/09/25/hello-world/" data-id="cm5sdeph10000gou41b66ftl3" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/09/25/hello-world/" data-id="cm61kozfi0000xwu45oqa7x0j" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -223,7 +283,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/09/25/week/2024/week1/" data-id="cm5sdephc000cgou43jc032g1" data-title="每周见闻 - 第1期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/09/25/week/2024/week1/" data-id="cm61kozfz000cxwu499993ulw" data-title="每周见闻 - 第1期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -294,6 +354,10 @@
       <ul>
         
           <li>
+            <a href="/2025/01/12/week/2025/week17/">每周见闻 - 第17 期</a>
+          </li>
+        
+          <li>
             <a href="/2025/01/04/week/2025/week16/">每周见闻 - 第 16期</a>
           </li>
         
@@ -307,10 +371,6 @@
         
           <li>
             <a href="/2024/12/20/week/2024/week14/">每周见闻 - 第 14期</a>
-          </li>
-        
-          <li>
-            <a href="/2024/12/13/week/2024/week13/">每周见闻 - 第 13期</a>
           </li>
         
       </ul>
