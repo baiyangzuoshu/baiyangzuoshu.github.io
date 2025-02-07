@@ -6,6 +6,7 @@ categories:
 tags:
 - tableview
 ---
+![TableView](/images/2025/20250207140231.png)
 
 在游戏开发过程中，列表视图（TableView） 是一种常见且实用的 UI 组件，用于展示大量数据，如排行榜、物品列表、任务列表等。为了确保游戏的性能和用户体验，如何在 Cocos Creator 中高效地实现一个可复用、性能优异的 TableView 成为开发者们关注的重点。本文将基于提供的代码示例，详细解析如何在 Cocos Creator 中实现一个通用的 TableView 组件。
 
