@@ -75,6 +75,127 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-game/《停车场小游戏》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" class="article-date">
+  <time class="dt-published" datetime="2025-01-20T07:12:06.000Z" itemprop="datePublished">2025-01-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/">《停车场小游戏》</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/car.png" alt="停车场小游戏"></p>
+<h1 id="一、项目概述"><a href="#一、项目概述" class="headerlink" title="一、项目概述"></a>一、项目概述</h1><p>该停车场项目以一块尺寸为 1200×450 的平面场地为基础，玩家可在其中操控多种类型的车辆完成装载与驶离的任务。项目整体玩法结合了蔬果的装载和不同车辆特性的管理，并在此基础上加入了道具系统、特殊车辆以及多种变动性机制，增加了游戏的策略深度与趣味性。</p>
+<h1 id="二、玩法简介"><a href="#二、玩法简介" class="headerlink" title="二、玩法简介"></a>二、玩法简介</h1><h3 id="1-基础车辆"><a href="#1-基础车辆" class="headerlink" title="1.基础车辆"></a>1.基础车辆</h3><ul>
+<li>4格车：可承载 4 个蔬果</li>
+<li>6格车：可承载 6 个蔬果</li>
+<li>10格车：可承载 10 个蔬果<br>这些车辆的移动受道路畅通情况限制：如果车辆前方有其他车辆阻挡，则只能等待前方车辆驶离后方可继续前进。</li>
+</ul>
+<h3 id="2-特殊车辆"><a href="#2-特殊车辆" class="headerlink" title="2.特殊车辆"></a>2.特殊车辆</h3><ol>
+<li>传送带车：传送带上可一次性驶出 8 辆车；停车场内同类型只能一次性驶出 1 辆车。</li>
+<li>问号车：该车会隐藏其他基本车的颜色与方向信息，增加不确定性。</li>
+<li>冰冻车：需要在停车场中先行驶出若干辆车后，它才会解冻并恢复为基础车状态。</li>
+</ol>
+<h3 id="3-道具系统"><a href="#3-道具系统" class="headerlink" title="3.道具系统"></a>3.道具系统</h3><ul>
+<li>刷新：在停车场内存在同类的基础车时，能够让它们进行位置和角度的相互交换。</li>
+<li>清除：可随机选中停车场的一辆基础车，并将其直接放入 VIP 停车位中驶离。</li>
+<li>排序：可对蔬果的前 30 个数据进行重新排列，以满足玩家的需求。</li>
+</ul>
+<h1 id="三、常见问题与解决思路"><a href="#三、常见问题与解决思路" class="headerlink" title="三、常见问题与解决思路"></a>三、常见问题与解决思路</h1><h3 id="1-碰撞检测"><a href="#1-碰撞检测" class="headerlink" title="1.碰撞检测"></a>1.碰撞检测</h3><p>由于车辆可能在同一时刻或极短时间间隔内产生多处碰撞，不能只检测第一次接触或最先发生碰撞的对象，而需要一个通用的多次、全域检测机制来确保所有车辆都能正确地响应碰撞事件。</p>
+<h3 id="2-动态阻塞与等待"><a href="#2-动态阻塞与等待" class="headerlink" title="2.动态阻塞与等待"></a>2.动态阻塞与等待</h3><p>车辆若被前方车辆阻挡，需要动态判断能否移动。如果只做实时判断，一旦出现局部卡顿，就会导致逻辑失效、车辆消失。因此，需要考虑以固定或预测方式计算车辆的移动与阻塞关系，规避性能抖动带来的位置丢失。</p>
+<h3 id="3-日志打印卡顿"><a href="#3-日志打印卡顿" class="headerlink" title="3.日志打印卡顿"></a>3.日志打印卡顿</h3><p>当游戏中需打印大量日志或输出数据时，会导致界面卡顿甚至无响应。应考虑优化日志打印的频率或使用异步输出机制，以减少对主线程的占用。</p>
+<h3 id="4-果蔬算法设计"><a href="#4-果蔬算法设计" class="headerlink" title="4.果蔬算法设计"></a>4.果蔬算法设计</h3><ul>
+<li>以每辆车为单位，根据“权重”进行分组，定义 diff 作为分组偏移量。</li>
+<li>当 1 权重分组的车辆出现时，需要将 diff % 的蔬果前移到 0 权重的分组。</li>
+<li>在分组中，第一辆车会取 1、2、3、4 单位蔬果，奇数的百分比由表字段 odd 控制，然后与分组内的第三辆车进行交换，依次再处理第二辆车的逻辑……</li>
+<li>通过精细的分组和调度，尽量保证游戏中蔬果的分配和流动符合设计预期。</li>
+</ul>
+<h3 id="5-编辑器生成-ID-冲突"><a href="#5-编辑器生成-ID-冲突" class="headerlink" title="5.编辑器生成 ID 冲突"></a>5.编辑器生成 ID 冲突</h3><p>在项目开发过程中，可能出现多个资源、节点生成相同 ID 的情况。需在编辑器或生成逻辑中引入唯一标识符机制，或在后端做二次检测，避免重复 ID 造成的混乱。</p>
+<h3 id="6-车辆行驶与坐标转换"><a href="#6-车辆行驶与坐标转换" class="headerlink" title="6.车辆行驶与坐标转换"></a>6.车辆行驶与坐标转换</h3><p>不应只依赖实时判断车辆移动，若在关键帧卡顿，车辆的移动数据易丢失。</p>
+<ul>
+<li>可采用世界坐标系，将每辆车的 vx、vy 作为方向速度，预先计算到达上下左右边界的时间点：</li>
+<li>到达下边或左右边时，可进行打开或变道</li>
+<li>到达左右边时，再进行向上的开车逻辑</li>
+<li>当车辆到达顶部后则驶入车位<br>通过提前计算，降低实时计算压力，并可在卡顿后快速恢复。</li>
+</ul>
+<h3 id="7-大数据量列表加载"><a href="#7-大数据量列表加载" class="headerlink" title="7.大数据量列表加载"></a>7.大数据量列表加载</h3><p>对于需要展示的大量数据，可以使用 TableView 或其他滑动列表，仅加载当前和下一屏的数据，避免一次性加载过多、造成性能消耗，并在滑动时动态增删数据以提升流畅度。</p>
+<h3 id="8-按钮点击问题"><a href="#8-按钮点击问题" class="headerlink" title="8.按钮点击问题"></a>8.按钮点击问题</h3><p>连续点击：玩家可能短时间内重复点击同一个按钮，需要做点击冷却或屏蔽防抖处理。<br>多个按钮同时响应：如果有多个按钮可能被玩家同时或短时间内快速点击，应建立统一的 UI 事件管理或排队机制，保证事件处理的顺序和独立性。</p>
+<h1 id="四、SDK-融合"><a href="#四、SDK-融合" class="headerlink" title="四、SDK 融合"></a>四、SDK 融合</h1><p>由于项目需在 Web、微信小游戏和终端应用中同时运行，为了简化多端兼容，可以通过 sdkAdapter 做统一封装。示例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sdkAdapter.<span class="title function_">login</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (sdk === websdk) &#123;</span><br><span class="line">        websdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk === minisdk) &#123;</span><br><span class="line">        minisdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk === appsdk) &#123;</span><br><span class="line">        appsdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过这种适配方式，能够最大限度地复用代码，减少多平台切换时的开发与维护成本。</p>
+<h1 id="五、适配策略"><a href="#五、适配策略" class="headerlink" title="五、适配策略"></a>五、适配策略</h1><h3 id="1-设计分辨率和设备分辨率"><a href="#1-设计分辨率和设备分辨率" class="headerlink" title="1.设计分辨率和设备分辨率"></a>1.设计分辨率和设备分辨率</h3><pre><code>设备宽高比ratioWHDevice大于设计宽高比ratioWHDesign，左右出现黑边
+    适配高度，高度=设计高度
+             宽度=设备宽*（设计高/设备高）
+设备宽高比ratioWHDevice小于于设计宽高比ratioWHDesign，上下出现黑边
+    适配宽度，宽度=设计宽度
+             高度=设计宽度/（设备宽/设备高）
+
+如果(ratioWHDevice &lt; 1.3) || (ratioWHDevice &gt; ratioWHDesign * 2)，则是异形屏幕
+    高度=设计高度
+    宽度=设计宽度
+    充满屏幕，可能左右或者上下有黑边
+</code></pre>
+<h3 id="2-安全区域"><a href="#2-安全区域" class="headerlink" title="2.安全区域"></a>2.安全区域</h3><pre><code>    动态获取设备灵动岛或者摄像机位置区域
+</code></pre>
+<h3 id="3-背景图和道路图片应该分开来"><a href="#3-背景图和道路图片应该分开来" class="headerlink" title="3.背景图和道路图片应该分开来"></a>3.背景图和道路图片应该分开来</h3><pre><code>    道路图片放在设计分辨率之内，背景图应该是设计分辨率的两倍大小，这样适配异形屏就没什么问题
+</code></pre>
+<h1 id="六、资源整理"><a href="#六、资源整理" class="headerlink" title="六、资源整理"></a>六、资源整理</h1><h3 id="1-静态合图"><a href="#1-静态合图" class="headerlink" title="1.静态合图"></a>1.静态合图</h3><p>将零散的小图标或素材进行打包合图，既能减少加载请求次数，又能避免过多小尺寸资源带来的管理复杂度。</p>
+<h3 id="2-动态合图"><a href="#2-动态合图" class="headerlink" title="2.动态合图"></a>2.动态合图</h3><p>在运行时根据需求将某些纹理动态合并成一张大图，能在一定程度上减少 GPU 的绘图调用次数和 CPU 负载，防止设备过热。</p>
+<h1 id="七、3D-转-2D-渲染"><a href="#七、3D-转-2D-渲染" class="headerlink" title="七、3D 转 2D 渲染"></a>七、3D 转 2D 渲染</h1><p>采用“9 张图渲染 32 个方向”的方法：</p>
+<ol>
+<li>先准备 9 张基础朝向图</li>
+<li>将 360 度拆分成 32 个小角度，每个 11.25 度为一档</li>
+<li>在表中记录 32 个角度的偏移量、镜像信息及对应的图片下标</li>
+<li>根据需要的角度读取对应图像并对其进行镜像或旋转，从而渲染出车辆在不同方向的外观<br>这种方法能有效减少资源量，提升运行效率。</li>
+</ol>
+<h1 id="八、流程控制"><a href="#八、流程控制" class="headerlink" title="八、流程控制"></a>八、流程控制</h1><h3 id="1-循环引用问题"><a href="#1-循环引用问题" class="headerlink" title="1.循环引用问题"></a>1.循环引用问题</h3><p>在复杂的场景与业务逻辑中，若模块之间互相调用容易形成循环依赖，需对模块进行解耦或分层处理，避免难以排查的逻辑错误。</p>
+<h3 id="2-UI-控制"><a href="#2-UI-控制" class="headerlink" title="2.UI 控制"></a>2.UI 控制</h3><p>为保证界面一致性，可在 UIController 模块做统一管理：如界面打开、关闭以及动画过渡等，避免在各个子模块中进行分散的 UI 调用。</p>
+<h1 id="九、测试与优化"><a href="#九、测试与优化" class="headerlink" title="九、测试与优化"></a>九、测试与优化</h1><ol>
+<li><p>持续测试，持续改进<br>根据项目迭代需求，不断进行功能测试、性能测试、兼容性测试等，及时修复 Bug 并优化性能，保证项目的稳定性与流畅度。</p>
+</li>
+<li><p>健壮性与异常场景<br>确保游戏在网络波动、设备资源不足或玩家异常操作等情况下依旧能平稳运行，避免出现崩溃或数据丢失。</p>
+</li>
+</ol>
+<h1 id="十、充值与补单"><a href="#十、充值与补单" class="headerlink" title="十、充值与补单"></a>十、充值与补单</h1><p>在游戏内购或充值环节，常会面临以下问题：</p>
+<ol>
+<li>未到账：部分第三方支付或网络异常时，出现扣费成功但游戏内未到账。</li>
+<li>掉单与补单：为尽量避免丢失订单，需要在游戏服务端进行订单校验与存储。当确认出现掉单，立即执行补单操作，为玩家补发对应道具或货币。<br>通过对接支付平台的回调接口，并在服务器端做状态记录与检查，可降低掉单问题对玩家体验的影响。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" data-id="cm88eocbv000nrku4e8808z27" data-title="《停车场小游戏》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2025/week18" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/01/18/week/2025/week18/" class="article-date">
@@ -119,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/18/week/2025/week18/" data-id="cm80476j7002bw0u40ctl6dhg" data-title="每周见闻 - 第 18 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/18/week/2025/week18/" data-id="cm88eocc9002frku4cvuofhiz" data-title="每周见闻 - 第 18 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -178,7 +299,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/12/week/2025/week17/" data-id="cm80476j60028w0u4dxbief1n" data-title="每周见闻 - 第17 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/12/week/2025/week17/" data-id="cm88eocc8002arku4eiueex72" data-title="每周见闻 - 第17 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -239,7 +360,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/04/week/2025/week16/" data-id="cm80476j50023w0u44f7q45lr" data-title="每周见闻 - 第 16期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/04/week/2025/week16/" data-id="cm88eocc70027rku460625hfa" data-title="每周见闻 - 第 16期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -296,7 +417,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/01/book/%E3%80%8A%E4%B8%87%E5%8E%86%E5%8D%81%E4%BA%94%E5%B9%B4%E3%80%8B/" data-id="cm80476io0005w0u41au4ao5g" data-title="《万历十五年》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/01/book/%E3%80%8A%E4%B8%87%E5%8E%86%E5%8D%81%E4%BA%94%E5%B9%B4%E3%80%8B/" data-id="cm88eocbm0002rku412wf095v" data-title="《万历十五年》" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -357,7 +478,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/27/week/2024/week15/" data-id="cm80476j0001cw0u4gno59yen" data-title="每周见闻 - 第15 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/27/week/2024/week15/" data-id="cm88eocc1001drku4fg7ygk7l" data-title="每周见闻 - 第15 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -415,7 +536,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/20/week/2024/week14/" data-id="cm80476iz001aw0u40z1tdbso" data-title="每周见闻 - 第 14期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/20/week/2024/week14/" data-id="cm88eocc00019rku42frz7nnu" data-title="每周见闻 - 第 14期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -475,7 +596,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/13/week/2024/week13/" data-id="cm80476iy0016w0u4gh3j5mho" data-title="每周见闻 - 第 13期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/13/week/2024/week13/" data-id="cm88eocc00017rku40vbr6exp" data-title="每周见闻 - 第 13期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -537,7 +658,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/07/week/2024/week12/" data-id="cm80476iy0014w0u43g526zws" data-title="每周见闻 - 第12期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/07/week/2024/week12/" data-id="cm88eocbz0013rku43j7a1ikk" data-title="每周见闻 - 第12期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -594,69 +715,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/29/week/2024/week11/" data-id="cm80476ix0010w0u466ed1dr7" data-title="每周见闻 - 第11期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2024/week10" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/11/22/week/2024/week10/" class="article-date">
-  <time class="dt-published" datetime="2024-11-22T08:17:03.000Z" itemprop="datePublished">2024-11-22</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/11/22/week/2024/week10/">每周见闻 - 第10期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2024/20241121_mouse_driving.avif"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JYdchoenLMutaN7DliUNIw">1.全球最大的外包公司，去年还挣60亿，今年私有化</a></p>
-<p><a target="_blank" rel="noopener" href="https://techcrunch.com/2024/11/21/marissa-mayer-just-laid-out-a-possible-business-model-for-ad-supported-ai-chatbots/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-chrome">2.AI时代在线广告的未来</a><br>1.玛丽莎·梅耶尔是谷歌搜索业务的早期核心人物，还曾担任雅虎总裁；<br>2.她认为，AI改变了消费者对于信息的预期，未来的广告也需要跟上这一趋势，比如在用户与AI的互动中，让AI生成包含广告内容的回答；<br>3.为了实现这一改变，广告公司需要与AI公司更紧密地合作，提供更多信息；<br>4.目前，AI公司正积极寻求新的收入来源，广告合作可能成为重要方向。</p>
-<p><a target="_blank" rel="noopener" href="https://www.reuters.com/technology/bitcoin-breaks-95000-first-time-optimism-over-trump-crypto-plans-2024-11-21/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-chrome">3.特朗普当选后比特币大涨</a><br>1.周四，比特币的价格逼近10万美金，因市场预测美国总统当选人特朗普将为加密货币创造友好的监管环境；<br>2.自特朗普当选以来的两周内，比特币价格上涨了约40%，今年以来已翻了一番；<br>3.特朗普在竞选期间支持数字资产，承诺将美国打造成“全球加密货币之都”，并计划积累国家级的比特币储备。</p>
-<p><a target="_blank" rel="noopener" href="https://www.odditycentral.com/news/robot-manufacturer-has-12-robots-kidnapped-from-showroom-by-another-robot.html?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=spacex">4.AI机器人说服同伴“离职跑路”</a><br>1.今年8月，上海某机器人展厅发生了一起机器人“跑路”事件，一台小型AI机器人与展厅内12台大型机器人对话，成功说服这些机器人跟它离开；<br>2.这是一次测试，小型AI机器人被要求说服其他机器人跟随它一起离开，结果它成功带领同伴“离职跑路”；<br>3.近日，这一事件的视频公开后，引发了人们对于AI安全性和控制机制的担忧。</p>
-<p><a target="_blank" rel="noopener" href="https://www.bloomberg.com/news/features/2024-11-24/amazon-plans-to-rival-nvidia-with-its-own-ai-chips?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-bluesky-threads">5.亚马逊自主研发AI芯片挑战英伟达</a><br>1.亚马逊正在积极研发AI芯片，以减少对英伟达的依赖，其工程师团队正在加紧开发第三代AI芯片Trainium2，希望在年底前能达到稳定运行的状态；<br>2.云服务提供商们，如亚马逊AWS、微软Azure和谷歌云平台，都在研发自己的AI芯片，其中亚马逊的投入最大，已经部署了多款自研芯片；<br>3.但是，短期内英伟达的市场地位依然难以撼动。</p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OJxE-ONj8gArS4SILB-qvQ">6.澳大利亚联邦参议院投票通过了对该国16岁以下人群实施社交媒体禁令的法案</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8erxFXRaH81">7.前实习生篡改代码攻击公司模型训练，字节跳动起诉索赔800万</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8esEoJpflJD">8.字节又出爆款，剑指优爱腾芒</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8erWM98HX7k">9.小马智行美国敲钟上市，成全球Robotaxi第一股</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3735537#from=ios?ivk=1">10.卢布大贬值！一周暴跌超10%</a></p>
-<h2 id="简语"><a href="#简语" class="headerlink" title="简语"></a>简语</h2><p>1.俄罗斯侵占中国150万多平方土地，以前和未来，俄罗斯作为与中国交接的国家，都会是竞争关系。</p>
-<p>2.冠名堂皇之下，必有肮脏。</p>
-<p>3.大型游戏到小游戏，长视频到短视频，现在还有超短视频。</p>
-<p>4.止步不前的苹果，奋力前进的华为。</p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img src="/images/2024/Bawangbieji.jpg" alt="霸王别姬"></p>
-<p>霸王别姬》（英语：Farewell My Concubine）改编自李碧华同名小说，由陈凯歌执导，张国荣、巩俐、张丰毅主演的电影。<br>叙述伶人程蝶衣对国粹艺术的执著，进而投影出历史与文化在大时代的演变下，造成的激荡与人生。影片蕴含深厚的文化内涵，气势恢宏，感情强烈，情节细腻深远。</p>
-<p>本片获得第46届法国戛纳电影节金棕榈奖，成为第一部也是迄今唯一获得此奖项的华语电影。亦被视为有史以来最伟大的华文电影之一。<br>此外，该片还荣获美国金球奖最佳外语片，以及第66届奥斯卡最佳外语片奖提名，并于2005年被美国《时代》周刊评为“百大不朽电影”之一。<br>2006年，《首映》杂志将巩俐饰演的“菊仙”列为“有史以来最伟大表演100位”第89名</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/22/week/2024/week10/" data-id="cm80476ix000yw0u49q0m77i9" data-title="每周见闻 - 第10期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/11/29/week/2024/week11/" data-id="cm88eocbz0011rku4gxr0as8f" data-title="每周见闻 - 第11期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -714,7 +773,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
     </div>
   </div>
 
@@ -725,6 +784,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2025/03/09/week/2025/week24/">每周见闻 - 第 24 期</a>
+          </li>
         
           <li>
             <a href="/2025/02/28/week/2025/week23/">每周见闻 - 第 23 期</a>
@@ -740,10 +803,6 @@
         
           <li>
             <a href="/2025/02/15/AI/PageAssist%E6%8F%92%E4%BB%B6%E8%BD%BB%E6%9D%BE%E5%AE%9E%E7%8E%B0DeepSeek%E8%81%94%E7%BD%91%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/">PageAssist插件轻松实现DeepSeek联网搜索功能</a>
-          </li>
-        
-          <li>
-            <a href="/2025/02/15/week/2025/week21/">每周见闻 - 第 21 期</a>
           </li>
         
       </ul>
