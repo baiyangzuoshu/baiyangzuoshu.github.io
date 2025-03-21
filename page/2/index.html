@@ -75,6 +75,127 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-cocos/Cocoscreator中实现TableView" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/" class="article-date">
+  <time class="dt-published" datetime="2025-01-25T01:17:59.000Z" itemprop="datePublished">2025-01-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Cocoscreator/">Cocoscreator</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/">Cocoscreator中实现TableView</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250207140231.png" alt="TableView"></p>
+<p>在游戏开发过程中，列表视图（TableView） 是一种常见且实用的 UI 组件，用于展示大量数据，如排行榜、物品列表、任务列表等。为了确保游戏的性能和用户体验，如何在 Cocos Creator 中高效地实现一个可复用、性能优异的 TableView 成为开发者们关注的重点。本文将基于提供的代码示例，详细解析如何在 Cocos Creator 中实现一个通用的 TableView 组件。</p>
+<h2 id="1-TableView-组件概述"><a href="#1-TableView-组件概述" class="headerlink" title="1. TableView 组件概述"></a>1. TableView 组件概述</h2><p>TableView 是一种用于展示长列表数据的 UI 组件，通过动态复用和虚拟渲染技术，仅渲染可视区域内的列表项，从而大幅提升性能，尤其在处理大量数据时尤为重要。<br>以下是 TableView 组件的主要功能：</p>
+<ul>
+<li>数据绑定：将数据源与列表项进行绑定，动态展示内容。</li>
+<li>点击事件处理：为每个列表项注册点击事件，实现交互功能。</li>
+<li>动态复用：根据滚动方向和位置复用列表项节点，减少内存和 CPU 开销。</li>
+<li>性能优化：通过计算可见项数和缓冲区，确保滚动的流畅性和渲染效率。</li>
+</ul>
+<p>本文将详细解析两个核心组件：ItemCell 和 TableView，并通过具体的代码示例展示如何实现一个高效的 TableView 组件。</p>
+<h2 id="2-ItemCell-组件详解"><a href="#2-ItemCell-组件详解" class="headerlink" title="2. ItemCell 组件详解"></a>2. ItemCell 组件详解</h2><p>ItemCell 是每个列表项的核心组件，负责绑定数据和处理点击事件。以下是 ItemCell 组件的详细解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">import type &#123; TableViewItem &#125; from &quot;../../Scripts/types&quot;;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 通用的 ItemCell 组件</span><br><span class="line"> * 负责绑定数据并处理点击事件</span><br><span class="line"> */</span><br><span class="line">class ItemCell extends cc.Component &#123;</span><br><span class="line">    private _itemId = 0;</span><br><span class="line">    private clickCallback!: (itemId: number, node: cc.Node) =&gt; void;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 绑定数据的方法，由外部传入具体的绑定逻辑</span><br><span class="line">     * @param index 数据索引</span><br><span class="line">     * @param data 数据对象</span><br><span class="line">     * @param bindCallback 数据绑定回调</span><br><span class="line">     */</span><br><span class="line">    public bindData(index: number, data: unknown, bindCallback: (node: cc.Node, data: unknown) =&gt; void) &#123;</span><br><span class="line">        this._itemId = index;</span><br><span class="line">        bindCallback(this.node, data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取当前项的索引</span><br><span class="line">     */</span><br><span class="line">    public getItemId(): number &#123;</span><br><span class="line">        return this._itemId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 注册点击事件</span><br><span class="line">     * @param callback 点击事件回调</span><br><span class="line">     */</span><br><span class="line">    public registerClick(callback: (itemId: number, node: cc.Node) =&gt; void) &#123;</span><br><span class="line">        this.clickCallback = callback;</span><br><span class="line">        const eventNode = this.node.getChildByName(&quot;event&quot;);</span><br><span class="line">        if (eventNode) &#123;</span><br><span class="line">            eventNode.on(&quot;click&quot;, this.onClick, this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 注销点击事件</span><br><span class="line">     */</span><br><span class="line">    public unregisterClick() &#123;</span><br><span class="line">        const eventNode = this.node.getChildByName(&quot;event&quot;);</span><br><span class="line">        if (eventNode) &#123;</span><br><span class="line">            eventNode.off(&quot;click&quot;, this.onClick, this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 点击事件处理</span><br><span class="line">     */</span><br><span class="line">    private onClick() &#123;</span><br><span class="line">        if (this.clickCallback) &#123;</span><br><span class="line">            this.clickCallback(this._itemId, this.node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected onDestroy() &#123;</span><br><span class="line">        this.unregisterClick();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="功能解析"><a href="#功能解析" class="headerlink" title="功能解析"></a>功能解析</h4><p>属性</p>
+<ul>
+<li>_itemId: 当前列表项的索引，用于标识该项在数据源中的位置。</li>
+<li>clickCallback: 列表项被点击时的回调函数。</li>
+</ul>
+<p>方法</p>
+<ul>
+<li>bindData(index, data, bindCallback): 绑定数据到列表项。接收数据索引、数据对象和一个数据绑定回调，由外部传入具体的绑定逻辑。</li>
+<li>getItemId(): 获取当前列表项的索引。</li>
+<li>registerClick(callback): 注册点击事件回调。假设每个列表项有一个名为 “event” 的子节点作为点击区域。</li>
+<li>unregisterClick(): 注销点击事件，防止内存泄漏。</li>
+<li>onClick(): 处理点击事件，触发外部传入的 clickCallback。</li>
+<li>onDestroy(): 生命周期方法，组件销毁时自动注销点击事件。</li>
+</ul>
+<p>关键点</p>
+<ul>
+<li>数据绑定：bindData 方法通过外部传入的 bindCallback 将数据绑定到节点上，确保组件的复用性和灵活性。</li>
+<li>事件管理：registerClick 和 unregisterClick 方法负责管理点击事件的注册和注销，确保事件处理的正确性和内存的有效管理。</li>
+<li>组件销毁：在组件销毁时自动注销事件，防止内存泄漏。</li>
+</ul>
+<h2 id="TableView-组件详解"><a href="#TableView-组件详解" class="headerlink" title="TableView 组件详解"></a>TableView 组件详解</h2><p>TableView 是整个列表的管理组件，负责初始化列表、管理可见项、处理滚动事件和复用列表项。以下是 TableView 组件的详细解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line">// scripts/TableView/TableView.ts</span><br><span class="line">/**</span><br><span class="line"> * 通用的 TableView 组件</span><br><span class="line"> * 负责管理 ScrollView 中的列表项复用</span><br><span class="line"> */</span><br><span class="line">export default class TableView extends cc.Component &#123;</span><br><span class="line">    private scrollView!: cc.ScrollView;</span><br><span class="line">    private itemPrefab!: cc.Node;</span><br><span class="line">    private itemHeight = 70;</span><br><span class="line">    private spacingY = 10;</span><br><span class="line">    private datas: unknown[] = [];</span><br><span class="line">    private items: cc.Node[] = [];</span><br><span class="line">    private visibleCount = 0;</span><br><span class="line">    private bufferZone = 0;</span><br><span class="line">    private totalCount = 0;</span><br><span class="line">    private lastContentPosY = 0;</span><br><span class="line"></span><br><span class="line">    // 数据绑定回调，由外部传入</span><br><span class="line">    private bindDataCallback!: (node: cc.Node, data: unknown) =&gt; void;</span><br><span class="line">    // 点击事件回调，由外部传入</span><br><span class="line">    private clickCallback!: (itemId: number, node: cc.Node) =&gt; void;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 初始化 TableView</span><br><span class="line">     * @param v1 TableViewItem 类型对象，包含必要的组件和配置</span><br><span class="line">     * @param datas 数据数组</span><br><span class="line">     * @param cb 回调对象，包含 bindCallback 和 clickCallback</span><br><span class="line">     */</span><br><span class="line">    public initialize(</span><br><span class="line">        v1: TableViewItem,</span><br><span class="line">        datas: unknown[],</span><br><span class="line">        cb: &#123;</span><br><span class="line">            bindCallback: (node: cc.Node, data: unknown) =&gt; void,</span><br><span class="line">            clickCallback: (itemId: number, node: cc.Node) =&gt; void</span><br><span class="line">        &#125;</span><br><span class="line">    ) &#123;</span><br><span class="line">        this.scrollView = v1.scrollView;</span><br><span class="line">        this.itemPrefab = v1.itemPrefab;</span><br><span class="line">        this.itemHeight = v1.itemHeight;</span><br><span class="line">        this.spacingY = v1.spacingY;</span><br><span class="line">        this.datas = datas;</span><br><span class="line">        this.totalCount = this.datas.length;</span><br><span class="line">        this.bindDataCallback = cb.bindCallback;</span><br><span class="line">        this.clickCallback = cb.clickCallback;</span><br><span class="line"></span><br><span class="line">        // 计算可见数量（根据 ScrollView 显示区域高度）</span><br><span class="line">        const viewHeight = this.scrollView.node.height * 4 / 2; // 这行代码需要根据实际情况调整</span><br><span class="line">        this.visibleCount = Math.ceil(viewHeight / (this.itemHeight + this.spacingY)) + 2;</span><br><span class="line">        this.bufferZone = viewHeight / 2;</span><br><span class="line"></span><br><span class="line">        // 设置 Content 的总高度</span><br><span class="line">        this.scrollView.content.height = this.totalCount * (this.itemHeight + this.spacingY);</span><br><span class="line"></span><br><span class="line">        // 初始化可见的节点池</span><br><span class="line">        for (let i = 0; i &lt; this.visibleCount &amp;&amp; i &lt; datas.length; i++) &#123;</span><br><span class="line">            const itemNode = cc.instantiate(this.itemPrefab);</span><br><span class="line">            itemNode.parent = this.scrollView.content;</span><br><span class="line">            itemNode.setPosition(0, -((i + 1) * (this.itemHeight + this.spacingY)));</span><br><span class="line">            const itemCell = itemNode.addComponent(ItemCell);</span><br><span class="line">            itemCell.bindData(i, this.datas[i], this.bindDataCallback);</span><br><span class="line">            itemCell.registerClick(this.clickCallback);</span><br><span class="line">            this.items.push(itemNode);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        this.lastContentPosY = this.scrollView.content.y;</span><br><span class="line">        this.scrollView.scrollToTop();</span><br><span class="line">        // 注册滚动事件</span><br><span class="line">        this.scrollView.node.on(&#x27;scrolling&#x27;, this.onScrolling, this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public destroyEvent() &#123;</span><br><span class="line">        // 移除滚动事件监听</span><br><span class="line">        if (this.scrollView) &#123;</span><br><span class="line">            this.scrollView.node.off(&#x27;scrolling&#x27;, this.onScrolling, this);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 移除所有 Item 的点击事件监听</span><br><span class="line">        for (const item of this.items) &#123;</span><br><span class="line">            const itemCell = item.getComponent(ItemCell);</span><br><span class="line">            itemCell.unregisterClick();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 滚动事件处理</span><br><span class="line">     */</span><br><span class="line">    private onScrolling() &#123;</span><br><span class="line">        const currY = this.scrollView.content.y;</span><br><span class="line">        const isScrollingDown = currY &gt; this.lastContentPosY;</span><br><span class="line"></span><br><span class="line">        for (const item of this.items) &#123;</span><br><span class="line">            const itemCell = item.getComponent(ItemCell);</span><br><span class="line">            const itemId = itemCell.getItemId();</span><br><span class="line">            const viewPos = this.getPositionInView(item);</span><br><span class="line"></span><br><span class="line">            if (isScrollingDown) &#123;</span><br><span class="line">                // 往下滚动，检查是否需要复用到底部</span><br><span class="line">                if (viewPos.y &gt; this.bufferZone) &#123;</span><br><span class="line">                    const newId = itemId + this.items.length;</span><br><span class="line">                    if (newId &lt; this.totalCount) &#123;</span><br><span class="line">                        const newY = item.y - this.items.length * (this.itemHeight + this.spacingY);</span><br><span class="line">                        item.setPosition(0, newY);</span><br><span class="line">                        itemCell.bindData(newId, this.datas[newId], this.bindDataCallback);</span><br><span class="line">                        itemCell.registerClick(this.clickCallback);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // 往上滚动，检查是否需要复用到顶部</span><br><span class="line">                if (viewPos.y &lt; -this.bufferZone) &#123;</span><br><span class="line">                    const newId = itemId - this.items.length;</span><br><span class="line">                    if (newId &gt;= 0) &#123;</span><br><span class="line">                        const newY = item.y + this.items.length * (this.itemHeight + this.spacingY);</span><br><span class="line">                        item.setPosition(0, newY);</span><br><span class="line">                        itemCell.bindData(newId, this.datas[newId], this.bindDataCallback);</span><br><span class="line">                        itemCell.registerClick(this.clickCallback);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        this.lastContentPosY = currY;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取节点在 ScrollView.view 上的坐标</span><br><span class="line">     * @param item 节点</span><br><span class="line">     */</span><br><span class="line">    private getPositionInView(item: cc.Node): cc.Vec3 &#123;</span><br><span class="line">        const worldPos = item.parent.convertToWorldSpaceAR(item.position);</span><br><span class="line">        const viewPos = this.scrollView.node.convertToNodeSpaceAR(worldPos);</span><br><span class="line">        return viewPos;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected onDestroy(): void &#123;</span><br><span class="line">        this.destroyEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="功能解析-1"><a href="#功能解析-1" class="headerlink" title="功能解析"></a>功能解析</h3><p>属性</p>
+<ul>
+<li>scrollView: 引用 ScrollView 组件，用于管理滚动和内容布局。</li>
+<li>itemPrefab: 列表项的预制体，用于动态实例化列表项。</li>
+<li>itemHeight 和 spacingY: 单个列表项的高度和垂直间距，用于计算内容布局。</li>
+<li>datas: 数据源数组，包含所有要展示的数据。</li>
+<li>items: 当前可见的列表项节点数组。</li>
+<li>visibleCount: 根据 ScrollView 的高度和列表项高度计算出的可见列表项数量。</li>
+<li>bufferZone: 缓冲区，用于提前复用列表项，确保滚动的流畅性。</li>
+<li>totalCount: 数据源的总数量。</li>
+<li>lastContentPosY: 记录上一次滚动位置，用于判断滚动方向。</li>
+</ul>
+<p>回调</p>
+<ul>
+<li>bindDataCallback: 数据绑定回调，由外部传入，用于将数据绑定到列表项。</li>
+<li>clickCallback: 点击事件回调，由外部传入，用于处理列表项的点击事件。</li>
+</ul>
+<p>方法</p>
+<ul>
+<li>initialize(v1, datas, cb): 初始化 TableView 组件。设置 ScrollView、预制体、列表项高度和间距，计算可见列表项数量，设置内容高度，实例化可见范围内的列表项，并注册滚动事件。</li>
+<li>destroyEvent(): 销毁时移除滚动事件监听器，并注销所有列表项的点击事件，防止内存泄漏。</li>
+<li>onScrolling(): 处理滚动事件，根据滚动方向和位置复用列表项。向下滚动时，复用列表项到底部；向上滚动时，复用列表项到顶部。</li>
+<li>getPositionInView(item): 获取列表项在 ScrollView 视图中的位置，用于判断是否需要复用。</li>
+<li>onDestroy(): 生命周期方法，组件销毁时调用 destroyEvent()。</li>
+</ul>
+<h3 id="关键点："><a href="#关键点：" class="headerlink" title="关键点："></a>关键点：</h3><ul>
+<li>动态复用：通过计算可见列表项数量和缓冲区，动态复用列表项节点，避免大量节点的创建和销毁。</li>
+<li>事件管理：合理注册和注销滚动事件和点击事件，确保组件的正确性和内存管理。</li>
+<li>数据绑定：通过外部传入的 bindDataCallback 实现数据与 UI 的绑定，增强组件的复用性和灵活性。</li>
+</ul>
+<h2 id="4-使用指南"><a href="#4-使用指南" class="headerlink" title="4. 使用指南"></a>4. 使用指南</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 初始化 TableView</span><br><span class="line">const tableView = this.myScrollView.node.addComponent(TableView);</span><br><span class="line">// 定义数据绑定回调</span><br><span class="line">const bindCallback = this.bindRankItem.bind(this);</span><br><span class="line">// 定义点击事件回调</span><br><span class="line">const clickCallback = this.onTableViewItemClick.bind(this);</span><br><span class="line"></span><br><span class="line">// 注入依赖</span><br><span class="line">tableView.initialize(&#123;</span><br><span class="line">    scrollView: this.myScrollView,</span><br><span class="line">    itemPrefab: this.cloneItem,</span><br><span class="line">    itemHeight: 70,</span><br><span class="line">    spacingY: 10</span><br><span class="line">&#125;, this.itemArr, &#123;</span><br><span class="line">    bindCallback: bindCallback,</span><br><span class="line">    clickCallback: clickCallback</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h3><pre><code>#### 配置对象：
+* scrollView: 引用的 ScrollView 组件。
+* itemPrefab: 列表项的预制体。
+* itemHeight: 单个列表项的高度。
+* spacingY: 列表项之间的垂直间距。
+* 数据数组：itemArr 包含所有要展示的数据。
+
+* 回调对象：
+* bindCallback: 数据绑定回调函数。
+* clickCallback: 点击事件回调函数。
+</code></pre>
+<p>通过以上步骤，TableView 组件将根据数据源动态生成和复用列表项，实现高效的列表展示。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/" data-id="cm8id88p4000iksu463eyh7qz" data-title="Cocoscreator中实现TableView" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tableview/" rel="tag">tableview</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-game/《停车场小游戏》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" class="article-date">
@@ -182,7 +303,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" data-id="cm88f2w33000mncu41o4nb8gs" data-title="《停车场小游戏》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" data-id="cm8id88p5000mksu4aaxv79sj" data-title="《停车场小游戏》" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -240,7 +361,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/18/week/2025/week18/" data-id="cm88f2w3f0026ncu43eywaqc2" data-title="每周见闻 - 第 18 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/18/week/2025/week18/" data-id="cm8id88p8000yksu43531484y" data-title="每周见闻 - 第 18 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -299,7 +420,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/12/week/2025/week17/" data-id="cm88f2w3e0021ncu4de3uhlrh" data-title="每周见闻 - 第17 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/12/week/2025/week17/" data-id="cm8id88p8000uksu44j1rew25" data-title="每周见闻 - 第17 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -360,7 +481,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/04/week/2025/week16/" data-id="cm88f2w3e001zncu4h0ooh3kl" data-title="每周见闻 - 第 16期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/04/week/2025/week16/" data-id="cm8id88p7000sksu4180udfkl" data-title="每周见闻 - 第 16期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -417,7 +538,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/01/book/%E3%80%8A%E4%B8%87%E5%8E%86%E5%8D%81%E4%BA%94%E5%B9%B4%E3%80%8B/" data-id="cm88f2w2w0005ncu45rdn9kh0" data-title="《万历十五年》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/01/book/%E3%80%8A%E4%B8%87%E5%8E%86%E5%8D%81%E4%BA%94%E5%B9%B4%E3%80%8B/" data-id="cm8id88oz0005ksu49k4x2wct" data-title="《万历十五年》" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -478,7 +599,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/27/week/2024/week15/" data-id="cm88f2w38001ancu4bbrp1q0f" data-title="每周见闻 - 第15 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/27/week/2024/week15/" data-id="cm8id88ph0021ksu465nc665k" data-title="每周见闻 - 第15 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -536,7 +657,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/20/week/2024/week14/" data-id="cm88f2w370016ncu48u7k0jt7" data-title="每周见闻 - 第 14期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/20/week/2024/week14/" data-id="cm8id88pg001zksu4cv7e19no" data-title="每周见闻 - 第 14期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -596,7 +717,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/13/week/2024/week13/" data-id="cm88f2w370014ncu4a9ow08uo" data-title="每周见闻 - 第 13期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/13/week/2024/week13/" data-id="cm8id88pg001vksu4gbtagi0q" data-title="每周见闻 - 第 13期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -658,64 +779,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/07/week/2024/week12/" data-id="cm88f2w360010ncu453tr88js" data-title="每周见闻 - 第12期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2024/week11" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/11/29/week/2024/week11/" class="article-date">
-  <time class="dt-published" datetime="2024-11-29T07:23:31.000Z" itemprop="datePublished">2024-11-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/11/29/week/2024/week11/">每周见闻 - 第11期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2024/bg2024120406.webp"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/T-qowqn09zwLqKf8vS4XMQ">1.西安幸福航空被曝长期欠薪，飞行员送外卖补贴家用</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/N1wyR0XkNYE3WyLr8xpf6g">2.巴基斯坦突发暴力冲突，已致120人死亡</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3735749#from=ios?ivk=1">3.车企供应商开始反抗,比亚迪要求供应商从2025年1月1日起供货产品降价10%</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/cg9dp2kvC3m2QyIXff43cQ">4.“人人网”已停止服务，曾有1.7亿用户</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.thepaper.cn/newsDetail_forward_29543514">5.琼瑶体面的选择了死亡</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/7YssK9-KucF5PbUf9Vv5Vg">6.OpenAI发布满血o1、无限使用，最强大模型来了</a></p>
-<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/jjxw/2024-12-05/doc-incymitn9661158.shtml?cref=cj">7.美图靠卖加密货币赚了将近6个亿</a></p>
-<p><a target="_blank" rel="noopener" href="http://www.news.cn/20241205/19d91d08e07f46b190365600b429514b/c.html">8.比特币价格首次突破10万美元</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/833816099_100095661?scm=thor.521_14-200000.0.10006.&spm=smpc.home.it-news11.4.17334684030315oXoZw5_1467">9.8位数年薪！“最懂阿里大模型的人”带整个团队跳槽加入！字节跳动放大招？</a></p>
-<h2 id="简语"><a href="#简语" class="headerlink" title="简语"></a>简语</h2><p>1.所有书籍都宣传做好人，这是不正常，因为统一口径。</p>
-<p>2.说不后悔的人，好像知道可以后悔一般。</p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img src="/images/2024/The_Bloody_Battle_of_Taierzhuang.jpg" alt="血战台儿庄"><br>&emsp;&emsp;《血战台儿庄》是一部中国大陆在1986年制作的电影，翟俊杰与杨光远合作执导，再现了台儿庄战役的历史。<br>&emsp;&emsp;这部电影是中国大陆方面首次使用电影艺术的方式肯定国民党在抗日战争正面战场的作用，因此在首映时给观众带来耳目一新的感受。<br>&emsp;&emsp;此电影与大陆其他电影风格截然不同，诸多细节迥异，甚至采用了国军的诸多习惯，如在军事地图中将日军绘成红色，国军为蓝色。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/29/week/2024/week11/" data-id="cm88f2w36000yncu414ht14cp" data-title="每周见闻 - 第11期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/07/week/2024/week12/" data-id="cm8id88pf001tksu4buin4n4l" data-title="每周见闻 - 第12期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -786,6 +850,10 @@
       <ul>
         
           <li>
+            <a href="/2025/03/14/week/2025/week25/">每周见闻 - 第 25 期</a>
+          </li>
+        
+          <li>
             <a href="/2025/03/09/week/2025/week24/">每周见闻 - 第 24 期</a>
           </li>
         
@@ -799,10 +867,6 @@
         
           <li>
             <a href="/2025/02/23/week/2025/week22/">每周见闻 - 第 22 期</a>
-          </li>
-        
-          <li>
-            <a href="/2025/02/15/AI/PageAssist%E6%8F%92%E4%BB%B6%E8%BD%BB%E6%9D%BE%E5%AE%9E%E7%8E%B0DeepSeek%E8%81%94%E7%BD%91%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/">PageAssist插件轻松实现DeepSeek联网搜索功能</a>
           </li>
         
       </ul>
