@@ -32,6 +32,9 @@ tags:
 ## 文章
 [1.]()
 
+## AI
+[1.OpenAI发布GPT-4.1，性能暴涨、100万上下文](https://mp.weixin.qq.com/s/Dfnh2JBZkpouQMxnRDZW8g)
+
 ## Github
 [1.LangManus](https://github.com/langmanus/langmanus)
 LangManus 是一个社区驱动的 AI 自动化框架，它建立在开源社区的卓越工作基础之上。我们的目标是将语言模型与专业工具（如网络搜索、爬虫和 Python 代码执行）相结合，同时回馈让这一切成为可能的社区。
