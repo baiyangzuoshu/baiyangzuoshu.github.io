@@ -75,6 +75,74 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Algorithm/使用分离轴定理（SAT）进行旋转矩形碰撞检测" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" class="article-date">
+  <time class="dt-published" datetime="2024-11-13T02:33:20.000Z" itemprop="datePublished">2024-11-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/">使用分离轴定理（SAT）进行旋转矩形碰撞检测</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2024/SAT.webp"></p>
+<p>平台：cocoscreator 3.8.x<br>语言：typescript</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;正在做一个项目，英雄有若干转刀，转刀会围绕英雄中心点旋转。如果用cocos自带的碰撞算法检测，不方便。<br>因此就找到分离轴定理算法，可以是缩放、放大、旋转多边形。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>&emsp;&emsp;在游戏开发中，碰撞检测是一个至关重要的部分，尤其是当处理复杂的物体如旋转矩形时。对于这类物体，传统的矩形碰撞检测方法不再适用，因为它们可能会旋转，并且需要更精确的检测方法。分离轴定理（SAT）是一个强大的算法，可以帮助我们检测两个旋转矩形是否发生碰撞。</p>
+<p>&emsp;&emsp;本文将介绍如何利用分离轴定理（SAT）进行旋转矩形的碰撞检测，并通过Cocos Creator的TypeScript实现代码来展示具体的实现方法。</p>
+<p>分离轴定理（SAT）简介<br>&emsp;&emsp;分离轴定理的核心思想是：如果两个凸多边形没有发生碰撞，那么存在一条直线（称为分离轴），使得这两个多边形在该轴上的投影是分开的。换句话说，如果两个物体的所有投影都没有重叠，那么它们就没有碰撞。反之，如果在任何一个轴上它们的投影有重叠，那么它们必然发生碰撞。</p>
+<p>代码实现<br>&emsp;&emsp;在实现旋转矩形的碰撞检测时，我们需要使用分离轴定理来判断两个旋转矩形是否重叠。以下是一个使用TypeScript实现的代码示例。</p>
+<h3 id="1-获取旋转矩形的四个顶点"><a href="#1-获取旋转矩形的四个顶点" class="headerlink" title="1. 获取旋转矩形的四个顶点"></a>1. 获取旋转矩形的四个顶点</h3><p>&emsp;&emsp;首先，我们需要计算旋转矩形的四个顶点。这个过程通过矩阵旋转公式完成。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 获取旋转矩形的顶点</span><br><span class="line">public static getRotatedRectangle(x: number, y: number, size: &#123; width: number, height: number &#125;, angle: number, scale: number) &#123;</span><br><span class="line">    let halfWidth = size.width / 2 * scale;</span><br><span class="line">    let halfHeight = size.height / 2 * scale;</span><br><span class="line"></span><br><span class="line">    // 计算旋转矩形的四个顶点</span><br><span class="line">    let rad = angle * (Math.PI / 180);</span><br><span class="line">    let cos = Math.cos(rad);</span><br><span class="line">    let sin = Math.sin(rad);</span><br><span class="line"></span><br><span class="line">    return [</span><br><span class="line">        &#123; x: x + halfWidth * cos - halfHeight * sin, y: y + halfWidth * sin + halfHeight * cos &#125;,  // 右上</span><br><span class="line">        &#123; x: x - halfWidth * cos - halfHeight * sin, y: y - halfWidth * sin + halfHeight * cos &#125;,  // 左上</span><br><span class="line">        &#123; x: x - halfWidth * cos + halfHeight * sin, y: y - halfWidth * sin - halfHeight * cos &#125;,  // 左下</span><br><span class="line">        &#123; x: x + halfWidth * cos + halfHeight * sin, y: y + halfWidth * sin - halfHeight * cos &#125;   // 右下</span><br><span class="line">    ];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这段代码计算了旋转矩形的四个顶点。矩形的中心点、尺寸、旋转角度以及缩放因子（scale）作为参数传入。通过矩阵旋转，我们计算出每个顶点的坐标。</p>
+<h3 id="2-投影矩形到轴上"><a href="#2-投影矩形到轴上" class="headerlink" title="2. 投影矩形到轴上"></a>2. 投影矩形到轴上</h3><p>&emsp;&emsp;接下来，我们需要将矩形投影到一个轴上。这里我们使用的是矩形的边作为投影轴，计算矩形在这些轴上的投影区间。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// 将矩形投影到轴上</span><br><span class="line">public static projectRectangle(rect: any[], axis: &#123; x: number, y: number &#125;) &#123;</span><br><span class="line">    // 归一化轴向量</span><br><span class="line">    let length = Math.sqrt(axis.x * axis.x + axis.y * axis.y);</span><br><span class="line">    let normalizedAxis = &#123; x: axis.x / length, y: axis.y / length &#125;;</span><br><span class="line"></span><br><span class="line">    let min = (rect[0].x * normalizedAxis.x + rect[0].y * normalizedAxis.y);</span><br><span class="line">    let max = min;</span><br><span class="line"></span><br><span class="line">    for (let i = 1; i &lt; rect.length; i++) &#123;</span><br><span class="line">        let projection = (rect[i].x * normalizedAxis.x + rect[i].y * normalizedAxis.y);</span><br><span class="line">        if (projection &lt; min) &#123;</span><br><span class="line">            min = projection;</span><br><span class="line">        &#125;</span><br><span class="line">        if (projection &gt; max) &#123;</span><br><span class="line">            max = projection;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return &#123; min, max &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;此方法将矩形的每个顶点投影到指定轴上，并返回该轴上的最小和最大投影值。</p>
+<h3 id="3-检查矩形是否重叠"><a href="#3-检查矩形是否重叠" class="headerlink" title="3. 检查矩形是否重叠"></a>3. 检查矩形是否重叠</h3><p>&emsp;&emsp;现在，我们有了每个矩形在不同轴上的投影区间。为了检查两个矩形是否发生碰撞，我们将它们的投影区间进行比较。如果在任何一个轴上，它们的投影区间没有重叠，那么这两个矩形就没有碰撞。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// 分离轴定理（SAT）用于旋转矩形之间的碰撞检测</span><br><span class="line">public static isRotatedRectanglesOverlapping(rect1: any[], rect2: any[]): boolean &#123;</span><br><span class="line">    let axes = [</span><br><span class="line">        // 矩形1的边的法向量</span><br><span class="line">        &#123; x: -(rect1[1].y - rect1[0].y), y: rect1[1].x - rect1[0].x &#125;,</span><br><span class="line">        &#123; x: -(rect1[2].y - rect1[1].y), y: rect1[2].x - rect1[1].x &#125;,</span><br><span class="line">        // 矩形2的边的法向量</span><br><span class="line">        &#123; x: -(rect2[1].y - rect2[0].y), y: rect2[1].x - rect2[0].x &#125;,</span><br><span class="line">        &#123; x: -(rect2[2].y - rect2[1].y), y: rect2[2].x - rect2[1].x &#125;</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    for (let axis of axes) &#123;</span><br><span class="line">        let projection1 = this.projectRectangle(rect1, axis);</span><br><span class="line">        let projection2 = this.projectRectangle(rect2, axis);</span><br><span class="line"></span><br><span class="line">        if (projection1.max &lt; projection2.min || projection2.max &lt; projection1.min) &#123;</span><br><span class="line">            return false;  // 没有重叠</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return true;  // 发生重叠</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 检查新车子的位置是否与现有车子重叠</span><br><span class="line">isOverlapping(newCar:cc.Node, carSize: &#123; width: number, height: number &#125;,existingCars:any[]): boolean &#123;</span><br><span class="line">    // 生成当前车子的旋转矩形</span><br><span class="line">    let carWorldPos=newCar.convertToWorldSpaceAR(cc.v3(0,0,0));</span><br><span class="line">    let carWorldRotation = util.getWorldRotation(newCar);</span><br><span class="line">    let newRect = util.getRotatedRectangle(carWorldPos.x, carWorldPos.y, carSize, carWorldRotation,carSacle);</span><br><span class="line">    let newID=newCar.getComponent(MapCar).getID();</span><br><span class="line"></span><br><span class="line">    for (let car of existingCars) &#123;</span><br><span class="line">        let carWorldPos2=car.node.convertToWorldSpaceAR(cc.v3(0,0,0));</span><br><span class="line">        let carWorldRotation2 = util.getWorldRotation(car.node);</span><br><span class="line">        let existingCar = util.getRotatedRectangle(carWorldPos2.x, carWorldPos2.y, car.size, carWorldRotation2,carSacle);</span><br><span class="line">        let existID=car.node.getComponent(MapCar).getID();</span><br><span class="line">        // 使用分离轴定理进行旋转矩形碰撞检测</span><br><span class="line">        if (util.isRotatedRectanglesOverlapping(newRect, existingCar)&amp;&amp;existID!=newID) &#123;</span><br><span class="line">            return true;  // 发生重叠</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;  // 没有重叠</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这段代码计算了两个矩形在所有可能的轴上的投影，并检查是否有任何轴上的投影区间没有重叠。如果任何一个轴的投影不重叠，则返回 false，表示没有碰撞；如果所有轴上的投影都重叠，则返回 true，表示发生了碰撞。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;通过应用分离轴定理（SAT），我们能够高效地检测旋转矩形之间的碰撞。我们首先计算出矩形的顶点，然后将这些顶点投影到矩形边的法向量上，最后通过比较投影区间来确定矩形是否发生碰撞。</p>
+<p>&emsp;&emsp;这种方法不仅适用于旋转矩形，也可以扩展到其他类型的凸多边形。通过此算法，我们能够确保游戏中的物体碰撞检测更加精确和高效。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" data-id="cmagdsg590002rgu40h7a9206" data-title="使用分离轴定理（SAT）进行旋转矩形碰撞检测" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-book/《大秦帝国》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/11/12/book/%E3%80%8A%E5%A4%A7%E7%A7%A6%E5%B8%9D%E5%9B%BD%E3%80%8B/" class="article-date">
@@ -112,7 +180,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/12/book/%E3%80%8A%E5%A4%A7%E7%A7%A6%E5%B8%9D%E5%9B%BD%E3%80%8B/" data-id="cm9wdb24o000bggu4fv9u6rye" data-title="《大秦帝国》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/11/12/book/%E3%80%8A%E5%A4%A7%E7%A7%A6%E5%B8%9D%E5%9B%BD%E3%80%8B/" data-id="cmagdsg5g000grgu4efclgip5" data-title="《大秦帝国》" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -171,7 +239,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/08/week/2024/week8/" data-id="cm9wdb252001vggu4a5s549fr" data-title="每周见闻 - 第8期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/11/08/week/2024/week8/" data-id="cmagdsg5t001vrgu454av7rw8" data-title="每周见闻 - 第8期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -239,7 +307,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/01/week/2024/week7/" data-id="cm9wdb251001pggu4a58b2nhw" data-title="每周见闻 - 第7期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/11/01/week/2024/week7/" data-id="cmagdsg5s001trgu41jrb63xb" data-title="每周见闻 - 第7期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -295,7 +363,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/10/25/week/2024/week6/" data-id="cm9wdb252001tggu4el9net95" data-title="每周见闻 - 第6期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/10/25/week/2024/week6/" data-id="cmagdsg5r001rrgu4cm8m0b9j" data-title="每周见闻 - 第6期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -347,7 +415,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/10/19/book/%E3%80%8A%E5%88%9B%E4%B8%9A%E5%B0%B1%E6%98%AF%E8%A6%81%E7%BB%86%E5%88%86%E5%9E%84%E6%96%AD%E3%80%8B/" data-id="cm9wdb24m0005ggu43taec19j" data-title="《创业就是要细分垄断》" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/10/19/book/%E3%80%8A%E5%88%9B%E4%B8%9A%E5%B0%B1%E6%98%AF%E8%A6%81%E7%BB%86%E5%88%86%E5%9E%84%E6%96%AD%E3%80%8B/" data-id="cmagdsg5f000crgu4hdt07fkt" data-title="《创业就是要细分垄断》" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -405,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/10/18/week/2024/week5/" data-id="cm9wdb250001kggu4cqy68zi1" data-title="每周见闻 - 第5期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/10/18/week/2024/week5/" data-id="cmagdsg5r001orgu42ciua35w" data-title="每周见闻 - 第5期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -466,7 +534,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/10/14/week/2024/week4/" data-id="cm9wdb251001oggu41znm8oc4" data-title="每周见闻 - 第4期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/10/14/week/2024/week4/" data-id="cmagdsg5q001lrgu4bve7224o" data-title="每周见闻 - 第4期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -522,7 +590,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/10/08/week/2024/week3/" data-id="cm9wdb24z001hggu4787e1p4i" data-title="每周见闻 - 第3期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/10/08/week/2024/week3/" data-id="cmagdsg5p001irgu4h3v48fdx" data-title="每周见闻 - 第3期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -572,72 +640,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/09/29/week/2024/week2/" data-id="cm9wdb24z001fggu45q82djlf" data-title="每周见闻 - 第2期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/09/29/week/2024/week2/" data-id="cmagdsg5p001frgu446v9f951" data-title="每周见闻 - 第2期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-cocos/Cocoscreator流程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" class="article-date">
-  <time class="dt-published" datetime="2024-09-26T03:29:57.000Z" itemprop="datePublished">2024-09-26</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Cocoscreator/">Cocoscreator</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/">Cocoscreator流程</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>平台：Web<br>版本:3.8.x<br><img src="/images/2024/cocoscreator.png" alt="Cocoscreator流程"></p>
-<pre><code>当我们打出web后，在build目录下会生成一个web-mobile文件夹，里面就是我们发布后的项目了。
-</code></pre>
-<p>在 web-mobile 文件夹下，有一个 index.html 文件，这个文件就是我们项目的入口文件。在 index.html 文件<br>中会加载 index.js 文件，在 index.js 文件中会加载 application.js 文件，在 application.js 文件中会<br>调用 init 函数和 start 函数。<br>在 init 函数中会初始化游戏引擎，在 start 函数中会启动游戏引擎。都是通过 game.js 文件来调用的。<br>game.ts 在被加载时，就会</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export const game = cclegacy.game = new Game();</span><br></pre></td></tr></table></figure>
-
-<p>在 game:init 函数中，会做好启动引擎之前的工作，比如</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">screen.init();</span><br><span class="line">assetManager.init();</span><br><span class="line">director.init();</span><br></pre></td></tr></table></figure>
-
-<p>在 game:step 函数中，会调用</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public step () &#123;</span><br><span class="line">    director.tick(this._calculateDT(true));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里是游戏的主循环，每一帧都会调用一次。<br>在 director:tick 函数中，主要看 this._root!.frameMove(dt);这行代码，用于每帧执行渲染流程的入口函数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this._frameMoveBegin();</span><br><span class="line">this._frameMoveProcess();</span><br><span class="line">this._frameMoveEnd();</span><br></pre></td></tr></table></figure>
-
-<p>_frameMoveBegin()清空场景和相机,<br>_frameMoveProcess()重新生成快照,主要看 this._batcher.update()这行代码，用于更新所有节点的渲染信息<br>_frameMoveEnd()渲染，this._pipeline.render(cameraList)这行代码，forwardStage:render(camera),<br>函数里面会调用 this._uiPhase.render(camera, renderPass)，用于渲染 UI</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const pso = PipelineStateManager.getOrCreatePipelineState(device, pass, shader, renderPass, inputAssembler);</span><br><span class="line">cmdBuff.bindPipelineState(pso);</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, pass.descriptorSet);</span><br><span class="line">const ds = batch.descriptorSet!;</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.LOCAL, ds);</span><br><span class="line">cmdBuff.bindInputAssembler(inputAssembler);</span><br><span class="line">cmdBuff.draw(inputAssembler);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" data-id="cm9wdb24t000oggu4faji312t" data-title="Cocoscreator流程" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
 
     </footer>
   </div>
@@ -691,7 +698,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
     </div>
   </div>
 
@@ -702,6 +709,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2025/05/09/week/2025/week31/">每周见闻 - 第31 期</a>
+          </li>
         
           <li>
             <a href="/2025/04/25/week/2025/week30/">每周见闻 - 第 30 期</a>
@@ -717,10 +728,6 @@
         
           <li>
             <a href="/2025/04/06/week/2025/week27/">每周见闻 - 第 27 期</a>
-          </li>
-        
-          <li>
-            <a href="/2025/03/28/week/2025/week26/">每周见闻 - 第 26 期</a>
           </li>
         
       </ul>
