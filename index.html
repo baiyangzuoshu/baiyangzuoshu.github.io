@@ -75,6 +75,578 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-book/读《Shader开发实战》有感" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/" class="article-date">
+  <time class="dt-published" datetime="2025-06-01T23:54:14.000Z" itemprop="datePublished">2025-06-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/">读《Shader开发实战》有感</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/s33940373.jpg"><br>我想有必要总结一下游戏开发中图片如何被渲染到移动设备上的过程。无论采用何种格式，图片都保存着每个像素位置对应的 RGBA 数据。当 CPU 将图片数据加载到内存中后，如果未指定具体位置，则默认在（0，0）位置上进行渲染，通过 MVP（模型-视图-投影）矩阵转换，得到最终的位置坐标。当 CPU 阶段的数据准备完成后，进入 GPU 阶段。首先，顶点着色器会对顶点位置进行转换。</p>
+<p>渲染这一术语本身来源于电影工业，渲染管线包括顶点数据输入、顶点着色器处理、形状装配、光栅化、片元着色器处理以及片元的最终输出。归一化坐标将原始坐标映射到 0 到 1 之间的统一范围，这种方法有效解决了不同设备屏幕尺寸带来的兼容性问题。光栅化阶段具体负责将装配好的形状转化为图元，并对片元进行插值。纹理映射则将二维图像应用于三维模型表面。</p>
+<p>在具体实现上，可以使用索引缓冲区将顶点数据组合为网格面。渲染所用的二维图像称为“纹理”，从纹理中获取特定点颜色值的过程称为“采样”。每个网格利用 UV 坐标，使片元能够精确地从纹理的不同区域采样颜色。纹理通常以 UV 坐标 0 到 1 之间的范围定义，以确保纹理中的每个像素都能被正确采样。</p>
+<p>Alpha 测试是检查片元透明度是否达到特定阈值并舍弃不合格片元的过程，可使用 discard 语句直接从渲染管线中删除不需要的片元。GPU 通过深度缓冲区存储信息，以确定物体间的遮挡关系，这被称为深度测试。在片元处理阶段，不透明的片元将与当前的后置缓冲内容进行混合处理。</p>
+<p>游戏中的摄像机会生成视图矩阵并在顶点着色器中使用，以根据摄像机的位置和朝向调整顶点在屏幕上的位置。投影矩阵定义了摄像机视锥体的形状，确保内容在不同尺寸的屏幕上表现一致。正交投影是大多数 2D 游戏普遍采用的投影类型。</p>
+<p>法线向量是垂直于网格表面并向外指向的矢量，存储在每个顶点上，用于描述表面的详细信息。如果游戏支持非等比缩放，则需要特殊的矩阵将法线向量从物体空间转换到世界空间。两个向量间的点积是一种标量值，通常用于表示方向和光照信息。漫反射光照取决于表面的粗糙度，片元接收到的漫反射光照强度由片元法线向量与入射光方向向量之间的点积决定。轮廓光则是一种特殊的渲染技术，可以模拟物体被背光照射的效果。</p>
+<p>法线贴图是一种在每个像素存储法线向量而非颜色信息的纹理，它为渲染提供了微小表面细节。法线贴图通常使用切线空间进行存储，这个空间由网格表面特定点的 UV 坐标和几何法线定义。法线贴图通过替换原始网格几何法线，实现了对表面细节的精细控制。</p>
+<p>立方体贴图是一种特殊的纹理，将六个相同尺寸的图像组合为单一的纹理资源，模拟环境反射效果。通过采样立方体贴图，游戏可以更加逼真地表现环境映射。</p>
+<p>游戏性能一般通过每秒帧数（FPS）或每帧时间来衡量。在进行性能分析或优化时，推荐使用每帧时间，因为它与性能表现呈现线性关系。着色器优化技巧之一是尽可能将计算移至顶点着色器，因为渲染每一帧所涉及的片元数目通常远远超过顶点数量，这样能显著提高渲染效率。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/" data-id="cmbebl9rv000cps772efw3hmh" data-title="读《Shader开发实战》有感" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week34" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/05/30/week/2025/week34/" class="article-date">
+  <time class="dt-published" datetime="2025-05-30T01:39:27.000Z" itemprop="datePublished">2025-05-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/05/30/week/2025/week34/">每周见闻 - 第34 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250530094008.jpg"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jiRuncLAgK">1.高通委托测试：苹果iPhone 16e自研基带5G性能落后于X75&#x2F;X80安卓竞品</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/7NiqfDYMG_ZmaW0ArQluhA">2.“国家网络身份认证”，7月15日起正式实施</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/crdLy3bDou9HnFecREZfSQ">3.香港科技大学：无条件录取哈佛转学生</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JOZU2SB7g4gyQLz1IIUQYQ">4.武汉车谷江大女足获得女足亚冠联赛冠军</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FNROVLx1BhmBBgxK6A2vVg">5.媒体：特朗普同意将对欧盟商品征收50%关税的最后期限延至7月9日</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jfZpAWxmws">6.腾讯京东等合资收购48座万达广场</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KauK-m7lB4-fYP21zex6sg">7.胖东来“红内裤”事件博主被判赔偿40万，发布道歉信30日内不得删除</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ohmC03FwljGPw3i9SUUh4g">8.沃尔沃：拟裁员3000人</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/mePXaVDAHvnTZbPH5LEvZA">9.斯诺克 | 白雨露再夺女子世锦赛冠军，2025男女世锦赛冠军都来自中国</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/-LJxfv87-CJdqLtmRCJtwQ">10.突发！特朗普暂停，国际学生签证</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/a9ONdi1alEAcJ9j_Lbixow">1.中国信用卡40年 一部关于消费的渐进史</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wYOYWr59TunFHMifSPJuLA">1.DeepSeek开源新版R1，媲美OpenAI最高o3模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zHwAeXjBD0J_C33zUxSZyQ">2.阿里最新财报：AI收入大涨，成新财务增长引擎</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ZD-ZL0xyccIYBXapUyDgNA">3.微软开源浏览器Agent，可实时跟踪、控制智能体，超4000颗星</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Co80jUZVDqqKe3P2QcNazA">4.一分钱可买到教程，AI成了小说“枪手”</a></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/CherryHQ/cherry-studio">1.cherry-studio</a><br>CherryStudio是一个支持多平台的AI客户端，支持Win、macOS、Linux平台,未来也会支持移动端</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/sinaptik-ai/pandas-ai">2.pandas-ai</a><br>PandasAI 是一个 Python 平台，它可以轻松地用自然语言向数据提问。它可以帮助非技术用户以更自然的方式与数据交互，并帮助技术用户在处理数据时节省时间和精力。</p>
+<h2 id="书籍"><a href="#书籍" class="headerlink" title="书籍"></a>书籍</h2><p><img src="/images/2025/s4494379.jpg" alt="巨流河"><br>巨流河，在清代被称为巨流河；哑口海位于台湾南端，是鹅銮鼻灯塔下的一泓湾流。这本书写的是一个并未远去的时代，关于两代人从巨流河到哑口海的故事。那立志将中国建设成现代化国家的父亲，在牧草中哭泣的母亲，公而忘私的先生；唱着《松花江上》的东北流亡学子，初识文学滋味的南开少女，含泪朗诵雪莱和济慈的朱光潜；那盛开铁石芍药的故乡，那波涛滚滚的巨流河，那暮色山风里、隘口边回头探望的少年张大飞……六十年来，作者读书、教书，写评论文章，却一直念念不忘当年事——郭松龄在东北家乡为厚植国力反抗军阀的兵谏；抗战初起，二十九军浴血守卫华北，牺牲之壮烈；南京大屠杀，国都化为鬼蜮的悲痛；保卫大武汉，民心觉醒，誓做决不投降的中国人之慷慨激昂；夺回台儿庄的激励；一步步攀登跋涉湘桂路、川黔路奔往重庆，绝处逢生的盼望；在四川、在滇缅公路上誓死守土的英勇战士的容颜，坚毅如在眼前；那一张张呼喊同胞、凝聚人心的战报、文告、号外，在作者心中仍墨迹未干……作者给我们讲述了一个埋藏着巨大悲伤的时代，同时也是所有中国人引以为荣的，真正存在过的，最有骨气的中国！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/30/week/2025/week34/" data-id="cmbebl9s9005hps77hvaubu95" data-title="每周见闻 - 第34 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-game/ECS架构的实践与思考" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" class="article-date">
+  <time class="dt-published" datetime="2025-05-26T02:54:34.000Z" itemprop="datePublished">2025-05-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/">ECS架构的实践与思考</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/ECS.png"><br>&emsp;&emsp;随着游戏规模不断扩大，传统的面向对象（OOP）开发方式逐渐显露出一些明显的局限性，比如类继承结构的复杂性、代码的高度耦合和难以扩展，特别是在游戏逻辑频繁变动、实体类型丰富的项目中尤为明显。<br>&emsp;&emsp;传统开发模式通常是通过继承来定义游戏对象，每个对象都包含数据和行为，这种设计容易导致类体系复杂且僵化，修改或新增功能时牵一发而动全身，不利于扩展与维护。同时，频繁创建和销毁对象也会带来额外的性能开销。<br>&emsp;&emsp;针对这些问题，ECS（Entity-Component-System）架构应运而生，它以数据驱动为核心思想，将实体（Entity）、数据（Component）和逻辑（System）完全分离，显著提升了游戏架构的灵活性、性能和扩展性。</p>
+<h2 id="一、ECS-架构概览"><a href="#一、ECS-架构概览" class="headerlink" title="一、ECS 架构概览"></a>一、ECS 架构概览</h2><ul>
+<li>Entity（实体）：游戏中的对象标识，仅包含唯一 ID，没有行为和数据。</li>
+<li>Component（组件）：纯数据结构，定义实体的属性（如位置、速度、渲染节点引用）。</li>
+<li>System（系统）：逻辑单元，遍历拥有特定组件组合的实体，执行行为（如移动、渲染、碰撞检测）。</li>
+</ul>
+<p>三者职责分离，数据与逻辑完全解耦，组合灵活，便于性能优化与多线程并行。</p>
+<h2 id="二、基础实现"><a href="#二、基础实现" class="headerlink" title="二、基础实现"></a>二、基础实现</h2><h3 id="1-核心类定义"><a href="#1-核心类定义" class="headerlink" title="1. 核心类定义"></a>1. 核心类定义</h3>   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">export class Position  &#123;</span><br><span class="line">    constructor(private x: number,private  y: number,private  z: number) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; Entity &#125; from &quot;../Entity&quot;;</span><br><span class="line"></span><br><span class="line">export abstract class System &#123;</span><br><span class="line">    protected requiredComponents: string[] = [];</span><br><span class="line"></span><br><span class="line">    constructor(required: string[]) &#123;</span><br><span class="line">        this.requiredComponents = required;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public abstract update(entities: Entity[], deltaTime: number): void;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export class Entity &#123;</span><br><span class="line">  public id: number;</span><br><span class="line"></span><br><span class="line">  private components: Map&lt;string, any&gt;;</span><br><span class="line"></span><br><span class="line">  constructor(id: number) &#123;</span><br><span class="line">    this.id = id;</span><br><span class="line">    this.components = new Map();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  addComponent(component: any): void &#123;</span><br><span class="line">    const compName = component.constructor.name;</span><br><span class="line">    this.components.set(compName, component);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  getComponent&lt;T&gt;(compClass: &#123; new (...args: any[]): T &#125;): T | undefined &#123;</span><br><span class="line">    return this.components.get(compClass.name);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  removeComponent&lt;T&gt;(compClass: &#123; new (...args: any[]): T &#125;): void &#123;</span><br><span class="line">    this.components.delete(compClass.name);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  hasComponent&lt;T&gt;(compClass: &#123; new (...args: any[]): T &#125;): boolean &#123;</span><br><span class="line">    return this.components.has(compClass.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 4. 定义World类，管理实体和系统</span><br><span class="line">export class World &#123;</span><br><span class="line">    private entities: Entity[] = [];</span><br><span class="line">    private systems: System[] = [];</span><br><span class="line">    private nextEntityId: number = 1;</span><br><span class="line"></span><br><span class="line">    createEntity(): Entity &#123;</span><br><span class="line">        const entity = new Entity(this.nextEntityId++);</span><br><span class="line">        this.entities.push(entity);</span><br><span class="line">        return entity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    destroyEntity(entity: Entity): void &#123;</span><br><span class="line">        this.entities = this.entities.filter(e =&gt; e !== entity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    addComponent&lt;T&gt;(entity: Entity, component: T): void &#123;</span><br><span class="line">        entity.addComponent(component);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    addSystem(system: System): void &#123;</span><br><span class="line">        this.systems.push(system);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private getEntitiesWith(componentNames: string[]): Entity[] &#123;</span><br><span class="line">        return this.entities.filter(entity =&gt;</span><br><span class="line">            componentNames.every(name =&gt; entity.hasComponent(&#123; name &#125; as any))</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    update(deltaTime: number): void &#123;</span><br><span class="line">        for (const system of this.systems) &#123;</span><br><span class="line">            const entitiesToUpdate = this.getEntitiesWith((system as any).requiredComponents);</span><br><span class="line">            system.update(entitiesToUpdate, deltaTime);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-实现"><a href="#2-实现" class="headerlink" title="2.实现"></a>2.实现</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">export class MovementSystem extends System &#123;</span><br><span class="line">  constructor() &#123;</span><br><span class="line">    super([&quot;Position&quot;, &quot;Velocity&quot;]);</span><br><span class="line">  &#125;</span><br><span class="line">  public update(entities: Entity[], deltaTime: number): void &#123;</span><br><span class="line">    for (const entity of entities) &#123;</span><br><span class="line">      const pos = entity.getComponent(Position)!;</span><br><span class="line">      const vel = entity.getComponent(Velocity)!;</span><br><span class="line">      pos.x += vel.vx * deltaTime;</span><br><span class="line">      pos.y += vel.vy * deltaTime;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export class Velocity  &#123;</span><br><span class="line">    constructor(private vx: number,private vy: number) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-测试"><a href="#3-测试" class="headerlink" title="3.测试"></a>3.测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// 5. 测试示例：创建世界、实体、添加组件、注册系统并运行更新</span><br><span class="line">const world = new World();</span><br><span class="line"></span><br><span class="line">// 创建两个实体</span><br><span class="line">const player = world.createEntity();</span><br><span class="line">const enemy = world.createEntity();</span><br><span class="line"></span><br><span class="line">// 为实体添加组件</span><br><span class="line">world.addComponent(player, new Position(0, 0, 0));</span><br><span class="line">world.addComponent(player, new Velocity(1, 0)); // player初始速度(1,0)</span><br><span class="line">world.addComponent(enemy, new Position(5, 5, 0));</span><br><span class="line">world.addComponent(enemy, new Velocity(0, -1)); // enemy初始速度(0,-1)</span><br><span class="line"></span><br><span class="line">// 注册移动系统</span><br><span class="line">world.addSystem(new MovementSystem());</span><br><span class="line"></span><br><span class="line">// 模拟游戏帧更新（deltaTime=1，例如1秒）</span><br><span class="line">world.update(1);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" data-id="cmbebl9ry000ups77gb368pqd" data-title="ECS架构的实践与思考" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week33" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/05/23/week/2025/week33/" class="article-date">
+  <time class="dt-published" datetime="2025-05-23T02:08:54.000Z" itemprop="datePublished">2025-05-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/05/23/week/2025/week33/">每周见闻 - 第 33 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250523100843.jpg"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/GXDEfCfHTvz6XCK9shooLA">1.工行、中行、建行、招行，集体下调存款利率</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WwhrMfptdc1p0XTRZfp9jw">2.鸿蒙电脑正式发布，0到1的跨越</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xEpjzroksHIT9R3-XyMBNg">3.突发！OpenAI以64亿美元，收购iPhone设计师公司io</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/9VebpVd9L93k72dcYaMi_w">4.NBA | 雷霆球星亚历山大当选本赛季常规赛MVP</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jYK7Rdt1wy">5.五年后重返App Store，《堡垒之夜》跃居免费应用第一位</a></p>
+<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/stock/hkstock/ggscyd/2025-05-22/doc-inexmnme9729834.shtml">6.比特币首破11万美元大关</a></p>
+<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/roll/2025-05-23/doc-inexniqu9377916.shtml">7.小米发布搭载3nm自研芯片旗舰产品</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.thepaper.cn/newsDetail_forward_30862864">8.美国政府暂停哈佛大学招收国际学生资格</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.news.cn/tech/20250430/d4ef0d3813584d70972f32423dc8fb86/c.html">9.神舟十九号载人飞船顺利撤离空间站组合体 三名航天员踏上回家之旅</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.news.cn/tech/20250523/d02b7e786d3b47579ac2165ef460d3ff/c.html">10.“中国天眼”发现罕见掩食脉冲星</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/oKuNUfFYYbpKf3j_kMzK4A">1.火了400多年，人性和人心早就被他说透了</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/In5jkpTRmg0A6AGT0KHjag">2.完美世界或许比任何时候都更需要创始人池宇峰</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/vd8lAKEB5COaqecUTnJ4ww">3.2024游戏安全白皮书：对抗激烈！PC游戏外挂功能数增长超149%，超85%移动外挂为定制挂</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tZRdh6k_qPvgGQ1RHHi0NA">4.朱媛媛去世：能演出生活质感的演员，越来越少了</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tZRdh6k_qPvgGQ1RHHi0NA">5.百度一季度，智能云成唯一“遮羞布”</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/d9PtU5skNYAnKkaF1hzMRg">1.OpenAI发布代码Agent：开启自动化编程时代，超强智能体</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/_FWuzFSrd2MdeSR9mtCv_Q">2.OpenAI放大招！核心API支持MCP，一夜改变智能体开发</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ae3K6S-DFmB_Cx15NC5o-g">3.Agent大革命！Claude 4连续自动编程7小时，刷新世界记录</a></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/hpcaitech/Open-Sora">1.Open-Sora</a><br> 这是一项致力于高效制作高质量视频的计划。我们希望让所有人都能轻松访问其模型、工具和所有细节。Open-Sora 秉承开源原则，不仅使高级视频生成技术的使用更加民主化，还提供了一个精简且用户友好的平台，简化了视频生成的复杂性。通过 Open-Sora，我们的目标是促进内容创作领域的创新、创造力和包容性。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/xpipe-io/xpipe">2.xpipe</a><br>XPipe 是一种新型的 Shell 连接中心和远程文件管理器，允许您从本地计算机访问整个服务器基础架构。它基于您已安装的命令行程序运行，无需在远程系统上进行任何设置。因此，如果您通常使用 CLI 工具（例如ssh、docker、kubectl等）连接到服务器，则可以直接在其上使用 XPipe。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/virattt/ai-hedge-fund">3.ai-hedge-fund</a><br> 这是人工智能对冲基金的概念验证。该项目旨在探索如何利用人工智能进行交易决策。本项目仅供教育用途，不适用于实际交易或投资。</p>
+<h2 id="书籍"><a href="#书籍" class="headerlink" title="书籍"></a>书籍</h2><p><img src="/images/2025/s3120212.jpg" alt="陈寅恪与傅斯年"><br>本书叙述了陈寅恪与傅斯年成长、留学以及在动荡岁月中颠沛流离，执着学术事业的艰难历程，生动卓然地展现了知识分子“独立之精神，自由之意志”的理想信念，是一部反映20世纪上半页知识分子心路历程与事业追求的心灵史诗，读来感人泪下，怅然太息。</p>
+<p>本书再现了陈寅恪追求学术独立和精神自由的曲折而辛酸的一生，他和傅斯年是20世纪波澜壮阔的时代洪流中涌现的众多大师的杰出代表。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/23/week/2025/week33/" data-id="cmbebl9s9005gps7752z13fk8" data-title="每周见闻 - 第 33 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week32" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/05/16/week/2025/week32/" class="article-date">
+  <time class="dt-published" datetime="2025-05-16T05:06:50.000Z" itemprop="datePublished">2025-05-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/05/16/week/2025/week32/">每周见闻 - 第32 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250516095521.png" alt="百度地图插播广告"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://www.guancha.cn/politics/2025_05_09_775195.shtml">1.明天起，结婚离婚不需要户口本</a></p>
+<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/stock/hkstock/2025-03-28/doc-inerenpt7276429.shtml">2.百果园战略调整的“阵痛期”：上市后首次巨亏，营收也跌幅不小</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jI7DEfi1ZB">3.价值10亿元，宁德时代股东向复旦大学捐赠405万股股票</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/realtime/china/story20250512-6327130">4.中美将大幅暂缓对彼此商品加征的关税90天，美国对华关税从145%削减至30%，中国对美关税从125%削减至10%</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/35n7NgY2VA3EldVnmB7Ugw">5.日产汽车：再裁员1万人</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jIsp82KTYJ">6.全球击败特斯拉！比亚迪再夺纯电车销量冠军</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/1PjvWEYIQ2DbH1FECsnVoQ">7.美国最新规定：使用华为昇腾AI芯片，违法</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BqRdmVvvWoxU_9AW9DjdYQ">8.塔图姆接受右脚跟腱断裂修复手术，本赛季报销</a></p>
+<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/tech/roll/2025-05-14/doc-inewpmqw6063448.shtml">9.哪吒汽车“命悬一线”</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JG7io31EA37hmmWG-Oel1A">10.郑钦文职业生涯首胜萨巴伦卡</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DdeerjSO4pjSpgCR6dU-AA">1.腾讯游戏2025年Q1国际市场收入再创新高，AI激发长青游戏用户参与度提升</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/th3a0XrlFVJqqRXfwWWckA">2.“冤案平反的象征”赵作海病逝：自由、钱与不安稳的晚年</a></p>
+<p><a target="_blank" rel="noopener" href="https://imbant.github.io/blog/2025/05/07/ts-go/">3.用 Go 移植 TypeScript 的重要影响</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/laWSP99eietzZXzkNx4gpw">1.微软开源新版ph4：媲美DeepSeek-R1，参数暴降48倍</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WdD-USAFlIAE9qmqJ2f9GA">2.OpenAI深夜开源HealthBench，60个国家合力开发5000段真实对话</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ylVgNlq9VDoGfSrJ19Wh4A">3.Manus开放注册</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/_u8Dp8xwcXUvTNfUYSH1WA">4.OpenAI开放GPT-4.1，100万上下文、代码能力超强</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jMj4bECZdr">5.阿里巴巴开源视频生成与编辑模型通义万相Wan2.1-VACE</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jNV6ToYu07">6.DeepSeek团队发布新论文，以DeepSeek-V3为代表，深入解读DeepSeek在硬件架构和模型设计方面的关键创新</a></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/HandBrake/HandBrake">1.HandBrake</a><br>HandBrake 是一款适用于 Linux、Mac 和 Windows 的开源视频转码器，根据GNU 通用公共许可证 (GPL) 版本 2获得许可。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ChrisTitusTech/winutil">2.winutil</a><br>winutil Chris Titus Tech 的 Windows 实用程序 - 安装程序、调整、修复和更新</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/HandBrake/HandBrake">3.build-your-own-x</a><br>build-your-own-x 是通过从头开始重新创建您最喜欢的技术来掌握编程。</p>
+<h2 id="影视剧"><a href="#影视剧" class="headerlink" title="影视剧"></a>影视剧</h2><p>新墨西哥州的高中化学老师沃尔特·H·怀特（布莱恩·科兰斯顿 Bryan Cranston 饰）是拮据家庭的唯一经济来源。他大半生安分守己，兢兢业业，却在50岁生日之际突然得知自己罹患肺癌晚期的噩耗，原本便不甚顺意的人生顿时雪上加霜。<br>　　为了保障怀孕的妻子斯凯勒（安娜·冈 Anna Gunn 饰）和残疾的儿子小沃特能在自己死后衣食无忧，沃尔特决意铤而走险。他主动找到曾经的学生、而今的毒贩小混混杰西·平克曼（亚伦·保尔 Aaron Paul 饰）谈合作，并运用娴熟高超的化学技术提炼出高纯度冰毒交给后者贩售。孰料事态的发展却在平克曼带回毒品供销商疯狂小八及其表弟后急转直下，沃尔特的人生也由此彻底步向失控。他被迫开始了教书与制毒的双重生活，逐渐坠落至万劫不复的深渊。<br><img src="/images/2025/p2886443948.webp" alt="绝命毒师"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/16/week/2025/week32/" data-id="cmbebl9s6003wps77g9c4hohm" data-title="每周见闻 - 第32 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week31" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/05/09/week/2025/week31/" class="article-date">
+  <time class="dt-published" datetime="2025-05-09T05:43:28.000Z" itemprop="datePublished">2025-05-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/05/09/week/2025/week31/">每周见闻 - 第31 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250509135249.jpg"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HZSDbYmQecxY_Xc_71Qwdg">1.伊朗港口爆炸事件已致4人死亡！3名中国公民受轻伤</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ZpOhwjILL_QnUfCniE9DaA">2.美国航运巨头联合包裹（UPS）周二宣布，今年将裁员20000人</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/PkY8e_t5ZTGXacLFja3m6A">3.市监通报：胖东来玉石合规</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EHzCDZlOOFJ6spDL0n4ruw">4.赵心童18-12马克·威廉姆斯夺得世锦赛冠军，终于在世锦赛奖杯上刻上了中国人的名字</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/widVRu3A_Aan_s2bmkN-lQ">5.OpenAI宣布，将继续由非营利组织控制</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/gYsolDN7kbIWlRlPQneP0w">6.默茨当选德国总理</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/sBN2v-wjvaS58VYBrMzryA">7.降准又降息</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jAVxLkUejv">8.OpenAI任命新CEO</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/t1EZP3PfxF6E6d95HPrkoA">9.超过谷歌搜索，成本猛降80%！阿里开源创新大模型搜索引擎</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xwflQO0wiRkSlwPaPTS2RA">10.《王者荣耀》杀回榜首！33家中国厂商霸榜全球手游收入百强</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G0BEtoY89p3R2r0lcMKUDA">1.大量2D Shader来袭，请收好这份教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BDrmKJuFkYt5D-XQWfP-AA">2.谷歌的 NotebookLM 能生成中文播客</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zK1ZZSj-DvLiGBl1pSIEsA">3.吴谢宇案｜没有人是这个社会的“陌生人”</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8iq6rN8SIz8">1.Adobe发布Firefly Image Model 4模型：AI生图再升级</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8iq4oOpapbV">2.消息称AI智能体公司Manus融资7500万美元，估值大涨四倍</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/IfDwtXV3duMdfuQT7BBkMw">3.微软AI Agent支持A2A、MCP协议</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/1bT_6MGa7Bb015pAIWtCVA">4.阿里开源Qwen-3</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hP1vgVRDysKXYdnb3Z5CdA">5.DeepSeek开源最新大模型，数学能力大突破</a></p>
+<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p>重庆一间工艺品厂已经濒临倒闭，却不料在拆倒旧厂房的时候，发现了厕所里的一件宝物——一块价值连城的翡翠。厂里决定用这块翡翠举办一个展览，赚些钱发拖欠了几个月的工人工资。期间由工艺品厂保卫科长包世宏（郭涛 饰）负责看守这件宝物。但是，国际大盗麦克与本地一帮小偷却让包世宏一筹莫展，他们各施其技接近翡翠，展览馆开始了一场明争暗斗的较量。黑色幽默也开始幕幕上演。翡翠的价值几何？最后谁是胜出者？事情远没有表面那么简单<br><img src="/images/2025/p712241453.webp" alt="疯狂的石头"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/09/week/2025/week31/" data-id="cmbebl9s60040ps776swf41hk" data-title="每周见闻 - 第31 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week30" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/04/25/week/2025/week30/" class="article-date">
+  <time class="dt-published" datetime="2025-04-25T05:27:21.000Z" itemprop="datePublished">2025-04-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/04/25/week/2025/week30/">每周见闻 - 第 30 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250425132905.jpg"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TiNv_9-vyV_aCMv7KFYbLQ">1.洞穴潜水失联3天奇迹生还</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ij7BdYmS88">2.京东：超时20分钟以上外卖订单全部免单 永不强迫兼职骑手“二选一”</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/XxFbBR63YxORU-_b5AvNzA">3.中国C909在越南执飞，机票首日销售火爆</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/n59myyhdJ1c_HnsmSkJlog">4.现货黄金站上3380美元</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/news/china/story20250419-6213102">5.中国人形机器人首秀北京半程马拉松 完赛比人类多一个半小时</a></p>
+<p><a target="_blank" rel="noopener" href="https://world.huanqiu.com/article/4MMp2jVrRKG">6.罗马教皇方济各去世</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/2k14phq47snr-GEY2Cxo8g">7.巴西勇夺乒乓球世界杯冠军</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/X5GYhFNhiI0v7dhqZvVgkA">8.特朗普：对自华进口的商品关税过高，预计将大幅降低</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8impqmm8tWJ">9.华人CEO上任第二把火！Intel将宣布裁员20%：超21000名员工失业</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/6Lew4QbNinC_0j-oL3rwQg">10.AI视频创作平台Capsule，获1200万美元融资</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EUa0AELotkDkngfiUOelnQ">1.华为将发布大量AI芯片，平替英伟达H100</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/GOyH0dZP5_XnM-7c2vtm5g">1.巨头的新战场：AI 编程 IDE</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/eSMMsxbT73YdFL0KUwD8Xw">1.微软上线两款新模型：增强RAG和AI Agent</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ilBQULHrtN">2.国产视频模型再获突破 Vidu Q1双榜登顶超越Runway、Sora</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EAUrcNzx-34vp4dVact2cQ">3.字节跳动开源多模态AI Agent—UI-TARS-1.5</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/m64PRJMgrZVfhGlDMuawfQ">4.OpenAI发布GPT-image-1模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EX3FMm6nZp5Ixi2-I6AhLQ">5.OpenAI免费开放Deep research</a></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/mannaandpoem/OpenManus?tab=readme-ov-file">1.OpenManus</a><br>OpenManus 这是一个专注于基于强化学习（RL，例如GRPO）的方法来优化大语言模型（LLM）智能体的开源项目，由来自UIUC和OpenManus的研究人员合作开发。<br><img src="/images/2025/20250425133902.png" alt="OpenManus"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ComposioHQ/composio">2.Composio</a><br>Composio 为 AI 代理提供了可用于生产的工具集，包括：</p>
+<p>支持多个类别的 250 多种工具：<br>GitHub、Notion、Linear、Gmail、Slack、Hubspot、Salesforce 等软件 工具<br>操作系统操作包括文件工具、shell 工具、代码分析工具 等<br>通过 Google、Perplexity、Tavily、Exa 等 进行搜索<br>全面的框架支持，包括 OpenAI、Groq、Claude、LlamaIndex、Langchain、CrewAI、Autogen、Gemini等<br>支持多种协议（OAuth、API Keys、Basic JWT）的托管身份验证<br>通过优化设计，工具调用准确率提高高达 40%<br>用于后端集成的白标解决方案<br>支持自定义工具和扩展的可插拔架构<br><img src="/images/2025/20250425134050.png" alt="Composio"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nicbarker/clay">3.Clay</a><br>Clay （ C Layout的缩写）是一个高性能的 2D UI 布局库。</p>
+<p>主要特点<br>微秒级布局性能<br>类似 Flex-box 的布局模型，适用于复杂、响应式的布局，包括文本换行、滚​​动容器和纵横比缩放<br>单个 ~4k LOC clay.h文件，无任何依赖项（包括无标准库）<br>Wasm 支持：使用 clang 编译为 15kb 未压缩的.wasm文件，以便在浏览器中使用<br>基于静态竞技场的内存使用，无需 malloc &#x2F; free，总内存开销较低（例如，8192 个布局元素约 3.5mb）。<br>类似 React 的嵌套声明语法<br>渲染器不可知：输出一个排序的渲染图元列表，这些图元可以在任何 3D 引擎中轻松合成，甚至可以编译为 HTML（提供示例）<br><img src="/images/2025/20250425134243.png" alt="Clay"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/electronicarts/CnC_Red_Alert">4. Red Alert</a><br>此仓库包含《命令与征服：红色警戒》的源代码。<br><img src="/images/2025/20250425134351.png" alt=" Red Alert"></p>
+<h2 id="书籍"><a href="#书籍" class="headerlink" title="书籍"></a>书籍</h2><p><img src="/images/2025/s3390444.jpg" alt="从文自传"><br>本卷所收，包括了两个方面的内容：一、《从文自传》及一组有关沈从文生平经历的自叙；二、沈从文为自己的创作集所写的序、跋、题记、艺文题识以及《废邮存底》等谈论文学艺术的文字。</p>
+<p>1932年暑假，沈从文在青岛完成了《从文自传》。这部作品出版后曾被周作人和老舍认为是“一九三四年我爱读的书”。《从文自传》讲述的是1902-1922年沈从文进入都市前的人生经历，即沈从文的湘西经历，他曾这样谈及《从文自传》的创作：</p>
+<p>就个人记忆到的写下去，既可温习一下个人生命发展过程，也可让读者明白我是在怎样环境下活过来的一个人。特别是在生活陷于完全绝望中，还能充满勇气和信心始终坚持工作，他的动力来源何在。</p>
+<p>通过写自传来“温习一下个人生命发展过程”，其目的并不仅仅是追忆，更重要的是在对自我生命的反思中，展开自身与自身的对话，为当下自我寻根，并以此敞开通向未来的路。《从文自传》中对过去…</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/25/week/2025/week30/" data-id="cmbebl9s6003sps773g7o3yfv" data-title="每周见闻 - 第 30 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week29" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/04/18/week/2025/week29/" class="article-date">
+  <time class="dt-published" datetime="2025-04-18T02:04:30.000Z" itemprop="datePublished">2025-04-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/04/18/week/2025/week29/">每周见闻 - 第29 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/20250418100827.png" alt="连续四年伤病NBA球星伦纳德"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/w4EhZR7QN1cNL67QaElQRg">1.茶姬控股有限公司（简称：霸王茶姬）正式在纳斯达克挂牌上市，成功筹集4.11亿美元</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/realtime/china/story20250411-6154258">2.中国再次反制 明起对所有美输华商品加征125%关税</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4ryMX1kB6XrkN0oVucmk9g">3.美国豁免手机、芯片、电脑等产品的对等关税，科技巨头迎重大利好</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/realtime/china/story20250416-6195446">4.H20晶片出口中国受管制 英伟达或损失55亿美元</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Ls9AMYqebmHarJzJ_TTnJA">5.中国互联网巨头腾讯宣布以11.6亿欧元（约90亿元人民币）注资育碧（Ubisoft）新成立的子公司，获得其25%的股份</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Qf0gs0l7ShvNsEJJ_S5CAQ">6.山西“订婚强奸案”二审宣判：维持原判</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/E-8luKFNAjQ_Ud5Aja_3sA">7.近30家银行密集下调定存利率</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/uhG_DzPEr0jRkF2kKVnLPQ">8.全球竞争力报告：移动游戏增长加速，中国份额扩大至37.5%</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WzuKXMcY-Jmbwsm_xzrWgA">9.“任教31年临近退休遭解聘”女教师最新发声：距离退休只差3个月，月工资2000元</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KfXnSxPtWJmq_oY-68tAgA">10.哪吒汽车被供应商“围攻” 上海总部仅剩300余位技术员工 直营店关门</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Dfnh2JBZkpouQMxnRDZW8g">1.OpenAI发布GPT-4.1，性能暴涨、100万上下文</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8iaQZR2q4lN">2.ChatGPT推出图库功能 方便用户查看AI生成图像</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CUAgtHZot88s9j-uNzRuEw">3.o4-mini发布！OpenAI史上最强、最智能模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ZGoDxuksDbMK2aGryJgCiw">4.谷歌开源Agent SDK，支持MCP</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/X2B1Sy5wAcp13VTIghHGVg">5.OpenAI开源了一个终端轻量级代码Agent智能体——Codex CLI</a></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/openai/openai-agents-python">1.openai-agents-python</a><br>openai-agents-python 是openai提供轻量级、强大的多代理工作流框架<br><img src="/images/2025/20250418102438.png" alt="openai-agents-python"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/xpipe-io/xpipe">2.xpipe</a><br>XPipe 是一种新型的 Shell 连接中心和远程文件管理器，允许您从本地计算机访问整个服务器基础架构。它基于您已安装的命令行程序运行，无需在远程系统上进行任何设置。因此，如果您通常使用 CLI 工具（例如ssh、docker、kubectl等）连接到服务器，则可以直接在其上使用 XPipe。<br><img src="/images/2025/20250418102557.png" alt="xpipe"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hpcaitech/Open-Sora">3.Open-Sora</a><br>Open-Sora：让所有人都能轻松高效地制作视频<br><img src="/images/2025/20250418102746.png" alt="Open-Sora"></p>
+<h2 id="影视剧"><a href="#影视剧" class="headerlink" title="影视剧"></a>影视剧</h2><p><img src="/images/2025/p1403875505.webp" alt="黑镜"><br>这部英国迷你剧由3个各自独立的故事组成，彼此间并没有直接联系，但都以极端的黑色幽默讽刺和探讨了科技对人类生活产生的影响。<br>　　《天佑吾主》：首相Michael Callow（罗里·金奈尔 Rory Kinnear 饰）被熟睡中的紧急电话召回办公室，得知广受喜爱的王室 成员Susannah公主遭人劫持，绑匪提出的交换条件匪夷所思。备感受辱的首相诸般尝试解救公主未果，最终在强大的社交网络民意压力下就范。<br>　　《一千五百万的价值》：在未来世界，衣着统一的人们只通过虚拟网络交流，依靠日复一日骑自行车赚取赖以为生的消费点数。不甘做行尸走肉的Bing（丹尼尔·卡卢亚 Daniel Kaluuya 饰）倾尽自己所有点数帮助天籁般歌声的Abi（杰西卡·布朗-芬德利 Jessica Brown-Findlay 饰）登上选秀舞台，却被Abi沦为艳星的事实深深打击。<br>　　《你的全部历史》：人人都植入内置芯片的时代，记忆影像可以被随时翻查。多疑的律师Liam（托比·凯贝尔 Toby Kebbell 饰）非常敏感妻子Fi（茱蒂·威泰克 Jodie Whittaker 饰）与前男友Jonas的关系。他歇斯底里的在三人记忆中搜查Fi不忠的证据，终于导致Fi崩溃离去。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/18/week/2025/week29/" data-id="cmbebl9s5003ops77hg352926" data-title="每周见闻 - 第29 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2025/week28" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/04/11/week/2025/week28/" class="article-date">
+  <time class="dt-published" datetime="2025-04-11T03:43:04.000Z" itemprop="datePublished">2025-04-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/04/11/week/2025/week28/">每周见闻 - 第 28 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/TOPSHOTS-TOPSHOT-US-ECONOMY-MARKET-STOCKS-204602_3.jpg" alt="特朗普暂停对等关税90天 唯对华税率飙至145%"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/RESzsJpjagLSNkD7Irz8Sg">1.纳指收涨12%创历史第二大单日涨幅，“七巨头”六家涨幅上双</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/realtime/china/story20250409-6140221">2.特朗普把中国关税提高至125%，其他国家暂时降至10%</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JyXN0Rdc71y_GaSZtDDGLA">3.强硬反制！对原产于美国的所有进口商品再加征50%关税</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/rZWzRCBohmM8iHxUVRKZbQ">4.毛奇，一审被判十年半</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/news/china/story20240303-1471829">5.深圳兴起“最后一里路”外卖代送员</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/lfvKjtDjAM-3Vypy7XdpPA">6.微软外包公司停止中国区运营，裁撤约2000人团队</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/realtime/china/story20250407-6129847">7.中国股市半天跌超6% 科技股全线下挫</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/E4n4oe9vmYweYkcQfmoDWQ">8.美元、美债、美股，抛！抛！抛！</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CmFg-YYvFAX5gfH-ITe7Ig">9.Unity 6 正式退出中国，开发者该何去何从</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dsck4buwzCgBR7S_vK5dWw">10.现货黄金冲破3200美元大关，再创历史新高</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/9OL9DxU_ZTjcOv2KQv4hwg">1.当过两家公司的CEO，现在他要重振曾经中国第一游戏公司</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Td3LiMgqR36PPpd36rjBAg">2.不可忽视的制造业零工经济趋势</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/g-F_9InACBhPnhjo8xiAoQ">1.OpenAI开源BrowseComp，重塑Agent浏览器评测</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/gb3EAoq2Q3EB2X5kdg7BuA">2.OpenAI对ChatGPT功能进行了大更新，新增长期记忆功能</a></p>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/microsoft/ai-agents-for-beginners">1.ai-agents-for-beginners</a><br>ai-agents-for-beginners是微软提供的关于构建 AI 代理的 10 个课程<br><img src="/images/2025/20250411114947.png" alt="ai-agents-for-beginners"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/n8n-io/n8n">2.n8n</a><br>n8n 是公平代码工作流自动化平台，具备原生 AI 功能。将可视化构建与自定义代码相结合，支持自托管或云部署，提供 400 多种集成方案。<br><img src="/images/2025/20250411115207.png" alt="n8n"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/StrayMeteor3337/WechatRealFriends">3.WechatRealFriends</a><br>WechatRealFriends 是微信好友关系一键检测，基于微信ipad协议，看看有没有朋友偷偷删掉或者拉黑你。<br><img src="/images/2025/20250411115356.png" alt="WechatRealFriends"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ourongxing/newsnow">4.newsnow</a><br>优雅的阅读界面设计，实时获取最新热点新闻<br>支持 GitHub 登录及数据同步<br>默认缓存时长为 30 分钟，登录用户可强制刷新获取最新数据<br>根据内容源更新频率动态调整抓取间隔（最快每 2 分钟），避免频繁抓取导致 IP 被封禁</p>
+<p><img src="/images/2025/20250411115450.png" alt="newsnow"></p>
+<h2 id="影视剧"><a href="#影视剧" class="headerlink" title="影视剧"></a>影视剧</h2><p>　此剧讲述了一伙行走在城乡接合部的城市边缘人物，他们有严格的内部纪律，人员分工明确，只骗不偷，他们甚至瞧不起小偷，认为小偷没有艺术含量，只是靠三只手泊来不义之财的走兽而已。几年前，赵宁（赵宁 饰）的父亲就是被骗子骗光所有财产，最后债台高筑被迫自杀，赵宁决定以其人之道还治其人之身，于是小小年纪涉入险恶江湖，集世间各种骗术之大成，组成了一个诈骗团伙。赵宁和小宝（杨羽 饰）、冬冬（邢冬冬 饰）、黎伟（黎伟 饰）和安宁（安宁 饰）形成了一个缺一不可的五指连环，游走在城市的大街小巷、车站码头，钱对他们来说不是问题，问题是他们不知道明天的路在哪……<br><img src="/images/2025/p2626206668.webp" alt="毛骗"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/11/week/2025/week28/" data-id="cmbebl9s5003kps776q5ohbfd" data-title="每周见闻 - 第 28 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2025/week27" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/04/06/week/2025/week27/" class="article-date">
@@ -120,516 +692,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/04/06/week/2025/week27/" data-id="cm94yjcgb004wev776xvm2ikm" data-title="每周见闻 - 第 27 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week26" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/03/28/week/2025/week26/" class="article-date">
-  <time class="dt-published" datetime="2025-03-28T06:02:48.000Z" itemprop="datePublished">2025-03-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/03/28/week/2025/week26/">每周见闻 - 第 26 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/jidi.png" alt="吉迪半场绝杀湖人"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KNnHmEidnBm-lBfJKHPz7A">1.DeepSeek开源了V3模型的最新版本0324</a></p>
-<p><a target="_blank" rel="noopener" href="https://forum.cocos.org/t/topic/166479">2.cocos创始人王哲预测2025年之后游戏行业的趋势</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8i0pOgCAdCa">3.李开复：DeepSeek让中美AI差距缩小至只剩三个月</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4Udogb78laXq1NI7C1XgAA">4.OpenAI发布新文生图模型</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/6b4Fhdtv-NULJlV2w61WYg">5.小鸡词典的生与死</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wstbsRMguowHvNXZTaubFg">6.OpenAI智能体支持MCP，已开源</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/u3GuWhi1p2NRN84O--W63g">7.张一鸣登顶中国首富</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8i3uLbdNY33">8.谷歌决定终止开源Android</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/L1tt8lKSlS8qoAbjZo9_1A">9.NBA | 公牛13秒3记三分奇迹逆转湖人</a></p>
-<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/infiniflow/ragflow">1.RAGFlow </a><br>RAGFlow 是一款基于深度文档理解构建的开源 RAG（Retrieval-Augmented Generation）引擎。RAGFlow 可以为各种规模的企业及个人提供一套精简的 RAG 工作流程，结合大语言模型（LLM）针对用户各类不同的复杂格式数据提供可靠的问答以及有理有据的引用。<br><img src="/images/2025/20250328140606.png" alt="RAGFlow"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/Byaidu/PDFMathTranslate">2.PDFMathTranslate </a><br>科学 PDF 文档翻译及双语对照工具<br>📊 保留公式、图表、目录和注释 (预览效果)<br>🌐 支持 多种语言 和 诸多翻译服务<br>🤖 提供 命令行工具，图形交互界面，以及 容器化部署<br><img src="/images/2025/20250328140835.png" alt="PDFMathTranslate"></p>
-<h2 id="影视剧"><a href="#影视剧" class="headerlink" title="影视剧"></a>影视剧</h2><p><img src="/images/2025/p2325129230.webp" alt="爱情公寓"></p>
-<p>国际大都会上海，一栋颇显平凡的公寓内，即将举行一场盛大的婚礼。正所谓天算不如人算，虽然此前经过周密准备，但是几名爱恨纠葛的孽侣乱入，以及各种意想不到的状况，令婚礼朝着难以预见的方向发展。在此之后，公寓正式更名“爱情公寓”，顺理成章迎来了7个来自五湖四海、从事不同职业并且性格各异的青年男女，林宛瑜（赵霁 饰）、陈美嘉（李金铭 饰）、陆展博（金世佳 饰）、吕子乔（孙艺洲 饰）、关谷神奇（王传君 饰）、胡一菲（娄艺潇 饰）和曾小贤（陈赫 饰）。<br>　　在接下来的日子里，这几位新新人类恋爱吵架、插科打诨，度过了一个个喧嚣又难忘的日子。爱情的萌芽也在他们的心中蓬勃生长……</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/28/week/2025/week26/" data-id="cm94yjcg7002wev77dgyqb09w" data-title="每周见闻 - 第 26 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-cocos/Cocoscreator中实现纹理合批" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/" class="article-date">
-  <time class="dt-published" datetime="2025-03-22T00:50:30.000Z" itemprop="datePublished">2025-03-22</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Cocoscreator/">Cocoscreator</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/">Cocoscreator中实现纹理合批</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在优化停车场小游戏，其中有一个是减少 DC。停车场小游戏是 3D 转 2D 的项目，因此车子使用的是 9 个方向，通过镜像翻转等实现 32 个方向。<br>简单点说，360 度的角度，渲染了 32 个方向，每个方向的间隔是 11.25 度。这样的好处是丰富了车子的形态，坏处则是资源变大，无法通过简单的大图解决合批问题。</p>
-<h1 id="DC-是什么"><a href="#DC-是什么" class="headerlink" title="DC 是什么"></a>DC 是什么</h1><p>简单来说，DC 代表了 CPU 向 GPU 发送的渲染调用次数，每一次调用都可能涉及状态切换、资源绑定等昂贵操作。当游戏场景中精灵数量庞大、各自使用不同纹理时，DC 数量会急剧增加，从而引发性能瓶颈，导致帧率下降甚至卡顿。因此，如何在保证画面效果的前提下尽可能减少 DC，是优化游戏渲染性能的关键所在。</p>
-<p>在 CocosCreator 3.8.5 中，实现合批渲染需要满足几个条件：</p>
-<ol>
-<li>同一材质和 Shader：只有共用相同材质和 Shader 的精灵才能合批；</li>
-<li>一致的渲染数据格式：精灵必须在顶点属性、纹理格式等方面保持一致；</li>
-<li>统一纹理绑定问题：传统单纹理绑定方式无法满足同时渲染多个纹理的需求。</li>
-</ol>
-<h1 id="IAssembler-是什么"><a href="#IAssembler-是什么" class="headerlink" title="IAssembler 是什么"></a>IAssembler 是什么</h1><p>在 Cocos Creator 3D 中，IAssembler 是引擎渲染管线中的一个 接口，用于管理 几何数据的组装 和 顶点缓冲区的更新。简单来说，它决定了 如何组织渲染对象的顶点数据，并将其提交给 GPU。</p>
-<p>在默认情况下，Cocos Creator 提供了一些 内置的 IAssembler 实现，用于处理 普通精灵（Sprite）、粒子（Particle）、文本（Label） 等不同类型的渲染组件。例如：<br>• SimpleSpriteAssembler 处理基础的 2D 精灵 渲染。<br>• LabelAssembler 负责 文本 的渲染。<br>• ParticleAssembler 处理 粒子系统。</p>
-<h1 id="多纹理合批"><a href="#多纹理合批" class="headerlink" title="多纹理合批"></a>多纹理合批</h1><p>为了解决最后一个问题，需要使用自定义 Shader。在我的方案中，通过在 Shader 中预先绑定多个纹理（例如 texture0 到 texture15），并在顶点数据中加入额外的纹理索引属性（a_texture_idx），让每个精灵在渲染时能够根据自己的属性选择正确的纹理采样器。这样，就能在同一个 Shader 中处理多个纹理，从而实现合批，降低 DC 数量，极大地提升渲染效率。</p>
-<p>而这背后的关键技术之一，就是对 CocosCreator 源码中 IAssembler 接口的扩展。IAssembler 是负责生成和更新精灵渲染数据的接口，它决定了如何将顶点位置、UV、颜色以及其他数据组织到顶点缓冲区中。在默认实现中，IAssembler 仅考虑基本的数据组装工作，并没有对多纹理的需求进行扩展。为此，我对 IAssembler 进行了自定义扩展：<br>• 扩展顶点属性：在原有位置、UV 和颜色数据之外，我增加了纹理索引属性，用以在顶点层面传递当前精灵所使用的纹理 ID。<br>• 数据更新机制：在每次渲染数据更新时，我不仅更新了精灵的位置信息、UV 坐标，还增加了纹理索引的更新逻辑。这样一来，当精灵的纹理信息发生变化时，可以通过标记（textureIdxDirty）及时刷新顶点数据，确保渲染时 Shader 能够采样到正确的纹理。</p>
-<p>自定义的 IAssembler 与配套 Shader 相辅相成，实现了多纹理合批的效果。在 Shader 端，通过顶点着色器将 a_texture_idx 传递给片元着色器，再由片元着色器根据纹理索引使用 if-else 条件判断，从对应绑定的纹理中采样颜色，最终再结合精灵的其他颜色信息输出最终像素。虽然这种分支判断方式在性能上存在一定开销，但它已经能够满足当前大多数项目的需求。当然，未来可以考虑使用纹理采样器数组等技术，进一步优化 Shader 逻辑，减少分支成本。</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br></pre></td><td class="code"><pre><span class="line">import &#123; _decorator, Component, Node, Material, Sprite, gfx, IAssembler, Color, __private, UI, SpriteFrame, RenderData, SpriteFrameEvent &#125; from &#x27;cc&#x27;;</span><br><span class="line">import SpriteAtlasManager from &#x27;../../Scripts/Manager/SpriteAtlasManager&#x27;;</span><br><span class="line">import &#123; EDITOR &#125; from &#x27;cc/env&#x27;;</span><br><span class="line">import &#123; MultiTextureManager &#125; from &#x27;../../Scripts/Manager/MultiTextureManager&#x27;;</span><br><span class="line">const &#123; ccclass, property, executeInEditMode &#125; = _decorator;</span><br><span class="line"></span><br><span class="line">const Attribute = gfx.Attribute;</span><br><span class="line"></span><br><span class="line">const attributes: gfx.Attribute[] = [</span><br><span class="line">    new Attribute(&#x27;a_position&#x27;, gfx.Format.RGB32F),</span><br><span class="line">    new Attribute(&#x27;a_texCoord&#x27;, gfx.Format.RG32F),</span><br><span class="line">    new Attribute(&#x27;a_color&#x27;, gfx.Format.RGBA32F),</span><br><span class="line">    new Attribute(&#x27;a_texture_idx&#x27;, gfx.Format.R32F),</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">interface IRenderData &#123;</span><br><span class="line">    x: number;</span><br><span class="line">    y: number;</span><br><span class="line">    z: number;</span><br><span class="line">    u: number;</span><br><span class="line">    v: number;</span><br><span class="line">    color: Color;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const QUAD_INDICES = Uint16Array.from([0, 1, 2, 1, 3, 2]);</span><br><span class="line"></span><br><span class="line">export const simple: IAssembler = &#123;</span><br><span class="line">    createData(sprite: Sprite) &#123;</span><br><span class="line">        const data = RenderData.add(attributes);</span><br><span class="line">        const renderData = data;</span><br><span class="line">        renderData.dataLength = 4;</span><br><span class="line">        renderData.resize(4, 6);</span><br><span class="line">        renderData.chunk.setIndexBuffer(QUAD_INDICES);</span><br><span class="line"></span><br><span class="line">        return renderData;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    updateRenderData(sprite: MultiTexture2d) &#123;</span><br><span class="line">        const frame = sprite.spriteFrame;</span><br><span class="line">        this.updateUVs(sprite);</span><br><span class="line">        // 如有需要可更新颜色，此处根据实际情况开启</span><br><span class="line">        // this.updateColor(sprite);</span><br><span class="line"></span><br><span class="line">        const renderData = sprite.renderData;</span><br><span class="line">        if (renderData &amp;&amp; frame) &#123;</span><br><span class="line">            if (renderData.vertDirty) &#123;</span><br><span class="line">                this.updateVertexData(sprite);</span><br><span class="line">            &#125;</span><br><span class="line">            // 新增：如果纹理索引有变动，则更新之</span><br><span class="line">            if (sprite.textureIdxDirty) &#123;</span><br><span class="line">                this.updateTextureIdx(sprite);</span><br><span class="line">            &#125;</span><br><span class="line">            renderData.updateRenderData(sprite, frame);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    updateWorldVerts(sprite: Sprite, chunk: __private._cocos_2d_renderer_static_vb_accessor__StaticVBChunk) &#123;</span><br><span class="line">        const renderData = sprite.renderData!;</span><br><span class="line">        const vData = chunk.vb;</span><br><span class="line">        const dataList = renderData.data;</span><br><span class="line">        const node = sprite.node;</span><br><span class="line">        const m = node.worldMatrix;</span><br><span class="line">        const m00 = m.m00, m01 = m.m01, m02 = m.m02, m03 = m.m03;</span><br><span class="line">        const m04 = m.m04, m05 = m.m05, m06 = m.m06, m07 = m.m07;</span><br><span class="line">        const m12 = m.m12, m13 = m.m13, m14 = m.m14, m15 = m.m15;</span><br><span class="line">        const stride = renderData.floatStride; // 现在为 10</span><br><span class="line">        let offset = 0;</span><br><span class="line">        const length = dataList.length;</span><br><span class="line">        for (let i = 0; i &lt; length; ++i) &#123;</span><br><span class="line">            const curData = dataList[i];</span><br><span class="line">            const x = curData.x;</span><br><span class="line">            const y = curData.y;</span><br><span class="line">            let rhw = m03 * x + m07 * y + m15;</span><br><span class="line">            rhw = rhw ? 1 / rhw : 1;</span><br><span class="line">            offset = i * stride;</span><br><span class="line">            vData[offset + 0] = (m00 * x + m04 * y + m12) * rhw;</span><br><span class="line">            vData[offset + 1] = (m01 * x + m05 * y + m13) * rhw;</span><br><span class="line">            vData[offset + 2] = (m02 * x + m06 * y + m14) * rhw;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    fillBuffers(sprite: Sprite, renderer:  __private._cocos_2d_renderer_i_batcher__IBatcher) &#123;</span><br><span class="line">        if (sprite === null) return;</span><br><span class="line">        const renderData = sprite.renderData!;</span><br><span class="line">        const chunk = renderData.chunk;</span><br><span class="line">        if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) &#123;</span><br><span class="line">            this.updateWorldVerts(sprite, chunk);</span><br><span class="line">            renderData.vertDirty = false;</span><br><span class="line">            sprite._flagChangedVersion = sprite.node.flagChangedVersion;</span><br><span class="line">        &#125;</span><br><span class="line">        const vidOrigin = chunk.vertexOffset;</span><br><span class="line">        const meshBuffer = chunk.meshBuffer;</span><br><span class="line">        const ib = meshBuffer.iData;</span><br><span class="line">        let indexOffset = meshBuffer.indexOffset;</span><br><span class="line">        const vid = vidOrigin;</span><br><span class="line">        // 填充索引数据</span><br><span class="line">        ib[indexOffset++] = vid;</span><br><span class="line">        ib[indexOffset++] = vid + 1;</span><br><span class="line">        ib[indexOffset++] = vid + 2;</span><br><span class="line">        ib[indexOffset++] = vid + 1;</span><br><span class="line">        ib[indexOffset++] = vid + 3;</span><br><span class="line">        ib[indexOffset++] = vid + 2;</span><br><span class="line">        meshBuffer.indexOffset += 6;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    updateVertexData(sprite: Sprite) &#123;</span><br><span class="line">        const renderData: RenderData | null = sprite.renderData;</span><br><span class="line">        if (!renderData) return;</span><br><span class="line">        const uiTrans = sprite.node._uiProps.uiTransformComp!;</span><br><span class="line">        const dataList = renderData.data;</span><br><span class="line">        const cw = uiTrans.width;</span><br><span class="line">        const ch = uiTrans.height;</span><br><span class="line">        const appX = uiTrans.anchorX * cw;</span><br><span class="line">        const appY = uiTrans.anchorY * ch;</span><br><span class="line">        let l = 0, b = 0, r = 0, t = 0;</span><br><span class="line">        if (sprite.trim) &#123;</span><br><span class="line">            l = -appX;</span><br><span class="line">            b = -appY;</span><br><span class="line">            r = cw - appX;</span><br><span class="line">            t = ch - appY;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            const frame = sprite.spriteFrame!;</span><br><span class="line">            const originSize = frame.originalSize;</span><br><span class="line">            const ow = originSize.width;</span><br><span class="line">            const oh = originSize.height;</span><br><span class="line">            const scaleX = cw / ow;</span><br><span class="line">            const scaleY = ch / oh;</span><br><span class="line">            const trimmedBorder = frame.trimmedBorder;</span><br><span class="line">            l = trimmedBorder.x * scaleX - appX;</span><br><span class="line">            b = trimmedBorder.z * scaleY - appY;</span><br><span class="line">            r = cw + trimmedBorder.y * scaleX - appX;</span><br><span class="line">            t = ch + trimmedBorder.w * scaleY - appY;</span><br><span class="line">        &#125;</span><br><span class="line">        // 注意：此处 dataList 存放的是逻辑顶点数据</span><br><span class="line">        dataList[0].x = l;</span><br><span class="line">        dataList[0].y = b;</span><br><span class="line">        dataList[1].x = r;</span><br><span class="line">        dataList[1].y = b;</span><br><span class="line">        dataList[2].x = l;</span><br><span class="line">        dataList[2].y = t;</span><br><span class="line">        dataList[3].x = r;</span><br><span class="line">        dataList[3].y = t;</span><br><span class="line">        renderData.vertDirty = true;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    updateUVs(sprite: Sprite) &#123;</span><br><span class="line">        if (!sprite.spriteFrame) return;</span><br><span class="line">        const renderData = sprite.renderData!;</span><br><span class="line">        const vData = renderData.chunk.vb;</span><br><span class="line">        const uv = sprite.spriteFrame.uv;</span><br><span class="line">        const stride = renderData.floatStride; // 现在为 10</span><br><span class="line">        // 顶点 0</span><br><span class="line">        vData[3] = uv[0];</span><br><span class="line">        vData[4] = uv[1];</span><br><span class="line">        // 顶点 1（偏移：stride + 3）</span><br><span class="line">        vData[stride + 3] = uv[2];</span><br><span class="line">        vData[stride + 4] = uv[3];</span><br><span class="line">        // 顶点 2（偏移：2*stride + 3）</span><br><span class="line">        vData[2 * stride + 3] = uv[4];</span><br><span class="line">        vData[2 * stride + 4] = uv[5];</span><br><span class="line">        // 顶点 3（偏移：3*stride + 3）</span><br><span class="line">        vData[3 * stride + 3] = uv[6];</span><br><span class="line">        vData[3 * stride + 4] = uv[7];</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    updateColor(sprite: Sprite) &#123;</span><br><span class="line">        const renderData = sprite.renderData!;</span><br><span class="line">        const vData = renderData.chunk.vb;</span><br><span class="line">        let colorOffset = 5;</span><br><span class="line">        const color = sprite.color;</span><br><span class="line">        const colorR = color.r / 255;</span><br><span class="line">        const colorG = color.g / 255;</span><br><span class="line">        const colorB = color.b / 255;</span><br><span class="line">        const colorA = color.a / 255;</span><br><span class="line">        for (let i = 0; i &lt; 4; i++, colorOffset += renderData.floatStride) &#123;</span><br><span class="line">            vData[colorOffset]     = colorR;</span><br><span class="line">            vData[colorOffset + 1] = colorG;</span><br><span class="line">            vData[colorOffset + 2] = colorB;</span><br><span class="line">            vData[colorOffset + 3] = colorA;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    // 新增：更新纹理索引数据</span><br><span class="line">    updateTextureIdx(sprite: any) &#123;</span><br><span class="line">        const renderData = sprite.renderData!;</span><br><span class="line">        const vData = renderData.chunk.vb;</span><br><span class="line">        const stride = renderData.floatStride; // 应为 10</span><br><span class="line">        for (let i = 0; i &lt; 4; i++) &#123;</span><br><span class="line">            vData[i * stride + 9] = sprite.textureIdx;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sprite.textureIdxDirty = false;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@ccclass(&#x27;MultiTexture2d&#x27;)</span><br><span class="line">@executeInEditMode</span><br><span class="line">export class MultiTexture2d extends Sprite &#123;</span><br><span class="line">    @property</span><br><span class="line">    textureIdx: number = 0;</span><br><span class="line">    textureIdxDirty: boolean = true;</span><br><span class="line"></span><br><span class="line">    handle: number = -1;</span><br><span class="line">    start () &#123;</span><br><span class="line">        // @ts-ignore</span><br><span class="line">        // 因为已经批量上传了纹理，所以就不需要引擎计算的texture哈希值，不然会打断dc</span><br><span class="line">        this.spriteFrame._texture._textureHash = 9999;</span><br><span class="line"></span><br><span class="line">        const material = this.getRenderMaterial(0);</span><br><span class="line"></span><br><span class="line">        if(EDITOR)&#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        for(const v of MultiTextureManager.Instance.data)&#123;</span><br><span class="line">            //console.log(v);</span><br><span class="line">            material.setProperty(&quot;texture&quot;+v.textureID,SpriteAtlasManager.Instance.carAtlas[v.carType][v.carColor-1].getTexture());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private _updateUVs (): void &#123;</span><br><span class="line">        if (this._assembler) &#123;</span><br><span class="line">            this._assembler.updateUVs(this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected _flushAssembler () &#123;</span><br><span class="line">        const assembler = simple;</span><br><span class="line"></span><br><span class="line">        if (this._assembler !== assembler) &#123;</span><br><span class="line">            this.destroyRenderData();</span><br><span class="line">            this._assembler = assembler;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (!this._renderData) &#123;</span><br><span class="line">            if (this._assembler &amp;&amp; this._assembler.createData) &#123;</span><br><span class="line">                this._renderData = this._assembler.createData(this);</span><br><span class="line">                this._renderData!.material = this.getRenderMaterial(0);</span><br><span class="line">                this.markForUpdateRenderData();</span><br><span class="line">                if (this.spriteFrame) &#123;</span><br><span class="line">                    this._assembler.updateUVs(this);</span><br><span class="line">                &#125;</span><br><span class="line">                this._updateColor();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // Only Sliced type need update uv when sprite frame insets changed</span><br><span class="line">        if (this._spriteFrame) &#123;</span><br><span class="line">            if (this._type === 1) &#123;</span><br><span class="line">                this._spriteFrame.on(SpriteFrameEvent.UV_UPDATED, this._updateUVs, this);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                this._spriteFrame.off(SpriteFrameEvent.UV_UPDATED, this._updateUVs, this);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是 shader</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br></pre></td><td class="code"><pre><span class="line">// Copyright (c) 2017-2020 Xiamen Yaji Software Co., Ltd.</span><br><span class="line">CCEffect %&#123;</span><br><span class="line">  techniques:</span><br><span class="line">  - passes:</span><br><span class="line">    - vert: sprite-vs:vert</span><br><span class="line">      frag: sprite-fs:frag</span><br><span class="line">      depthStencilState:</span><br><span class="line">        depthTest: false</span><br><span class="line">        depthWrite: false</span><br><span class="line">      blendState:</span><br><span class="line">        targets:</span><br><span class="line">        - blend: true</span><br><span class="line">          blendSrc: src_alpha</span><br><span class="line">          blendDst: one_minus_src_alpha</span><br><span class="line">          blendDstAlpha: one_minus_src_alpha</span><br><span class="line">      rasterizerState:</span><br><span class="line">        cullMode: none</span><br><span class="line">      properties:</span><br><span class="line"></span><br><span class="line">        texture0: &#123; value: white &#125;</span><br><span class="line">        texture1: &#123; value: white &#125;</span><br><span class="line">        texture2: &#123; value: white &#125;</span><br><span class="line">        texture3: &#123; value: white &#125;</span><br><span class="line"></span><br><span class="line">        texture4: &#123; value: white &#125;</span><br><span class="line">        texture5: &#123; value: white &#125;</span><br><span class="line">        texture6: &#123; value: white &#125;</span><br><span class="line">        texture7: &#123; value: white &#125;</span><br><span class="line"></span><br><span class="line">        texture8: &#123; value: white &#125;</span><br><span class="line">        texture9: &#123; value: white &#125;</span><br><span class="line">        texture10: &#123; value: white &#125;</span><br><span class="line">        texture11: &#123; value: white &#125;</span><br><span class="line"></span><br><span class="line">        texture12: &#123; value: white &#125;</span><br><span class="line">        texture13: &#123; value: white &#125;</span><br><span class="line">        texture14: &#123; value: white &#125;</span><br><span class="line">        texture15: &#123; value: white &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        alphaThreshold: &#123; value: 0.5 &#125;</span><br><span class="line">&#125;%</span><br><span class="line"></span><br><span class="line">CCProgram sprite-vs %&#123;</span><br><span class="line">  precision highp float;</span><br><span class="line">  #include &lt;builtin/uniforms/cc-global&gt;</span><br><span class="line">  #if USE_LOCAL</span><br><span class="line">    #include &lt;builtin/uniforms/cc-local&gt;</span><br><span class="line">  #endif</span><br><span class="line">  #if SAMPLE_FROM_RT</span><br><span class="line">    #include &lt;common/common-define&gt;</span><br><span class="line">  #endif</span><br><span class="line">  in vec3 a_position;</span><br><span class="line">  in vec2 a_texCoord;</span><br><span class="line">  in vec4 a_color;</span><br><span class="line"></span><br><span class="line">  out vec4 color;</span><br><span class="line">  out vec2 uv0;</span><br><span class="line"></span><br><span class="line">  in float a_texture_idx;</span><br><span class="line">  out float texture_idx;</span><br><span class="line"></span><br><span class="line">  vec4 vert () &#123;</span><br><span class="line">    texture_idx = a_texture_idx;</span><br><span class="line">    vec4 pos = vec4(a_position, 1);</span><br><span class="line"></span><br><span class="line">    #if USE_LOCAL</span><br><span class="line">      pos = cc_matWorld * pos;</span><br><span class="line">    #endif</span><br><span class="line"></span><br><span class="line">    #if USE_PIXEL_ALIGNMENT</span><br><span class="line">      pos = cc_matView * pos;</span><br><span class="line">      pos.xyz = floor(pos.xyz);</span><br><span class="line">      pos = cc_matProj * pos;</span><br><span class="line">    #else</span><br><span class="line">      pos = cc_matViewProj * pos;</span><br><span class="line">    #endif</span><br><span class="line"></span><br><span class="line">    uv0 = a_texCoord;</span><br><span class="line">    #if SAMPLE_FROM_RT</span><br><span class="line">      CC_HANDLE_RT_SAMPLE_FLIP(uv0);</span><br><span class="line">    #endif</span><br><span class="line">    color = a_color;</span><br><span class="line"></span><br><span class="line">    return pos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;%</span><br><span class="line"></span><br><span class="line">CCProgram sprite-fs %&#123;</span><br><span class="line">  precision highp float;</span><br><span class="line">  #include &lt;builtin/internal/embedded-alpha&gt;</span><br><span class="line">  #include &lt;builtin/internal/alpha-test&gt;</span><br><span class="line"></span><br><span class="line">  in vec4 color;</span><br><span class="line">  #if USE_TEXTURE</span><br><span class="line">    in vec2 uv0;</span><br><span class="line">    #pragma builtin(local)</span><br><span class="line">    layout(set = 2, binding = 10) uniform sampler2D cc_spriteTexture;</span><br><span class="line">    in float texture_idx;</span><br><span class="line">  #endif</span><br><span class="line"></span><br><span class="line">  uniform sampler2D texture0;</span><br><span class="line">  uniform sampler2D texture1;</span><br><span class="line">  uniform sampler2D texture2;</span><br><span class="line">  uniform sampler2D texture3;</span><br><span class="line"></span><br><span class="line">  uniform sampler2D texture4;</span><br><span class="line">  uniform sampler2D texture5;</span><br><span class="line">  uniform sampler2D texture6;</span><br><span class="line">  uniform sampler2D texture7;</span><br><span class="line"></span><br><span class="line">  uniform sampler2D texture8;</span><br><span class="line">  uniform sampler2D texture9;</span><br><span class="line">  uniform sampler2D texture10;</span><br><span class="line">  uniform sampler2D texture11;</span><br><span class="line"></span><br><span class="line">  uniform sampler2D texture12;</span><br><span class="line">  uniform sampler2D texture13;</span><br><span class="line">  uniform sampler2D texture14;</span><br><span class="line">  uniform sampler2D texture15;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  vec4 frag () &#123;</span><br><span class="line">    vec4 o = vec4(1, 1, 1, 1);</span><br><span class="line"></span><br><span class="line">    #if USE_TEXTURE</span><br><span class="line">      if(texture_idx &lt; 1.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture0, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 2.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture1, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 3.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture2, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 4.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture3, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 5.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture4, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 6.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture5, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 7.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture6, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 8.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture7, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 9.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture8, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 10.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture9, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 11.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture10, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 12.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture11, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 13.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture12, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 14.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture13, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 15.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture14, uv0);</span><br><span class="line">      &#125;</span><br><span class="line">      else if(texture_idx &lt; 16.0) &#123;</span><br><span class="line">        o *= CCSampleWithAlphaSeparated(texture15, uv0);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      #if IS_GRAY</span><br><span class="line">        float gray  = 0.2126 * o.r + 0.7152 * o.g + 0.0722 * o.b;</span><br><span class="line">        o.r = o.g = o.b = gray;</span><br><span class="line">      #endif</span><br><span class="line">    #endif</span><br><span class="line"></span><br><span class="line">    o *= color;</span><br><span class="line">    ALPHA_TEST(o);</span><br><span class="line">    return o;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;%</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/" data-id="cm94yjcfy000iev7772z97joy" data-title="Cocoscreator中实现纹理合批" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week25" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/03/14/week/2025/week25/" class="article-date">
-  <time class="dt-published" datetime="2025-03-14T06:51:00.000Z" itemprop="datePublished">2025-03-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/03/14/week/2025/week25/">每周见闻 - 第 25 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/leonard2.gif"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/gS3Tdl3pMUKopnNtdgKchg">1.百威亚太被曝裁员数千人，以削减成本15%</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Y2u2xLkthHNf7NL-O69HAQ">2.李嘉诚公司将巴拿马运河港口卖给美财团</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zd2fK-QW-BmEbP0qT8v-uQ">3.百度重磅发布文心4.5、X1，视频解读+深度思考</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/AieGolbOKa8I_MgjwxfPRA">4.“13岁女儿涉嫌开盒他人”，刚刚百度副总裁道歉：深感愧疚</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/pOnaXdiHixe9Cll0z3klAQ">5.德国知名汽车制造商奥迪大裁员！7500人面临失业</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/QfxKzlOwG8GyRpeXBw8sWQ">6.Zoom发布全平台Agent，智能体大爆发</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/YpIGjSC9-4mfjcwlVmIR4Q">7.滞留宇航员搭载SpaceX“龙”飞船返回地球</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hosLrqQDbT">8.英伟达：B200已破DeepSeek-R1推理世界纪录</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/74JbiTDuMaH4LTX5Gc1-nw">9.OpenAI首发语音Agent，智能体实现重大突破</a></p>
-<p><a target="_blank" rel="noopener" href="https://m.weibo.cn/search?containerid=231522type=1&t=10&q=%23%E5%87%AF%E5%B0%94%E7%89%B9%E4%BA%BA61%E4%BA%BF%E7%BE%8E%E5%85%83%E5%87%BA%E5%94%AE%23&extparam=%23%E5%87%AF%E5%B0%94%E7%89%B9%E4%BA%BA61%E4%BA%BF%E7%BE%8E%E5%85%83%E5%87%BA%E5%94%AE%23">10.凯尔特人61亿美元被格罗斯贝克家族售出</a></p>
-<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/langmanus/langmanus">1.LangManus</a><br>LangManus 是一个社区驱动的 AI 自动化框架，它建立在开源社区的卓越工作基础之上。我们的目标是将语言模型与专业工具（如网络搜索、爬虫和 Python 代码执行）相结合，同时回馈让这一切成为可能的社区。<br><img src="/images/2025/20250321134612.png" alt="LangManus"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/krahets/hello-algo">2.hello算法</a><br>本项目旨在打造一本开源免费、新手友好的数据结构与算法入门教程。<br>全书采用动画图解，内容清晰易懂、学习曲线平滑，引导初学者探索数据结构与算法的知识地图。<br>源代码可一键运行，帮助读者在练习中提升编程技能，了解算法工作原理和数据结构底层实现。<br>提倡读者互助学习，欢迎大家在评论区提出问题与分享见解，在交流讨论中共同进步。<br><img src="/images/2025/20250321134938.png" alt="hello算法"></p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img src="/images/2025/p2579932167.webp" alt="喜剧之王"></p>
-<p>尹天仇（周星驰 饰）一直醉心戏剧，想成为一名演员，平时除了做跑龙套以外，还会在街坊福利会里开设演员训练班。此时舞小姐柳飘飘在妈妈桑的带领下来到这里要求学做戏，原来柳飘飘有一段非常不愉快的经历，在尹天仇对她指导的过程中，柳飘飘对尹天仇渐生情愫，同时她也成为了夜总会里当红的小姐。尹天仇受到了极多白眼之后，终于得到了大明星鹃姐（莫文蔚 饰）的赏识，提携他担演新戏中的男主角，但没想到突然把他的角色换掉了，令他失望不已。在片场当场务的卧底警员（吴孟达 饰）身份被识穿，尹天仇阴差阳错的帮忙破了案。之后尹天仇继续活跃在街坊福利会的演员训练班里</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/14/week/2025/week25/" data-id="cm94yjcg70030ev774rmx67wy" data-title="每周见闻 - 第 25 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week24" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/03/09/week/2025/week24/" class="article-date">
-  <time class="dt-published" datetime="2025-03-09T11:22:54.000Z" itemprop="datePublished">2025-03-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/03/09/week/2025/week24/">每周见闻 - 第 24 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/5ce92a912dcf24238dc31a90b7dd01c7.jpg"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hbTGkAX86V">1.特斯拉中国销量在过去五个月里连续同比下滑</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/UENHnddOdnRCw_8jdL8Sdw">2.OpenAI发布CoT监控，阻止大模型恶意行为</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HkcuJILUGHrVkUDolZLZ6Q">3.OpenAI开源首个Agent SDK</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.financeun.com/newsDetail/60221.shtml">4.江苏银行以0.5折“骨折价”挂牌转让70.9亿元个人网贷坏账</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/8HusRonfYRZO97tXCHwKew">5.谷歌开源Gemma-3：媲美DeepSeek，算力暴降10倍</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hf64YdTzSk">6.求职越难，BOSS直聘越赚钱</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hgaXEG3w1z">7.英特尔CEO陈立武</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.guancha.cn/economy/2025_03_12_768192.shtml">8.被曝剩菜回收再卖，杨铭宇黄焖鸡道歉：即刻停业，永久关店</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.thepaper.cn/newsDetail_forward_30393327">9.黄金价格再创历史新高</a></p>
-<p><a target="_blank" rel="noopener" href="https://news.sina.com.cn/zx/2025-03-14/doc-inepqxcq3966626.shtml">10.库里4000记三分里程碑</a></p>
-<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/fruitbars/transbridge">1.TransBridge</a><br>TransBridge 是一个强大的翻译 API 代理服务，通过调用各种大模型 API 实现高质量的机器翻译功能，并提供兼容 DeepL API 接口格式。<br>它提供了丰富的配置选项、灵活的缓存机制和完善的日志记录，可以作为多种大模型翻译服务的统一代理。<br><img src="/images/2025/bg2025031001.webp" alt="TransBridge"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/mannaandpoem/OpenManus">2.Openmanus</a><br>OpenManus 是由 MetaGPT 团队成员开发的开源通用 AI 智能体框架，旨在复刻并优化 Manus（一款封闭式商业 AI Agent）的核心功能，提供无需邀请码、本地化部署的智能体解决方案。<br><img src="/images/2025/20250314144939.png" alt="Openmanus"></p>
-<h2 id="影视剧"><a href="#影视剧" class="headerlink" title="影视剧"></a>影视剧</h2><p><img src="/images/2025/The_Long_Season_poster.jpg" alt="漫长的季节"></p>
-<p>该剧主要人物与故事框架来自于编剧于小千所创作的《凛冬之刃》，但相对于最初版本，编剧团队及导演对这个剧本进行了大幅度的改编，改动重点包括沈墨的人设、王阳之死、龚彪之死，以及王响与沈墨之间的恩怨。<br>而剧名《漫长的季节》则取材于该剧文学策划班宇的同名短篇小说，同时，剧中由王阳写出的诗歌《漫长的》也是班宇的作品，导演辛爽在采访中表示他采用这个名字原因在于，狭义地看，王响被困在了儿子王阳走后的那年秋天，广义地理解，季节代表四季轮回，特别像人生。他希望透过时间流逝的感觉、透过王响，让人看到芸芸众生。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/09/week/2025/week24/" data-id="cm94yjcg7002sev774ub2ehop" data-title="每周见闻 - 第 24 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week23" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/02/28/week/2025/week23/" class="article-date">
-  <time class="dt-published" datetime="2025-02-28T13:52:02.000Z" itemprop="datePublished">2025-02-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/02/28/week/2025/week23/">每周见闻 - 第 23 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/wangjiajia.jpg"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://m.weibo.cn/search?containerid=231522type=1&t=10&q=%23%E5%85%9A%E5%BF%97%E5%86%9B%E8%A2%AB%E6%89%A7%E8%A1%8C%E6%AD%BB%E5%88%91%23&extparam=%23%E5%85%9A%E5%BF%97%E5%86%9B%E8%A2%AB%E6%89%A7%E8%A1%8C%E6%AD%BB%E5%88%91%23">1.党志军被执行死刑</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wLJyI52OPo0n_0Ge7E2c5A">2.英国乌克兰签22.6亿英镑贷款协议</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3742203#from=ios?ivk=1">3.小米SU7 Ultra 3天完成全年任务</a><br><img src="/images/2025/xiaomi.jpg" alt="小米SU7 Ultra"></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hQ9bYTvF3Q">4.联想推出三屏笔记本电脑，还有Tiko AI情感交互伴侣</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hPzT7xwrXu">5.字节跳动发布中国首个AI编程工具Trae：可切换满血版DeepSeek</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4ZTp_AXgK3lviduJ8NmYgg">6.微软发布医疗AI助手，终结手写病历时代</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hTUCWJRJAg">7.阿里发布开源推理模型QwQ-32B 支持消费级显卡本地部署</a></p>
-<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/tech/roll/2025-03-05/doc-inenrcym1757824.shtml">8.2024图灵奖颁给了强化学习之父Richard Sutton与导师Andrew Barto</a></p>
-<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/jjxw/2025-03-06/doc-inenswim6838232.shtml">9.刘家琨获2025年普利兹克建筑奖</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EimzMIJC6a0KudNrSOd0RA">10.DeepSeek创造历史！登顶全球AI应用第2名，豆包排名第10</a></p>
-<h2 id="书籍"><a href="#书籍" class="headerlink" title="书籍"></a>书籍</h2><p><img src="/images/2025/325px-GoldenSectionSearch.png" alt="黄金分割法"></p>
-<p>1953年，美国数学家杰克·基弗提出了0.618法。<br>20世纪60、70年代中国数学家华罗庚先生对其作了简化和补充，并在全中国范围内推广普及，取得了令人满意的结果</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/02/28/week/2025/week23/" data-id="cm94yjcg6002oev77cdyyg1d6" data-title="每周见闻 - 第 23 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-book/《朱元璋传-吴晗》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/02/28/book/%E3%80%8A%E6%9C%B1%E5%85%83%E7%92%8B%E4%BC%A0-%E5%90%B4%E6%99%97%E3%80%8B/" class="article-date">
-  <time class="dt-published" datetime="2025-02-28T13:41:28.000Z" itemprop="datePublished">2025-02-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/02/28/book/%E3%80%8A%E6%9C%B1%E5%85%83%E7%92%8B%E4%BC%A0-%E5%90%B4%E6%99%97%E3%80%8B/">《朱元璋传-吴晗》</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/s3024937.jpg"></p>
-<h1 id="《朱元璋传》-吴晗"><a href="#《朱元璋传》-吴晗" class="headerlink" title="《朱元璋传》-吴晗"></a>《朱元璋传》-吴晗</h1><p>&emsp;&emsp;知晓吴晗，是听高华教授的讲座《毛泽东炮打司令部》。吴晗作为学者，对于政治非常感兴趣，要不然咋能做北京高官。吴晗作为刘少奇一派，被整被搞臭，太正常。《朱元璋传》共有四个版本，最早的版本是 1946。也就是说，这本书已经过去 80 余年，还能出版再版。<br>&emsp;&emsp;朱重八 17 岁时，家里人都要死绝了，只剩大嫂，侄儿和二哥。持续几年都是干旱，即便你有人有力气，不下雨，你也没办法！朱重八吃土吃树根吃尽苦头，最后去寺庙当了和尚。寺庙往往都是混饭吃的地方，杀人有罪之人可进入，家里穷的吃不起饭可进入，真正信仰佛教之人很少！寺庙还放高利贷，压榨老百姓帮起耕田。朱重八的师傅高彬长老，竟然还有家小，朱重八还得做高彬的小厮。不满两个月，寺庙收不到田租，朱重八被扫地出门。朱重八无奈之下，就坐上了游方僧，就是乞丐僧人。<br>&emsp;&emsp;朱重八在外乞讨四年，接触各色人物，见过各种风土人情。不知什么时候朱重八加入的明教，反正是接触过，也许被明教宗义所吸引。公元 1351 年，红军起义，迅速占领南方各处。蒙古人是非常落后，没有融入到中华文化当中，统治是采用落后的方式。蒙古人将几千万人当作牲畜，人的忍受是有限度的，吃不起饭，造反是迟早的事。<br>&emsp;&emsp;黄河决堤，元皇朝纠集几十万役夫堵口。韩山童和刘福通借此干起来造反事业，哪知起义当天消息泄露，韩山童被捕杀死，刘福通带领部队出其不意横扫附近县城。此时郭子兴也乘势而起，与其他五人占据豪州。郭子兴手下有一人，是朱重八的少时好友，希望朱重八一起造反。朱重八犹豫再三，最后卜卦决定去了豪州。朱重八一入郭子兴军队，不到几个月，就做亲兵十夫长。有几个月后，朱重八在军中表现被郭子兴看中，把养女嫁给朱重八，朱重八起了一个正式名字，朱元璋，字国瑞！<br>&emsp;&emsp;朱元璋两年之后，成了郭子兴军队的总官。但是豪州没有什么发展前途，郭子兴又没有什么志向。于是朱元璋带领二十四名忠实伙伴南游定远，招降三千民兵，击败元将张志远，收降民兵七万口，挑拣出两万壮士。后有冯国用两兄弟来投，建议占领南京。朱元璋于是南下攻滁州，定远人李善长来投，建议朱元璋学刘邦，要有远大的志向和宽广的胸怀，军队要有纪律，天下自然而定。朱元璋如鱼得水，迅速发展壮大势力，大到需要认义子提防手下将军。然而郭子兴带了一万军队和朱元璋在滁州汇合，朱元璋表面上不得不放弃军权给郭子兴。<br>&emsp;&emsp;公元 1355 年，红军统帅刘福通寻得韩林儿，建国为宋，号小明王。郭子兴和朱元璋汇合不久，就染病而死。虽然在后续权力斗争中，朱元璋是排行第三，但是凭借手段高明和能力压制控制了滁州军队。后来在与元军对战时，巧用计谋，设计借刀杀人，把郭天叙和张天佑两位大帅杀死，吞并郭氏部队。朱元璋五六年间，扩张势力，使得朱元璋实力与张士诚、徐寿辉、小明王并立的四大势力，朱元璋非常有战略眼光，将自己处于与元军隔离位置。这段时间，朱元璋将部队从土匪习气转换为正规军队，不抢劫百姓，不奸淫妇女。与此同时，朱元璋命令手下康茂才屯田屯兵，保障粮食和兵员供应。<br>&emsp;&emsp;公元 1338 年袁州起义失败，彭莹玉认真总结，发展壮大队伍，经过十四年。公元 1351 年，彭莹玉推举徐寿辉为首领，后建立天完政权。公元 1357 年，天完政权丞相倪文俊谋逆不成功，逃到了天完元帅陈友谅地区。陈友谅后来杀了倪文俊，公元 1360 年谋逆成功，建立汉国，江西湖广之地。陈友谅势力位置和朱元璋相邻，终于在公元 1360 年打起来。后来朱元璋连用诈降、反间计一步一步吞并陈友谅军队和地盘，最终在几年之后消灭了陈友谅。<br>&emsp;&emsp;小明王称帝之后，实际掌握权力的是刘太保刘福通。小明王势力看是庞大，实际四分五裂，均不听从刘福通派遣，导致小明王的势力被各个击破。这让我想起近代的共产党和国民党，共产党在 1942 年整风运动之后，以毛为领袖，刘少奇喊主席万岁而登上牌桌，加固毛的权威，进而统一共产党内部思想。国民党的蒋介石自从孙中山死后登上大总统职位，尽管通过十余年的努力，发展壮大了自己的部队中央军，1946 年时也不过 20 个师 60 万余部队。国民党看起来三百多万对共产党一百多万，实际上是 60 万对一百多万。其余军阀的部队蒋介石无法指挥！公元 1363 年二月，张士诚进攻小明王的安丰，小明王向朱元璋求救。朱元璋向曹操学习，囚禁小明王。在救援小明王路上，陈友谅急攻南昌，幸好南昌守将固守了三个月。朱元璋带领 20 万部队在鄱阳湖和陈友谅决战，最终运气在朱元璋这边，陈友谅死于战斗中的弓箭。<br>&emsp;&emsp;公元 1364 正月，朱元璋自立为吴王。陈友谅已灭，剩下的就是张士诚，最后是元朝。公元 1365 年，朱元璋不到一年就灭了张士诚。但是此时朱元璋还没有和元朝翻脸，仍是一个骑墙者。元朝内部也是互相争斗，没有时间解决红军系。不到三年，朱元璋就解决了其他军阀。公元 1368 年十月，朱元璋南征北伐同时进行，以徐达为征虏大将军，常遇春为副将军，二十五军队进攻破碎的元军。在武的同时，朱元璋手下的宋濂奉命写的檄文：强调民族独立，复兴道统。这比军队更加杀人诛心，元朝是异族统治，这是元朝天然缺陷。公元 1369 年八月，北伐成功，朱元璋攻陷大都，元朝 90 年的政权正式进入历史的垃圾堆里。<br>&emsp;&emsp;公元 1368 年，朱元璋在南京建立明朝，大明出自明教的含义。继承明教，安抚了原来明教系统的将军们，明又可以代表光明的含义，让儒士们心安。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/02/28/book/%E3%80%8A%E6%9C%B1%E5%85%83%E7%92%8B%E4%BC%A0-%E5%90%B4%E6%99%97%E3%80%8B/" data-id="cm94yjcfx000bev77bshrbi6f" data-title="《朱元璋传-吴晗》" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week22" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/02/23/week/2025/week22/" class="article-date">
-  <time class="dt-published" datetime="2025-02-23T00:36:25.000Z" itemprop="datePublished">2025-02-23</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/02/23/week/2025/week22/">每周见闻 - 第 22 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/20250228213042.jpg"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://deepseek.csdn.net/67c14b936670175f992ce225.html">1.DeepSeek开源周</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/qavpDNpqhyd0r0gpaJonEg">2.时代的列车疾驰：松下电视已是落日余晖，中国智造加速驶向未来</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xEkEEkRebKTMAmH-H0IDFQ">3.京东：将承担骑手五险一金的所有成本</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hGEg7yp0oS">4.DeepSeek重新开放API充值</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hG0A69wDMG">5.苹果开发者官方微信公众号正式上线</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hJPURUEqh0">6.2024年中国车企依然拿下全球超7成电动汽车市场份额</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3742035#from=ios?ivk=1">7.小米SU7 Ultra地表最快，定价52.99万元</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/2rOEPGGepP5ffIR_cRfNfg">8.OpenAI发布GPT-4.5：功能非常特殊，推理很贵</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zaobao.com.sg/realtime/china/story20250228-5944742">9.余华英被执行死刑</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/SU9AggOa7ssFB373kGooiA">10.奔驰在华裁员15%，员工最高可获得N+11赔偿</a></p>
-<h2 id="电视剧"><a href="#电视剧" class="headerlink" title="电视剧"></a>电视剧</h2><p><img src="/images/2025/p1539002059.webp" alt="孝子"><br>&emsp;&emsp;历经半辈子的操劳，年近古稀的刘英（严敏求 饰）总算和老伴乔战迎来了可以安度晚年的时刻，可是一场大病不仅让这位坚忍倔强的老太太病倒，还让子女们本就烦恼不少的生活平添了许多的争吵。大女儿乔水兰（陈瑾 饰）的丈夫是一名官员，饮食无忧可是苦乐自知；大儿子乔海洋（许亚军 饰）的生意进入困局，待产的妻子身体状况频出，外忧内患；三女儿水灵（王乙竹 饰）和丈夫的生活紧迫，捉襟见肘；吃了一肚子洋墨水的小儿子乔海明（张鹰 饰）口若悬河，自以为西方文明的他早将东方的孝道观念抛在了一边。<br>&emsp;&emsp;人老了还不就是图个子女孝顺，生活安康，这却是一个微小而渺茫的愿望……</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/02/23/week/2025/week22/" data-id="cm94yjcg6002kev77hd7k3ron" data-title="每周见闻 - 第 22 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-AI/PageAssist插件轻松实现DeepSeek联网搜索功能" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/02/15/AI/PageAssist%E6%8F%92%E4%BB%B6%E8%BD%BB%E6%9D%BE%E5%AE%9E%E7%8E%B0DeepSeek%E8%81%94%E7%BD%91%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/" class="article-date">
-  <time class="dt-published" datetime="2025-02-15T02:35:57.000Z" itemprop="datePublished">2025-02-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/AI/">AI</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/02/15/AI/PageAssist%E6%8F%92%E4%BB%B6%E8%BD%BB%E6%9D%BE%E5%AE%9E%E7%8E%B0DeepSeek%E8%81%94%E7%BD%91%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/">PageAssist插件轻松实现DeepSeek联网搜索功能</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/pageAssist.jpg" alt="page assist"></p>
-<h1 id="1、安装-PageAssist"><a href="#1、安装-PageAssist" class="headerlink" title="1、安装 PageAssist"></a>1、安装 PageAssist</h1><p>可以从 Github 仓库去获得安装地址：<br><a target="_blank" rel="noopener" href="https://github.com/n4ze3m/page-assist">https://github.com/n4ze3m/page-assist</a><br>也可以直接使用下面的地址：<br>Chrome<br><a target="_blank" rel="noopener" href="https://chrome.google.com/webstore/detail/page-assist/jfgfiigpkhlkbnfnbobbkinehhfdhndo">https://chrome.google.com/webstore/detail/page-assist/jfgfiigpkhlkbnfnbobbkinehhfdhndo</a><br>FireFox<br><a target="_blank" rel="noopener" href="https://addons.mozilla.org/en-US/firefox/addon/page-assist/">https://addons.mozilla.org/en-US/firefox/addon/page-assist/</a><br>MS Edge<br><a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/page-assist-a-web-ui-fo/ogkogooadflifpmmidmhjedogicnhooa">https://microsoftedge.microsoft.com/addons/detail/page-assist-a-web-ui-fo/ogkogooadflifpmmidmhjedogicnhooa</a></p>
-<h1 id="2、配置-PageAssist"><a href="#2、配置-PageAssist" class="headerlink" title="2、配置 PageAssist"></a>2、配置 PageAssist</h1><p>打开设置面板<br>安装成功后，打开插件，点击右上角的设置按钮。<br><img src="/images/2025/as1.webp"></p>
-<p>配置 API 提供商<br>左边栏选择 OpenAI Compatible API，然后选择 Add Provider。<br><img src="/images/2025/as2.webp"></p>
-<p>在弹出的窗口中，填上相应的信息即可。</p>
-<p>Provider Name：随便填，比如 硅基流动<br>Base URL：填 <a target="_blank" rel="noopener" href="https://api.siliconflow.cn/">https://api.siliconflow.cn</a> 即可。<br>API Key：把刚刚创建的 KEY 复制粘贴过来即可。<br><img src="/images/2025/as3.webp"></p>
-<p>配置大模型<br>1、选择 Manage Models -&gt; Custom Models -&gt; Add New Model<br><img src="/images/2025/as4.webp"></p>
-<p>2、在弹出的窗口中，填写相应的信息。<br>Model ID:每个平台提供的不太一样，硅基流动的是 deepseek-ai&#x2F;DeepSeek-R1<br>Provider：选择刚刚新增的提供商，比如 硅基流动。<br><img src="/images/2025/as5.webp"><br>点保存就可以了。</p>
-<p>使用<br>1、配置成功后，点击右上方，Select Model，下拉列表中，就会出现对应的模型ID了，选择它即可。<br><img src="/images/2025/as6.webp"></p>
-<p>2、点击左上角的 New Chat 按钮，打开输入框中的联网搜索功能。<br><img src="/images/2025/as7.webp"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/02/15/AI/PageAssist%E6%8F%92%E4%BB%B6%E8%BD%BB%E6%9D%BE%E5%AE%9E%E7%8E%B0DeepSeek%E8%81%94%E7%BD%91%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/" data-id="cm94yjcfu0001ev771wjk2z36" data-title="PageAssist插件轻松实现DeepSeek联网搜索功能" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week21" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/02/15/week/2025/week21/" class="article-date">
-  <time class="dt-published" datetime="2025-02-15T02:21:48.000Z" itemprop="datePublished">2025-02-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/02/15/week/2025/week21/">每周见闻 - 第 21 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/20250221174218.jpg"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HBtwlY0DImp09TKdKJl-RQ">1.微信接入DeepSeek</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Dpz0nUb7J00UYQ4XZgaqyQ">2.广州图森百人团队解散，金庸3A何去何从</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/SDrIQIExrSmYLRmDaNzVjQ">3.继京东后，美团宣布将为全职及稳定兼职骑手缴纳社保</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3741456#from=ios?ivk=1">4.微软首发量子计算芯片</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/5xZ8ABPLW83MjM9GLwl8tQ">5.以色列多地公交车被同时引爆</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/31LvcZTLlZvs_owo_eVHsw">6.文班亚马查出右肩深静脉血栓，预计赛季报销</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FUQQ93eJ6OktPYkHy0y5zw">7.1月中国游戏收入同比增27.65%，超310亿元</a></p>
-<p><a target="_blank" rel="noopener" href="https://news.qq.com/rain/a/20231001A03MJW00">8.重庆巫山 | 悬崖边的轻奢民宿，躺在万水千山里</a></p>
-<p><a target="_blank" rel="noopener" href="https://spectrum.ieee.org/5g-bandwidth">9.5G 网速足以满足绝大多数人的需求</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.thepaper.cn/newsDetail_forward_30209307">10.复旦华山团队发现帕金森病全新治疗靶点</a></p>
-<h2 id="简语"><a href="#简语" class="headerlink" title="简语"></a>简语</h2><p>1.我们是有话要说，但说不出来。有说话功能，但遗失了文化的嘴。</p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img src="/images/2025/The_Secret_Life_of_Walter_Mitty_poster.jpg" alt="白日梦想家"></p>
-<p>&emsp;&emsp;《白日梦想家》（英语：The Secret Life of Walter Mitty）是一部于2013年上映的美国冒险喜剧剧情电影，斯图尔特·康菲尔德编剧，本·斯蒂勒身兼导演、主演及监制（与小塞缪尔·戈德温、约翰·戈德温及斯图尔特·康菲尔德一起）。其他演员包含克里斯汀·韦格、雪莉·麦克雷恩、亚当·斯科特、凯瑟琳·哈恩和西恩·潘等人。高尔·韦宾斯基则担任执行制片人。</p>
-<p>&emsp;&emsp;该片为改编自詹姆斯·格罗弗·瑟伯的短篇小说的第二部电影。《白日梦想家》在2013年10月5日于纽约电影节上首映。二十世纪福克斯负责电影的发行工作。美国于2013年12月25日上映。上映后，影评人给予此片的评价两极化。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/02/15/week/2025/week21/" data-id="cm94yjcg6002gev778bta1mo9" data-title="每周见闻 - 第 21 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/06/week/2025/week27/" data-id="cmbebl9s5003gps77ej5bh2rl" data-title="每周见闻 - 第 27 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -647,7 +710,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -668,7 +731,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
     </div>
   </div>
 
@@ -678,7 +741,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+      <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
     </div>
   </div>
 
@@ -687,7 +750,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
     </div>
   </div>
 
@@ -700,23 +763,23 @@
       <ul>
         
           <li>
-            <a href="/2025/04/06/week/2025/week27/">每周见闻 - 第 27 期</a>
+            <a href="/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/">读《Shader开发实战》有感</a>
           </li>
         
           <li>
-            <a href="/2025/03/28/week/2025/week26/">每周见闻 - 第 26 期</a>
+            <a href="/2025/05/30/week/2025/week34/">每周见闻 - 第34 期</a>
           </li>
         
           <li>
-            <a href="/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/">Cocoscreator中实现纹理合批</a>
+            <a href="/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/">ECS架构的实践与思考</a>
           </li>
         
           <li>
-            <a href="/2025/03/14/week/2025/week25/">每周见闻 - 第 25 期</a>
+            <a href="/2025/05/23/week/2025/week33/">每周见闻 - 第 33 期</a>
           </li>
         
           <li>
-            <a href="/2025/03/09/week/2025/week24/">每周见闻 - 第 24 期</a>
+            <a href="/2025/05/16/week/2025/week32/">每周见闻 - 第32 期</a>
           </li>
         
       </ul>
