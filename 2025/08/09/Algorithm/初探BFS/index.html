@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>初探BFS | 白杨左书</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="语言：typescript 前言&emsp;&emsp;最近做的项目有类似连连看消除的功能，需要使用到 BFS 算法，因此想先初探一下 BFS 算法。 概述&emsp;&emsp;广度优先搜索（Breadth-First Search, BFS）作为一种系统地遍历图或树节点的算法，其思想最早可以追溯到 20 世纪中期。德国计算机先驱康拉德·楚澤（Konrad Zuse）在 1945 年的博士论文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探BFS">
+<meta property="og:url" content="https://baiyangzuoshu.github.io/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/index.html">
+<meta property="og:site_name" content="白杨左书">
+<meta property="og:description" content="语言：typescript 前言&emsp;&emsp;最近做的项目有类似连连看消除的功能，需要使用到 BFS 算法，因此想先初探一下 BFS 算法。 概述&emsp;&emsp;广度优先搜索（Breadth-First Search, BFS）作为一种系统地遍历图或树节点的算法，其思想最早可以追溯到 20 世纪中期。德国计算机先驱康拉德·楚澤（Konrad Zuse）在 1945 年的博士论文">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://baiyangzuoshu.github.io/images/2025/bfs-vs-dfs-(1).png">
+<meta property="article:published_time" content="2025-08-09T11:28:41.000Z">
+<meta property="article:modified_time" content="2025-08-14T09:36:09.444Z">
+<meta property="article:author" content="白杨左书">
+<meta property="article:tag" content="BFS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://baiyangzuoshu.github.io/images/2025/bfs-vs-dfs-(1).png">
+  
+    <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">白杨左书</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有品性的丰满，知识就是伪装</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Algorithm/初探BFS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/" class="article-date">
+  <time class="dt-published" datetime="2025-08-09T11:28:41.000Z" itemprop="datePublished">2025-08-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      初探BFS
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/bfs-vs-dfs-(1).png"></p>
+<p>语言：typescript</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;最近做的项目有类似连连看消除的功能，需要使用到 BFS 算法，因此想先初探一下 BFS 算法。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>&emsp;&emsp;广度优先搜索（Breadth-First Search, BFS）作为一种系统地遍历图或树节点的算法，其思想最早可以追溯到 20 世纪中期。德国计算机先驱康拉德·楚澤（Konrad Zuse）在 1945 年的博士论文中首次描述了类似于 BFS 的算法思想。当时楚澤正致力于设计世界上第一种高级编程语言——Plankalkül。在其未发表的博士论文（由于二战后局势未能提交，直到 1972 年才出版）中，楚澤给出了一个完整的示例程序，用于计算图的连通分量。这份示例程序使用的正是广度优先的搜索策略：从图中某一节点出发，按层次遍历整个图，以标记和计数不连通图中的各个组件。这可以被视为 BFS 算法的雏形，其背景属于图论范畴（寻找图的连通组件的问题）。值得注意的是，楚澤的工作发生在计算机科学正式诞生之初，他从工程和数学角度出发，在算法层面提出了这一思想，但当时并未引起学界广泛关注，因为论文迟迟未出版。 虽然楚澤在 1945 年就提出了 BFS 思想，但这一成果当时并没有传播开来。直到 20 世纪 50 年代末，BFS 算法才在学术出版物中正式露面。</p>
+<p>代码实现<br>&emsp;&emsp;BFS 算法的代码实现如下：</p>
+<h3 id="1-定义数据结构"><a href="#1-定义数据结构" class="headerlink" title="1. 定义数据结构"></a>1. 定义数据结构</h3><p>&emsp;&emsp;首先，我们需要定义一个数据结构来表示图的节点。每个节点包含节点的坐标和到起始节点的距离。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const grid = [</span><br><span class="line">  [&quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;#&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;.&quot;, &quot;#&quot;, &quot;.&quot;, &quot;#&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;P&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;.&quot;, &quot;#&quot;, &quot;B&quot;, &quot;#&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;],</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这段代码定义了一个二维数组 <code>grid</code>，表示一个网格图。每个元素可以是 “.” 表示空位置，”#” 表示障碍物，”P” 表示玩家，”B” 表示目标。</p>
+<h3 id="2-查找玩家位置"><a href="#2-查找玩家位置" class="headerlink" title="2. 查找玩家位置"></a>2. 查找玩家位置</h3><p>&emsp;&emsp;接下来，我们需要查找玩家的位置。这里我们使用的是玩家的字符 “P” 来查找。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">interface Pos &#123;</span><br><span class="line">  x: number;</span><br><span class="line">  y: number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const _dirs = [</span><br><span class="line">  &#123; x: -1, y: 0 &#125;,</span><br><span class="line">  &#123; x: 1, y: 0 &#125;,</span><br><span class="line">  &#123; x: 0, y: -1 &#125;,</span><br><span class="line">  &#123; x: 0, y: 1 &#125;,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">console.table(grid);</span><br><span class="line"></span><br><span class="line">function findPlayer(grid: string[][], player: string) &#123;</span><br><span class="line">  for (let y = 0; y &lt; grid.length; y++) &#123;</span><br><span class="line">    for (let x = 0; x &lt; grid[y].length; x++) &#123;</span><br><span class="line">      if (grid[y][x] === player) &#123;</span><br><span class="line">        return &#123; x, y &#125;;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return &#123; x: -1, y: -1 &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const pos = findPlayer(grid, &quot;P&quot;);</span><br><span class="line">console.log(&quot;P pos:&quot;, pos);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查找玩家到目标的最短路径"><a href="#3-查找玩家到目标的最短路径" class="headerlink" title="3. 查找玩家到目标的最短路径"></a>3. 查找玩家到目标的最短路径</h3><p>&emsp;&emsp;接下来，我们需要查找玩家到目标的最短路径。这里我们使用的是玩家的字符 “P” 和目标的字符 “B” 来查找。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">unction findPlayerToBox(</span><br><span class="line">  grid: string[][],</span><br><span class="line">  player: string,</span><br><span class="line">  box: string</span><br><span class="line">): number &#123;</span><br><span class="line">  const pos = findPlayer(grid, player);</span><br><span class="line">  if (pos.x == -1 || pos.y == -1) &#123;</span><br><span class="line">    return -1;</span><br><span class="line">  &#125;</span><br><span class="line">  const queue: &#123; pos: Pos; curStep: number &#125;[] = [];</span><br><span class="line">  const visited = new Set&lt;string&gt;();</span><br><span class="line">  queue.push(&#123; pos, curStep: 0 &#125;);</span><br><span class="line">  visited.add($&#123;pos.x&#125;,$&#123;pos.y&#125;);</span><br><span class="line">  while (queue.length &gt; 0) &#123;</span><br><span class="line">    const &#123; pos: curPos, curStep &#125; = queue.shift();</span><br><span class="line">    for (let i = 0; i &lt; _dirs.length; i++) &#123;</span><br><span class="line">      const ny = curPos.y + _dirs[i].y;</span><br><span class="line">      const nx = curPos.x + _dirs[i].x;</span><br><span class="line">      if (nx &lt; 0 || ny &lt; 0 || ny &gt;= grid.length || nx &gt;= grid[0].length) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      if (visited.has($&#123;nx&#125;,$&#123;ny&#125;)) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      const tag = grid[ny][nx];</span><br><span class="line">      if (&quot;#&quot; == tag) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      if (box == tag) &#123;</span><br><span class="line">        return curStep + 1;</span><br><span class="line">      &#125;</span><br><span class="line">      queue.push(&#123; pos: &#123; x: nx, y: ny &#125;, curStep: curStep + 1 &#125;);</span><br><span class="line">      visited.add($&#123;nx&#125;,$&#123;ny&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return -1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const step = findPlayerToBox(grid, &quot;P&quot;, &quot;B&quot;);</span><br><span class="line">console.log(&quot;step:&quot;, step);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-回朔路径"><a href="#4-回朔路径" class="headerlink" title="4. 回朔路径"></a>4. 回朔路径</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">function findPlayerToBox(</span><br><span class="line">  grid: string[][],</span><br><span class="line">  player: string,</span><br><span class="line">  box: string</span><br><span class="line">): &#123; step: number; path: Pos[] &#125; &#123;</span><br><span class="line">  const start = findPlayer(grid, player);</span><br><span class="line">  if (start.x === -1 || start.y === -1) &#123;</span><br><span class="line">    return &#123; step: -1, path: [] &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const queue: &#123; pos: Pos; curStep: number &#125;[] = [];</span><br><span class="line">  const visited = new Set&lt;string&gt;();</span><br><span class="line">  const parent = new Map&lt;string, string&gt;(); // child -&gt; parent</span><br><span class="line"></span><br><span class="line">  queue.push(&#123; pos: start, curStep: 0 &#125;);</span><br><span class="line">  visited.add(`$&#123;start.x&#125;,$&#123;start.y&#125;`);</span><br><span class="line"></span><br><span class="line">  while (queue.length &gt; 0) &#123;</span><br><span class="line">    const &#123; pos: curPos, curStep &#125; = queue.shift()!;</span><br><span class="line">    for (let i = 0; i &lt; _dirs.length; i++) &#123;</span><br><span class="line">      const ny = curPos.y + _dirs[i].y;</span><br><span class="line">      const nx = curPos.x + _dirs[i].x;</span><br><span class="line"></span><br><span class="line">      // 边界检查</span><br><span class="line">      if (nx &lt; 0 || ny &lt; 0 || ny &gt;= grid.length || nx &gt;= grid[0].length) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      if (visited.has(`$&#123;nx&#125;,$&#123;ny&#125;`)) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      const tag = grid[ny][nx];</span><br><span class="line">      if (tag === &quot;#&quot;) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // 记录父节点</span><br><span class="line">      parent.set(`$&#123;nx&#125;,$&#123;ny&#125;`, `$&#123;curPos.x&#125;,$&#123;curPos.y&#125;`);</span><br><span class="line"></span><br><span class="line">      if (tag === box) &#123;</span><br><span class="line">        // 回溯路径</span><br><span class="line">        const path: Pos[] = [];</span><br><span class="line">        let curKey = `$&#123;nx&#125;,$&#123;ny&#125;`;</span><br><span class="line">        while (curKey) &#123;</span><br><span class="line">          const [x, y] = curKey.split(&quot;,&quot;).map(Number);</span><br><span class="line">          path.push(&#123; x, y &#125;);</span><br><span class="line">          curKey = parent.get(curKey) || &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        path.reverse(); // 从起点到终点</span><br><span class="line">        return &#123; step: curStep + 1, path &#125;;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      queue.push(&#123; pos: &#123; x: nx, y: ny &#125;, curStep: curStep + 1 &#125;);</span><br><span class="line">      visited.add(`$&#123;nx&#125;,$&#123;ny&#125;`);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return &#123; step: -1, path: [] &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const result = findPlayerToBox(grid, &quot;P&quot;, &quot;B&quot;);</span><br><span class="line">console.log(&quot;P 到 B 步数:&quot;, result.step);</span><br><span class="line">console.log(&quot;路径:&quot;, result.path);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;通过使用广度优先搜索（BFS）算法，我们可以高效地查找玩家到目标的最短路径。其中 queue.shift()!;这里可以优化，因为如果 queue 数据巨大，会导致性能问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/" data-id="cmecdul4w0001dwu47btlgzzw" data-title="初探BFS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/08/15/week/2025/week45/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          每周见闻 - 第45 期
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/08/08/week/2025/week44/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">每周见闻 - 第44 期</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cocoscreator/">Cocoscreator</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%80%9D%E8%80%83/">思考</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/08/15/week/2025/week45/">每周见闻 - 第45 期</a>
+          </li>
+        
+          <li>
+            <a href="/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/">初探BFS</a>
+          </li>
+        
+          <li>
+            <a href="/2025/08/08/week/2025/week44/">每周见闻 - 第44 期</a>
+          </li>
+        
+          <li>
+            <a href="/2025/08/01/week/2025/week43/">每周见闻 - 第 43期</a>
+          </li>
+        
+          <li>
+            <a href="/2025/07/25/week/2025/week42/">每周见闻 - 第42 期</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 白杨左书<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
