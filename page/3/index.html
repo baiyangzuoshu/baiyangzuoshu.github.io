@@ -75,6 +75,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-game/ECS架构的实践与思考" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" class="article-date">
+  <time class="dt-published" datetime="2025-05-26T02:54:34.000Z" itemprop="datePublished">2025-05-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/">ECS架构的实践与思考</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/ECS.png"><br>&emsp;&emsp;随着游戏规模不断扩大，传统的面向对象（OOP）开发方式逐渐显露出一些明显的局限性，比如类继承结构的复杂性、代码的高度耦合和难以扩展，特别是在游戏逻辑频繁变动、实体类型丰富的项目中尤为明显。<br>&emsp;&emsp;传统开发模式通常是通过继承来定义游戏对象，每个对象都包含数据和行为，这种设计容易导致类体系复杂且僵化，修改或新增功能时牵一发而动全身，不利于扩展与维护。同时，频繁创建和销毁对象也会带来额外的性能开销。<br>&emsp;&emsp;针对这些问题，ECS（Entity-Component-System）架构应运而生，它以数据驱动为核心思想，将实体（Entity）、数据（Component）和逻辑（System）完全分离，显著提升了游戏架构的灵活性、性能和扩展性。</p>
+<h2 id="一、ECS-架构概览"><a href="#一、ECS-架构概览" class="headerlink" title="一、ECS 架构概览"></a>一、ECS 架构概览</h2><ul>
+<li>Entity（实体）：游戏中的对象标识，仅包含唯一 ID，没有行为和数据。</li>
+<li>Component（组件）：纯数据结构，定义实体的属性（如位置、速度、渲染节点引用）。</li>
+<li>System（系统）：逻辑单元，遍历拥有特定组件组合的实体，执行行为（如移动、渲染、碰撞检测）。</li>
+</ul>
+<p>三者职责分离，数据与逻辑完全解耦，组合灵活，便于性能优化与多线程并行。</p>
+<h2 id="二、基础实现"><a href="#二、基础实现" class="headerlink" title="二、基础实现"></a>二、基础实现</h2><h3 id="1-核心类定义"><a href="#1-核心类定义" class="headerlink" title="1. 核心类定义"></a>1. 核心类定义</h3>   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">export class Position  &#123;</span><br><span class="line">    constructor(private x: number,private  y: number,private  z: number) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; Entity &#125; from &quot;../Entity&quot;;</span><br><span class="line"></span><br><span class="line">export abstract class System &#123;</span><br><span class="line">    protected requiredComponents: string[] = [];</span><br><span class="line"></span><br><span class="line">    constructor(required: string[]) &#123;</span><br><span class="line">        this.requiredComponents = required;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public abstract update(entities: Entity[], deltaTime: number): void;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export class Entity &#123;</span><br><span class="line">  public id: number;</span><br><span class="line"></span><br><span class="line">  private components: Map&lt;string, any&gt;;</span><br><span class="line"></span><br><span class="line">  constructor(id: number) &#123;</span><br><span class="line">    this.id = id;</span><br><span class="line">    this.components = new Map();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  addComponent(component: any): void &#123;</span><br><span class="line">    const compName = component.constructor.name;</span><br><span class="line">    this.components.set(compName, component);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  getComponent&lt;T&gt;(compClass: &#123; new (...args: any[]): T &#125;): T | undefined &#123;</span><br><span class="line">    return this.components.get(compClass.name);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  removeComponent&lt;T&gt;(compClass: &#123; new (...args: any[]): T &#125;): void &#123;</span><br><span class="line">    this.components.delete(compClass.name);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  hasComponent&lt;T&gt;(compClass: &#123; new (...args: any[]): T &#125;): boolean &#123;</span><br><span class="line">    return this.components.has(compClass.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 4. 定义World类，管理实体和系统</span><br><span class="line">export class World &#123;</span><br><span class="line">    private entities: Entity[] = [];</span><br><span class="line">    private systems: System[] = [];</span><br><span class="line">    private nextEntityId: number = 1;</span><br><span class="line"></span><br><span class="line">    createEntity(): Entity &#123;</span><br><span class="line">        const entity = new Entity(this.nextEntityId++);</span><br><span class="line">        this.entities.push(entity);</span><br><span class="line">        return entity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    destroyEntity(entity: Entity): void &#123;</span><br><span class="line">        this.entities = this.entities.filter(e =&gt; e !== entity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    addComponent&lt;T&gt;(entity: Entity, component: T): void &#123;</span><br><span class="line">        entity.addComponent(component);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    addSystem(system: System): void &#123;</span><br><span class="line">        this.systems.push(system);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private getEntitiesWith(componentNames: string[]): Entity[] &#123;</span><br><span class="line">        return this.entities.filter(entity =&gt;</span><br><span class="line">            componentNames.every(name =&gt; entity.hasComponent(&#123; name &#125; as any))</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    update(deltaTime: number): void &#123;</span><br><span class="line">        for (const system of this.systems) &#123;</span><br><span class="line">            const entitiesToUpdate = this.getEntitiesWith((system as any).requiredComponents);</span><br><span class="line">            system.update(entitiesToUpdate, deltaTime);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-实现"><a href="#2-实现" class="headerlink" title="2.实现"></a>2.实现</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">export class MovementSystem extends System &#123;</span><br><span class="line">  constructor() &#123;</span><br><span class="line">    super([&quot;Position&quot;, &quot;Velocity&quot;]);</span><br><span class="line">  &#125;</span><br><span class="line">  public update(entities: Entity[], deltaTime: number): void &#123;</span><br><span class="line">    for (const entity of entities) &#123;</span><br><span class="line">      const pos = entity.getComponent(Position)!;</span><br><span class="line">      const vel = entity.getComponent(Velocity)!;</span><br><span class="line">      pos.x += vel.vx * deltaTime;</span><br><span class="line">      pos.y += vel.vy * deltaTime;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export class Velocity  &#123;</span><br><span class="line">    constructor(private vx: number,private vy: number) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-测试"><a href="#3-测试" class="headerlink" title="3.测试"></a>3.测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// 5. 测试示例：创建世界、实体、添加组件、注册系统并运行更新</span><br><span class="line">const world = new World();</span><br><span class="line"></span><br><span class="line">// 创建两个实体</span><br><span class="line">const player = world.createEntity();</span><br><span class="line">const enemy = world.createEntity();</span><br><span class="line"></span><br><span class="line">// 为实体添加组件</span><br><span class="line">world.addComponent(player, new Position(0, 0, 0));</span><br><span class="line">world.addComponent(player, new Velocity(1, 0)); // player初始速度(1,0)</span><br><span class="line">world.addComponent(enemy, new Position(5, 5, 0));</span><br><span class="line">world.addComponent(enemy, new Velocity(0, -1)); // enemy初始速度(0,-1)</span><br><span class="line"></span><br><span class="line">// 注册移动系统</span><br><span class="line">world.addSystem(new MovementSystem());</span><br><span class="line"></span><br><span class="line">// 模拟游戏帧更新（deltaTime=1，例如1秒）</span><br><span class="line">world.update(1);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" data-id="cmgkg1qos000xocu42n6khn09" data-title="ECS架构的实践与思考" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2025/week33" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/05/23/week/2025/week33/" class="article-date">
@@ -129,7 +184,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/05/23/week/2025/week33/" data-id="cmfrlm84c0048hcu41yjddla8" data-title="每周见闻 - 第 33 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/23/week/2025/week33/" data-id="cmgkg1qpr0040ocu4cdg0e3p3" data-title="每周见闻 - 第 33 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -197,7 +252,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/05/16/week/2025/week32/" data-id="cmfrlm84b0044hcu432c7bbiu" data-title="每周见闻 - 第32 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/16/week/2025/week32/" data-id="cmgkg1qpq003wocu46mlx5ufh" data-title="每周见闻 - 第32 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -261,7 +316,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/05/09/week/2025/week31/" data-id="cmfrlm84b0040hcu44uh11bki" data-title="每周见闻 - 第31 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/09/week/2025/week31/" data-id="cmgkg1qpp003socu46sd1gu93" data-title="每周见闻 - 第31 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -333,7 +388,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/04/25/week/2025/week30/" data-id="cmfrlm84a003whcu4ey843d8o" data-title="每周见闻 - 第 30 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/25/week/2025/week30/" data-id="cmgkg1qpo003oocu40hk1dqfo" data-title="每周见闻 - 第 30 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -397,7 +452,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/04/18/week/2025/week29/" data-id="cmfrlm849003shcu4866l50nw" data-title="每周见闻 - 第29 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/18/week/2025/week29/" data-id="cmgkg1qpn003kocu4e7sqagv5" data-title="每周见闻 - 第29 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -462,7 +517,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/04/11/week/2025/week28/" data-id="cmfrlm849003ohcu44ae074kl" data-title="每周见闻 - 第 28 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/11/week/2025/week28/" data-id="cmgkg1qpg003gocu4dvynck7q" data-title="每周见闻 - 第 28 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -521,7 +576,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/04/06/week/2025/week27/" data-id="cmfrlm848003khcu4cwfjedt0" data-title="每周见闻 - 第 27 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/04/06/week/2025/week27/" data-id="cmgkg1qpf003cocu4bomq0cz8" data-title="每周见闻 - 第 27 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -579,7 +634,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/28/week/2025/week26/" data-id="cmfrlm847003ghcu4e6lk513o" data-title="每周见闻 - 第 26 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/03/28/week/2025/week26/" data-id="cmgkg1qpe0038ocu4apdsd47q" data-title="每周见闻 - 第 26 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -640,70 +695,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/" data-id="cmfrlm83n000jhcu464dsf1cn" data-title="Cocoscreator中实现纹理合批" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/" data-id="cmgkg1qor000socu49mf4bedx" data-title="Cocoscreator中实现纹理合批" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week25" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/03/14/week/2025/week25/" class="article-date">
-  <time class="dt-published" datetime="2025-03-14T06:51:00.000Z" itemprop="datePublished">2025-03-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/03/14/week/2025/week25/">每周见闻 - 第 25 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/leonard2.gif"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/gS3Tdl3pMUKopnNtdgKchg">1.百威亚太被曝裁员数千人，以削减成本15%</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Y2u2xLkthHNf7NL-O69HAQ">2.李嘉诚公司将巴拿马运河港口卖给美财团</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zd2fK-QW-BmEbP0qT8v-uQ">3.百度重磅发布文心4.5、X1，视频解读+深度思考</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/AieGolbOKa8I_MgjwxfPRA">4.“13岁女儿涉嫌开盒他人”，刚刚百度副总裁道歉：深感愧疚</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/pOnaXdiHixe9Cll0z3klAQ">5.德国知名汽车制造商奥迪大裁员！7500人面临失业</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/QfxKzlOwG8GyRpeXBw8sWQ">6.Zoom发布全平台Agent，智能体大爆发</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/YpIGjSC9-4mfjcwlVmIR4Q">7.滞留宇航员搭载SpaceX“龙”飞船返回地球</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8hosLrqQDbT">8.英伟达：B200已破DeepSeek-R1推理世界纪录</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/74JbiTDuMaH4LTX5Gc1-nw">9.OpenAI首发语音Agent，智能体实现重大突破</a></p>
-<p><a target="_blank" rel="noopener" href="https://m.weibo.cn/search?containerid=231522type=1&t=10&q=%23%E5%87%AF%E5%B0%94%E7%89%B9%E4%BA%BA61%E4%BA%BF%E7%BE%8E%E5%85%83%E5%87%BA%E5%94%AE%23&extparam=%23%E5%87%AF%E5%B0%94%E7%89%B9%E4%BA%BA61%E4%BA%BF%E7%BE%8E%E5%85%83%E5%87%BA%E5%94%AE%23">10.凯尔特人61亿美元被格罗斯贝克家族售出</a></p>
-<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/langmanus/langmanus">1.LangManus</a><br>LangManus 是一个社区驱动的 AI 自动化框架，它建立在开源社区的卓越工作基础之上。我们的目标是将语言模型与专业工具（如网络搜索、爬虫和 Python 代码执行）相结合，同时回馈让这一切成为可能的社区。<br><img src="/images/2025/20250321134612.png" alt="LangManus"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/krahets/hello-algo">2.hello算法</a><br>本项目旨在打造一本开源免费、新手友好的数据结构与算法入门教程。<br>全书采用动画图解，内容清晰易懂、学习曲线平滑，引导初学者探索数据结构与算法的知识地图。<br>源代码可一键运行，帮助读者在练习中提升编程技能，了解算法工作原理和数据结构底层实现。<br>提倡读者互助学习，欢迎大家在评论区提出问题与分享见解，在交流讨论中共同进步。<br><img src="/images/2025/20250321134938.png" alt="hello算法"></p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img src="/images/2025/p2579932167.webp" alt="喜剧之王"></p>
-<p>尹天仇（周星驰 饰）一直醉心戏剧，想成为一名演员，平时除了做跑龙套以外，还会在街坊福利会里开设演员训练班。此时舞小姐柳飘飘在妈妈桑的带领下来到这里要求学做戏，原来柳飘飘有一段非常不愉快的经历，在尹天仇对她指导的过程中，柳飘飘对尹天仇渐生情愫，同时她也成为了夜总会里当红的小姐。尹天仇受到了极多白眼之后，终于得到了大明星鹃姐（莫文蔚 饰）的赏识，提携他担演新戏中的男主角，但没想到突然把他的角色换掉了，令他失望不已。在片场当场务的卧底警员（吴孟达 饰）身份被识穿，尹天仇阴差阳错的帮忙破了案。之后尹天仇继续活跃在街坊福利会的演员训练班里</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/14/week/2025/week25/" data-id="cmfrlm847003chcu4bokm65rv" data-title="每周见闻 - 第 25 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
 
     </footer>
   </div>
@@ -738,7 +734,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
     </div>
   </div>
 
@@ -748,7 +744,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+      <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
     </div>
   </div>
 
@@ -757,7 +753,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
     </div>
   </div>
 
@@ -768,6 +764,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2025/10/10/Algorithm/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8E%8B%E7%BC%A9%E7%AE%97%E6%B3%95/">二进制压缩算法</a>
+          </li>
         
           <li>
             <a href="/2025/09/20/week/2025/week50/">每周见闻 - 第50 期</a>
@@ -783,10 +783,6 @@
         
           <li>
             <a href="/2025/08/29/week/2025/week47/">每周见闻 - 第47 期</a>
-          </li>
-        
-          <li>
-            <a href="/2025/08/22/week/2025/week46/">每周见闻 - 第 46 期</a>
           </li>
         
       </ul>
