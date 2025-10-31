@@ -75,6 +75,68 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Algorithm/初探BFS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/" class="article-date">
+  <time class="dt-published" datetime="2025-08-09T11:28:41.000Z" itemprop="datePublished">2025-08-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/">初探BFS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/images/2025/bfs-vs-dfs-(1).png"></p>
+<p>语言：typescript</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;最近做的项目有类似连连看消除的功能，需要使用到 BFS 算法，因此想先初探一下 BFS 算法。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>&emsp;&emsp;广度优先搜索（Breadth-First Search, BFS）作为一种系统地遍历图或树节点的算法，其思想最早可以追溯到 20 世纪中期。德国计算机先驱康拉德·楚澤（Konrad Zuse）在 1945 年的博士论文中首次描述了类似于 BFS 的算法思想。当时楚澤正致力于设计世界上第一种高级编程语言——Plankalkül。在其未发表的博士论文（由于二战后局势未能提交，直到 1972 年才出版）中，楚澤给出了一个完整的示例程序，用于计算图的连通分量。这份示例程序使用的正是广度优先的搜索策略：从图中某一节点出发，按层次遍历整个图，以标记和计数不连通图中的各个组件。这可以被视为 BFS 算法的雏形，其背景属于图论范畴（寻找图的连通组件的问题）。值得注意的是，楚澤的工作发生在计算机科学正式诞生之初，他从工程和数学角度出发，在算法层面提出了这一思想，但当时并未引起学界广泛关注，因为论文迟迟未出版。 虽然楚澤在 1945 年就提出了 BFS 思想，但这一成果当时并没有传播开来。直到 20 世纪 50 年代末，BFS 算法才在学术出版物中正式露面。</p>
+<p>代码实现<br>&emsp;&emsp;BFS 算法的代码实现如下：</p>
+<h3 id="1-定义数据结构"><a href="#1-定义数据结构" class="headerlink" title="1. 定义数据结构"></a>1. 定义数据结构</h3><p>&emsp;&emsp;首先，我们需要定义一个数据结构来表示图的节点。每个节点包含节点的坐标和到起始节点的距离。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const grid = [</span><br><span class="line">  [&quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;#&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;.&quot;, &quot;#&quot;, &quot;.&quot;, &quot;#&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;P&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;.&quot;, &quot;#&quot;, &quot;B&quot;, &quot;#&quot;, &quot;.&quot;],</span><br><span class="line">  [&quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;, &quot;.&quot;],</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这段代码定义了一个二维数组 <code>grid</code>，表示一个网格图。每个元素可以是 “.” 表示空位置，”#” 表示障碍物，”P” 表示玩家，”B” 表示目标。</p>
+<h3 id="2-查找玩家位置"><a href="#2-查找玩家位置" class="headerlink" title="2. 查找玩家位置"></a>2. 查找玩家位置</h3><p>&emsp;&emsp;接下来，我们需要查找玩家的位置。这里我们使用的是玩家的字符 “P” 来查找。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">interface Pos &#123;</span><br><span class="line">  x: number;</span><br><span class="line">  y: number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const _dirs = [</span><br><span class="line">  &#123; x: -1, y: 0 &#125;,</span><br><span class="line">  &#123; x: 1, y: 0 &#125;,</span><br><span class="line">  &#123; x: 0, y: -1 &#125;,</span><br><span class="line">  &#123; x: 0, y: 1 &#125;,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">console.table(grid);</span><br><span class="line"></span><br><span class="line">function findPlayer(grid: string[][], player: string) &#123;</span><br><span class="line">  for (let y = 0; y &lt; grid.length; y++) &#123;</span><br><span class="line">    for (let x = 0; x &lt; grid[y].length; x++) &#123;</span><br><span class="line">      if (grid[y][x] === player) &#123;</span><br><span class="line">        return &#123; x, y &#125;;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return &#123; x: -1, y: -1 &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const pos = findPlayer(grid, &quot;P&quot;);</span><br><span class="line">console.log(&quot;P pos:&quot;, pos);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查找玩家到目标的最短路径"><a href="#3-查找玩家到目标的最短路径" class="headerlink" title="3. 查找玩家到目标的最短路径"></a>3. 查找玩家到目标的最短路径</h3><p>&emsp;&emsp;接下来，我们需要查找玩家到目标的最短路径。这里我们使用的是玩家的字符 “P” 和目标的字符 “B” 来查找。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">unction findPlayerToBox(</span><br><span class="line">  grid: string[][],</span><br><span class="line">  player: string,</span><br><span class="line">  box: string</span><br><span class="line">): number &#123;</span><br><span class="line">  const pos = findPlayer(grid, player);</span><br><span class="line">  if (pos.x == -1 || pos.y == -1) &#123;</span><br><span class="line">    return -1;</span><br><span class="line">  &#125;</span><br><span class="line">  const queue: &#123; pos: Pos; curStep: number &#125;[] = [];</span><br><span class="line">  const visited = new Set&lt;string&gt;();</span><br><span class="line">  queue.push(&#123; pos, curStep: 0 &#125;);</span><br><span class="line">  visited.add($&#123;pos.x&#125;,$&#123;pos.y&#125;);</span><br><span class="line">  while (queue.length &gt; 0) &#123;</span><br><span class="line">    const &#123; pos: curPos, curStep &#125; = queue.shift();</span><br><span class="line">    for (let i = 0; i &lt; _dirs.length; i++) &#123;</span><br><span class="line">      const ny = curPos.y + _dirs[i].y;</span><br><span class="line">      const nx = curPos.x + _dirs[i].x;</span><br><span class="line">      if (nx &lt; 0 || ny &lt; 0 || ny &gt;= grid.length || nx &gt;= grid[0].length) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      if (visited.has($&#123;nx&#125;,$&#123;ny&#125;)) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      const tag = grid[ny][nx];</span><br><span class="line">      if (&quot;#&quot; == tag) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      if (box == tag) &#123;</span><br><span class="line">        return curStep + 1;</span><br><span class="line">      &#125;</span><br><span class="line">      queue.push(&#123; pos: &#123; x: nx, y: ny &#125;, curStep: curStep + 1 &#125;);</span><br><span class="line">      visited.add($&#123;nx&#125;,$&#123;ny&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return -1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const step = findPlayerToBox(grid, &quot;P&quot;, &quot;B&quot;);</span><br><span class="line">console.log(&quot;step:&quot;, step);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-回朔路径"><a href="#4-回朔路径" class="headerlink" title="4. 回朔路径"></a>4. 回朔路径</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">function findPlayerToBox(</span><br><span class="line">  grid: string[][],</span><br><span class="line">  player: string,</span><br><span class="line">  box: string</span><br><span class="line">): &#123; step: number; path: Pos[] &#125; &#123;</span><br><span class="line">  const start = findPlayer(grid, player);</span><br><span class="line">  if (start.x === -1 || start.y === -1) &#123;</span><br><span class="line">    return &#123; step: -1, path: [] &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const queue: &#123; pos: Pos; curStep: number &#125;[] = [];</span><br><span class="line">  const visited = new Set&lt;string&gt;();</span><br><span class="line">  const parent = new Map&lt;string, string&gt;(); // child -&gt; parent</span><br><span class="line"></span><br><span class="line">  queue.push(&#123; pos: start, curStep: 0 &#125;);</span><br><span class="line">  visited.add(`$&#123;start.x&#125;,$&#123;start.y&#125;`);</span><br><span class="line"></span><br><span class="line">  while (queue.length &gt; 0) &#123;</span><br><span class="line">    const &#123; pos: curPos, curStep &#125; = queue.shift()!;</span><br><span class="line">    for (let i = 0; i &lt; _dirs.length; i++) &#123;</span><br><span class="line">      const ny = curPos.y + _dirs[i].y;</span><br><span class="line">      const nx = curPos.x + _dirs[i].x;</span><br><span class="line"></span><br><span class="line">      // 边界检查</span><br><span class="line">      if (nx &lt; 0 || ny &lt; 0 || ny &gt;= grid.length || nx &gt;= grid[0].length) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      if (visited.has(`$&#123;nx&#125;,$&#123;ny&#125;`)) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      const tag = grid[ny][nx];</span><br><span class="line">      if (tag === &quot;#&quot;) &#123;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // 记录父节点</span><br><span class="line">      parent.set(`$&#123;nx&#125;,$&#123;ny&#125;`, `$&#123;curPos.x&#125;,$&#123;curPos.y&#125;`);</span><br><span class="line"></span><br><span class="line">      if (tag === box) &#123;</span><br><span class="line">        // 回溯路径</span><br><span class="line">        const path: Pos[] = [];</span><br><span class="line">        let curKey = `$&#123;nx&#125;,$&#123;ny&#125;`;</span><br><span class="line">        while (curKey) &#123;</span><br><span class="line">          const [x, y] = curKey.split(&quot;,&quot;).map(Number);</span><br><span class="line">          path.push(&#123; x, y &#125;);</span><br><span class="line">          curKey = parent.get(curKey) || &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        path.reverse(); // 从起点到终点</span><br><span class="line">        return &#123; step: curStep + 1, path &#125;;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      queue.push(&#123; pos: &#123; x: nx, y: ny &#125;, curStep: curStep + 1 &#125;);</span><br><span class="line">      visited.add(`$&#123;nx&#125;,$&#123;ny&#125;`);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return &#123; step: -1, path: [] &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const result = findPlayerToBox(grid, &quot;P&quot;, &quot;B&quot;);</span><br><span class="line">console.log(&quot;P 到 B 步数:&quot;, result.step);</span><br><span class="line">console.log(&quot;路径:&quot;, result.path);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;通过使用广度优先搜索（BFS）算法，我们可以高效地查找玩家到目标的最短路径。其中 queue.shift()!;这里可以优化，因为如果 queue 数据巨大，会导致性能问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/08/09/Algorithm/%E5%88%9D%E6%8E%A2BFS/" data-id="cmheedrxs0007ssu4fv51bpwx" data-title="初探BFS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2025/week44" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/08/08/week/2025/week44/" class="article-date">
@@ -124,7 +186,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/08/08/week/2025/week44/" data-id="cmh4nfiju0058ycu42hyjgvnz" data-title="每周见闻 - 第44 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/08/08/week/2025/week44/" data-id="cmheedrz3004yssu4dt512rs7" data-title="每周见闻 - 第44 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -189,7 +251,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/08/01/week/2025/week43/" data-id="cmh4nfijt0054ycu4e8ah1c74" data-title="每周见闻 - 第 43期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/08/01/week/2025/week43/" data-id="cmheedrys003assu4hlwh1q9z" data-title="每周见闻 - 第 43期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -257,7 +319,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/07/25/week/2025/week42/" data-id="cmh4nfijt0050ycu47wld596u" data-title="每周见闻 - 第42 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/07/25/week/2025/week42/" data-id="cmheedrys0036ssu40g5ugsn3" data-title="每周见闻 - 第42 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -321,7 +383,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/07/18/week/2025/week41/" data-id="cmh4nfijs004wycu449j4exew" data-title="每周见闻 - 第 41期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/07/18/week/2025/week41/" data-id="cmheedryr0032ssu400lt1omc" data-title="每周见闻 - 第 41期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -388,7 +450,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/07/11/week/2025/week40/" data-id="cmh4nfijr004sycu4149bhf3t" data-title="每周见闻 - 第 40期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/07/11/week/2025/week40/" data-id="cmheedryq002zssu4fd8y78sy" data-title="每周见闻 - 第 40期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -456,7 +518,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/07/04/week/2025/week39/" data-id="cmh4nfijr004oycu4algmb9zf" data-title="每周见闻 - 第39 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/07/04/week/2025/week39/" data-id="cmheedryv003mssu457hzhr9b" data-title="每周见闻 - 第39 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -518,7 +580,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/06/27/week/2025/week38/" data-id="cmh4nfijq004kycu421gd3o75" data-title="每周见闻 - 第38 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/06/27/week/2025/week38/" data-id="cmheedryq002vssu4bg6udr11" data-title="每周见闻 - 第38 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -582,7 +644,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/06/20/week/2025/week37/" data-id="cmh4nfijp004gycu46d5c4owo" data-title="每周见闻 - 第37 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/06/20/week/2025/week37/" data-id="cmheedryp002tssu4cecr4z1n" data-title="每周见闻 - 第37 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -644,73 +706,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/06/13/week/2025/week36/" data-id="cmh4nfijp004cycu464pk6u0t" data-title="每周见闻 - 第36 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2025/week35" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/06/06/week/2025/week35/" class="article-date">
-  <time class="dt-published" datetime="2025-06-06T02:14:10.000Z" itemprop="datePublished">2025-06-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/06/06/week/2025/week35/">每周见闻 - 第 35期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img src="/images/2025/KqFNBMIHIi8ovNxr.jpg"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CavxQdpNrBdOTqmpzboj1A">1.苹果拟推出新PC游戏平台，搅局发行市场</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/766AzMDzoL_M1mf8dEXDLQ">2.永坤黄金的黄金买卖出现大规模兑付异常</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/-Ua6-N3m4k_X9m1oQip5qw">3.香港一恒生银行发生持刀抢劫案</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/v1NZlJ00OsAEHXKX_sIa3Q">4.微软，再裁员</a></p>
-<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/jjxw/2025-06-06/doc-inezachu1209544.shtml">5.花旗突然宣布：在华裁员约3500人</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jtss0vG83a">6.2025苹果设计大奖揭晓：12款App与游戏树立行业标杆</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wtzLqyK50ICO2N8i1ASbpQ">7.迅雷5亿收购虎扑</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.36kr.com/p/3321511070755079">8.5轮融资的“住范儿”爆雷2个月，业主维权难</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.xinhuanet.com/sports/20250606/b1cbbd79fd1147f2bf0711214d74c2ca/c.html">9.国足世预赛18强赛客负印尼 无缘美加墨世界杯</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jx6bGGOqa5">10.马斯克与特朗普闹掰 特斯拉暴跌14%市值蒸发1万亿</a></p>
-<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EdUbzpI6I3INTft1hXnJLQ">1.梁文锋 俯身做真正的创新</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jnlz0REtR6">2.无人再谈AI六小龙</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8jp65s8E5CA">3.苹果 AI：是“崩塌”还是“成长的烦恼”</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TQ__2wFYwg1pmheeUTF8Iw">4.9岁少年坠亡：一个围棋“天才”家庭的明暗面</a></p>
-<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://www.bestblogs.dev/article/dc7fed">1.DeepSeek-R1 更新，思考更深，推理更强</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Wn1rdofeVHW1s-lJm4CszQ">2.免费使用Sora！微软发布Bing Video Creator</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/doPRJXeD_Ca1yGNAUbc5qw">3.刚刚，全球第一CRM收购AI Agent平台Moonhub</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/K5PAi-iQ2Dcnip6Lw2gAFg">4.OpenAI发布ChatGPT记忆功能，秒变私人助理</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Ki2Go5e-GmiJyqFXqlHwlQ">5.OpenAI深夜宣布ChatGPT支持MCP、会议记录</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/pH4doOTIRhDZEIqRimomyg">6.亚马逊投资100亿美元发展AI，并成立AI Agent团队</a></p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img src="/images/2025/p2530507350.webp" alt="城市英雄"><br>迈克尔·道格拉斯扮演的威廉·福斯特是一家军工场的工程师，被解雇后心情很压抑。因离婚，小女儿的生日没被邀请，恰好路上堵车，他弃车走进一家杂货铺，想找点零钱打电话，却遭到刁难，他操起垒球棒砸了铺子。在公园休息时，又和流氓打了一架；在快餐店里因和服务生发生争执，他拔出从流氓那里缴获的手枪一阵乱射，此时他已完全失控。最后，他面对退休警官的枪口，不禁自问：“我是坏人吗？”</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/06/06/week/2025/week35/" data-id="cmh4nfijo0048ycu49rg990de" data-title="每周见闻 - 第 35期" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/06/13/week/2025/week36/" data-id="cmheedryp002pssu43ktbbmwy" data-title="每周见闻 - 第36 期" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -781,6 +777,10 @@
       <ul>
         
           <li>
+            <a href="/2025/10/31/week/2025/week53/">每周见闻 - 第53 期</a>
+          </li>
+        
+          <li>
             <a href="/2025/10/24/week/2025/week52/">每周见闻 - 第52 期</a>
           </li>
         
@@ -794,10 +794,6 @@
         
           <li>
             <a href="/2025/09/20/week/2025/week50/">每周见闻 - 第50 期</a>
-          </li>
-        
-          <li>
-            <a href="/2025/09/12/week/2025/week49/">每周见闻 - 第49 期</a>
           </li>
         
       </ul>
