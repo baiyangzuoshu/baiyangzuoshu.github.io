@@ -40,9 +40,12 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Deploy public directory to master
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: master
-          publish_dir: ./blog/public
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy with Hexo
+        env:
+          HEXO_DEPLOYER_REPO: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/baiyangzuoshu/baiyangzuoshu.github.io.git,master
+        run: npx hexo deploy
