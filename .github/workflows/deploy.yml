@@ -40,12 +40,7 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Configure Git identity
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
       - name: Deploy with Hexo
         env:
-          HEXO_DEPLOYER_REPO: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/baiyangzuoshu/baiyangzuoshu.github.io.git,master
-        run: npx hexo deploy
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx hexo deploy --config _config.yml,_config.ci.yml

@@ -1,0 +1,8 @@
+deploy:
+  type: git
+  repo:
+    url: https://github.com/baiyangzuoshu/baiyangzuoshu.github.io.git
+    branch: master
+    token: $GITHUB_TOKEN
+  name: github-actions[bot]
+  email: 41898282+github-actions[bot]@users.noreply.github.com
