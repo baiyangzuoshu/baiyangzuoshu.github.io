@@ -37,7 +37,8 @@
 
   
   
-<meta name="generator" content="Hexo 7.3.0">
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
   <link rel="canonical" href="https://baiyangzuoshu.github.io/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/">
 </head>
 
@@ -107,7 +108,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><img src="/images/2025/s33940373.jpg"><br>&emsp;&emsp;我想有必要总结一下游戏开发中图片如何被渲染到移动设备上的过程。无论采用何种格式，图片都保存着每个像素位置对应的 RGBA 数据。当 CPU 将图片数据加载到内存中后，如果未指定具体位置，则默认在（0，0）位置上进行渲染，通过 MVP（模型-视图-投影）矩阵转换，得到最终的位置坐标。当 CPU 阶段的数据准备完成后，进入 GPU 阶段。首先，顶点着色器会对顶点位置进行转换。</p>
+        <p><img loading="lazy" decoding="async" src="/images/2025/s33940373.jpg"><br>&emsp;&emsp;我想有必要总结一下游戏开发中图片如何被渲染到移动设备上的过程。无论采用何种格式，图片都保存着每个像素位置对应的 RGBA 数据。当 CPU 将图片数据加载到内存中后，如果未指定具体位置，则默认在（0，0）位置上进行渲染，通过 MVP（模型-视图-投影）矩阵转换，得到最终的位置坐标。当 CPU 阶段的数据准备完成后，进入 GPU 阶段。首先，顶点着色器会对顶点位置进行转换。</p>
 <p>&emsp;&emsp;渲染这一术语本身来源于电影工业，渲染管线包括顶点数据输入、顶点着色器处理、形状装配、光栅化、片元着色器处理以及片元的最终输出。归一化坐标将原始坐标映射到 0 到 1 之间的统一范围，这种方法有效解决了不同设备屏幕尺寸带来的兼容性问题。光栅化阶段具体负责将装配好的形状转化为图元，并对片元进行插值。纹理映射则将二维图像应用于三维模型表面。</p>
 <p>&emsp;&emsp;在具体实现上，可以使用索引缓冲区将顶点数据组合为网格面。渲染所用的二维图像称为“纹理”，从纹理中获取特定点颜色值的过程称为“采样”。每个网格利用 UV 坐标，使片元能够精确地从纹理的不同区域采样颜色。纹理通常以 UV 坐标 0 到 1 之间的范围定义，以确保纹理中的每个像素都能被正确采样。</p>
 <p>&emsp;&emsp;Alpha 测试是检查片元透明度是否达到特定阈值并舍弃不合格片元的过程，可使用 discard 语句直接从渲染管线中删除不需要的片元。GPU 通过深度缓冲区存储信息，以确定物体间的遮挡关系，这被称为深度测试。在片元处理阶段，不透明的片元将与当前的后置缓冲内容进行混合处理。</p>
@@ -120,7 +121,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/" data-id="cmna82g4d000ncz771q0gcwko" data-title="读《Shader开发实战》有感" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/06/02/book/%E8%AF%BB%E3%80%8AShader%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98%E3%80%8B%E6%9C%89%E6%84%9F/" data-id="cmna8q2rn000om277b65p6jic" data-title="读《Shader开发实战》有感" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -269,5 +270,7 @@
 
 
   </div>
-</body>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end --></body>
 </html>

@@ -37,7 +37,8 @@
 
   
   
-<meta name="generator" content="Hexo 7.3.0">
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
   <link rel="canonical" href="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/">
 </head>
 
@@ -107,7 +108,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><img src="/images/2025/ECS.png"><br>&emsp;&emsp;随着游戏规模不断扩大，传统的面向对象（OOP）开发方式逐渐显露出一些明显的局限性，比如类继承结构的复杂性、代码的高度耦合和难以扩展，特别是在游戏逻辑频繁变动、实体类型丰富的项目中尤为明显。<br>&emsp;&emsp;传统开发模式通常是通过继承来定义游戏对象，每个对象都包含数据和行为，这种设计容易导致类体系复杂且僵化，修改或新增功能时牵一发而动全身，不利于扩展与维护。同时，频繁创建和销毁对象也会带来额外的性能开销。<br>&emsp;&emsp;针对这些问题，ECS（Entity-Component-System）架构应运而生，它以数据驱动为核心思想，将实体（Entity）、数据（Component）和逻辑（System）完全分离，显著提升了游戏架构的灵活性、性能和扩展性。</p>
+        <p><img loading="lazy" decoding="async" src="/images/2025/ECS.png"><br>&emsp;&emsp;随着游戏规模不断扩大，传统的面向对象（OOP）开发方式逐渐显露出一些明显的局限性，比如类继承结构的复杂性、代码的高度耦合和难以扩展，特别是在游戏逻辑频繁变动、实体类型丰富的项目中尤为明显。<br>&emsp;&emsp;传统开发模式通常是通过继承来定义游戏对象，每个对象都包含数据和行为，这种设计容易导致类体系复杂且僵化，修改或新增功能时牵一发而动全身，不利于扩展与维护。同时，频繁创建和销毁对象也会带来额外的性能开销。<br>&emsp;&emsp;针对这些问题，ECS（Entity-Component-System）架构应运而生，它以数据驱动为核心思想，将实体（Entity）、数据（Component）和逻辑（System）完全分离，显著提升了游戏架构的灵活性、性能和扩展性。</p>
 <h2 id="一、ECS-架构概览"><a href="#一、ECS-架构概览" class="headerlink" title="一、ECS 架构概览"></a>一、ECS 架构概览</h2><ul>
 <li>Entity（实体）：游戏中的对象标识，仅包含唯一 ID，没有行为和数据。</li>
 <li>Component（组件）：纯数据结构，定义实体的属性（如位置、速度、渲染节点引用）。</li>
@@ -122,7 +123,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" data-id="cmna82g4e0011cz77a07vfg93" data-title="ECS架构的实践与思考" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" data-id="cmna8q2ro0014m2774jm71aah" data-title="ECS架构的实践与思考" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -271,5 +272,7 @@
 
 
   </div>
-</body>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end --></body>
 </html>
