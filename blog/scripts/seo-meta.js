@@ -1,5 +1,14 @@
 const { escapeHTML, stripHTML, truncate, unescapeHTML } = require("hexo-util");
 
+hexo.extend.injector.register(
+  "head_end",
+  '\n<link rel="stylesheet" href="/css/site-enhancements.css">'
+);
+hexo.extend.injector.register(
+  "body_end",
+  '\n<script src="/js/local-search.js"></script>'
+);
+
 function toPlainText(input) {
   if (!input) {
     return "";
@@ -55,6 +64,8 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
       );
     }
   }
+
+  result = result.replace(/<img(?![^>]*\bloading=)([^>]*?)>/g, '<img loading="lazy" decoding="async"$1>');
 
   if (!data || !data.path || !this.config.url || result.includes('rel="canonical"')) {
     return result;

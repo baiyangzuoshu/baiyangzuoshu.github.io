@@ -96,6 +96,12 @@ sitemap:
   tags: true
   categories: true
 
+search:
+  path: search.json
+  field: post
+  content: true
+  format: striptags
+
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
