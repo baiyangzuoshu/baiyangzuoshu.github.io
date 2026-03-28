@@ -6,7 +6,7 @@
 title: 白杨左书
 subtitle: 没有品性的丰满，知识就是伪装
 description: 没有品性的丰满，知识就是伪装
-keywords:
+keywords: 白杨左书,周刊,读书,算法,游戏开发,AI,藏书
 author: 白杨左书
 language: zh-CN
 timezone: Asia/Shanghai
@@ -77,6 +77,24 @@ tag_map:
 # Metadata elements
 ## https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
 meta_generator: true
+
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  content_limit: 180
+  content_limit_delim: " "
+  order_by: -date
+  autodiscovery: true
+  icon: /images/2024/favicon32.ico
+
+sitemap:
+  path:
+    - sitemap.xml
+    - sitemap.txt
+  rel: true
+  tags: true
+  categories: true
 
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
