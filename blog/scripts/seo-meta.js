@@ -6,7 +6,7 @@ hexo.extend.injector.register(
 );
 hexo.extend.injector.register(
   "body_end",
-  '\n<script src="/js/local-search.js"></script>'
+  '\n<script src="/js/local-search.js"></script>\n<script src="/js/site-interactions.js"></script>'
 );
 
 function toPlainText(input) {

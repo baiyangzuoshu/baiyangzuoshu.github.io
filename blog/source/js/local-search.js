@@ -13,6 +13,7 @@
 
   $wrap.append($panel);
   $form.attr({ action: "#", autocomplete: "off" });
+  $input.attr({ placeholder: "站内搜索", "aria-label": "站内搜索" });
   $input.off("blur");
 
   function escapeHtml(value) {
