@@ -102,6 +102,38 @@ search:
   content: true
   format: striptags
 
+comments:
+  provider: giscus
+  giscus:
+    repo: baiyangzuoshu/baiyangzuoshu.github.io
+    repo_id: R_kgDOM2uYIA # required: repository id from giscus app
+    category: Announcements # recommended default discussion category
+    category_id: DIC_kwDOM2uYIM4C5eW1 # required: category id from giscus app
+    mapping: pathname
+    strict: 0
+    reactions_enabled: 1
+    emit_metadata: 0
+    input_position: bottom
+    theme: preferred_color_scheme
+    lang: zh-CN
+
+analytics:
+  provider: clarity
+  clarity:
+    project_id: w2upclgnjh # required: project id from Microsoft Clarity
+    script_host: https://www.clarity.ms/tag/
+  umami:
+    script_url: https://cloud.umami.is/script.js
+    website_id: ""
+    domains: baiyangzuoshu.github.io
+    host_url: ""
+    auto_track: true
+    do_not_track: true
+    exclude_search: false
+    exclude_hash: false
+    performance: false
+    tag: ""
+
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
