@@ -6,23 +6,24 @@
   
   <title>Cocoscreator中实现纹理合批 | 白杨左书</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="前言最近在优化停车场小游戏，其中有一个是减少 DC。停车场小游戏是 3D 转 2D 的项目，因此车子使用的是 9 个方向，通过镜像翻转等实现 32 个方向。简单点说，360 度的角度，渲染了 32 个方向，每个方向的间隔是 11.25 度。这样的好处是丰富了车子的形态，坏处则是资源变大，无法通过简单的大图解决合批问题。 DC 是什么简单来说，DC 代表了 CPU 向 GPU 发送的渲染调用次数，每">
+  <meta name="description" content="前言最近在优化停车场小游戏，其中有一个是减少 DC。停...">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cocoscreator中实现纹理合批">
 <meta property="og:url" content="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/index.html">
 <meta property="og:site_name" content="白杨左书">
-<meta property="og:description" content="前言最近在优化停车场小游戏，其中有一个是减少 DC。停车场小游戏是 3D 转 2D 的项目，因此车子使用的是 9 个方向，通过镜像翻转等实现 32 个方向。简单点说，360 度的角度，渲染了 32 个方向，每个方向的间隔是 11.25 度。这样的好处是丰富了车子的形态，坏处则是资源变大，无法通过简单的大图解决合批问题。 DC 是什么简单来说，DC 代表了 CPU 向 GPU 发送的渲染调用次数，每">
+<meta property="og:description" content="前言最近在优化停车场小游戏，其中有一个是减少 DC。停...">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-03-22T00:50:30.000Z">
 <meta property="article:modified_time" content="2025-03-22T00:50:30.000Z">
 <meta property="article:author" content="白杨左书">
 <meta property="article:tag" content="优化">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="前言最近在优化停车场小游戏，其中有一个是减少 DC。停...">
   
     <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
   
   
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="shortcut icon" href="/images/2024/favicon32.ico">
   
   
   
@@ -34,7 +35,9 @@
 
   
   
-<meta name="generator" content="Hexo 7.3.0"></head>
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="canonical" href="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/">
+</head>
 
 <body>
   <div id="container">
@@ -123,7 +126,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/" data-id="cmn90xauw0011vy77d97x1ahk" data-title="Cocoscreator中实现纹理合批" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/03/22/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BA%B9%E7%90%86%E5%90%88%E6%89%B9/" data-id="cmna82g4d000tcz771alzhqds" data-title="Cocoscreator中实现纹理合批" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
