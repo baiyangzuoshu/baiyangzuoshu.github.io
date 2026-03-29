@@ -250,6 +250,12 @@ function buildSidebar(hexo, allPosts) {
   const feedPath = normalizePath(
     (hexo.config.feed && hexo.config.feed.path) || "atom.xml"
   );
+  const topicPages = [
+    { name: "算法专题", path: "/topics/algorithm/" },
+    { name: "游戏开发专题", path: "/topics/game-development/" },
+    { name: "藏书专题", path: "/topics/library/" },
+    { name: "周刊精选", path: "/topics/weekly-highlights/" },
+  ];
 
   return [
     '<section class="home-sidebar-panel home-sidebar-panel--topics">',
@@ -276,6 +282,21 @@ function buildSidebar(hexo, allPosts) {
     '<section class="home-sidebar-panel">',
     '  <div class="home-sidebar-head"><p class="home-kicker">周刊</p><h3>近期周刊</h3></div>',
     renderSidebarList(weeklyPosts, "暂无周刊内容"),
+    "</section>",
+    '<section class="home-sidebar-panel home-sidebar-panel--actions">',
+    '  <div class="home-sidebar-head"><p class="home-kicker">专题页</p><h3>长期主题</h3></div>',
+    '  <div class="home-sidebar-actions">',
+    topicPages
+      .map(
+        (topic) =>
+          '    <a class="home-sidebar-action" href="' +
+          escapeHTML(topic.path) +
+          '">' +
+          escapeHTML(topic.name) +
+          "</a>"
+      )
+      .join(""),
+    "  </div>",
     "</section>",
     '<section class="home-sidebar-panel home-sidebar-panel--actions">',
     '  <div class="home-sidebar-head"><p class="home-kicker">入口</p><h3>快速入口</h3></div>',
