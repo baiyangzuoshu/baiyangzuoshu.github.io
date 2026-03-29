@@ -97,3 +97,32 @@ npm run build
 - `CLARITY_SCRIPT_HOST`
 
 工作流 `.github/workflows/deploy.yml` 已经会自动读取这些 secrets 并在构建时注入。
+
+## 启用 IndexNow
+
+站点已接入 `IndexNow`：
+
+- 根目录验证文件已经放在 `blog/source/b10c0c69-d2f2-4b15-aa23-32eb47104762.txt`
+- `hexo deploy` 完成后会自动读取 `public/sitemap.txt` 并向 IndexNow 提交 URL
+- 如果需要手动重试，可以执行 `npm run indexnow`
+
+相关配置位于 `blog/_config.yml`：
+
+- `indexnow.enable`
+- `indexnow.endpoint`
+- `indexnow.key`
+- `indexnow.batch_size`
+- `indexnow.dry_run`
+
+本地验证示例：
+
+```bash
+cd blog
+npm run build
+INDEXNOW_DRY_RUN=1 npm run indexnow
+```
+
+官方文档：
+
+- [IndexNow](https://www.indexnow.org/documentation)
+- [IndexNow FAQ](https://www.indexnow.org/faq)
