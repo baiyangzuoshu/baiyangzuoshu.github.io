@@ -3,6 +3,7 @@ title: 初探BFS
 date: 2025-08-09 19:28:41
 categories:
   - 算法
+description: "从连连看类项目需求出发，梳理 BFS 的基本思想、历史背景与 TypeScript 实现方式。"
 tags:
   - BFS
 ---

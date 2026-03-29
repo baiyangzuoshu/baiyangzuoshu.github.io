@@ -3,6 +3,7 @@ title: Cocoscreator中实现纹理合批
 date: 2025-03-22 08:50:30
 categories:
   - Cocoscreator
+description: "围绕停车场小游戏优化，说明 Cocos Creator 中减少 DC、统一材质与实现纹理合批的关键条件。"
 tags:
   - 优化
 ---

@@ -3,6 +3,7 @@ title: 读《Shader开发实战》有感
 date: 2025-06-02 07:54:14
 categories:
   - 读书
+description: "从图片上屏到光照计算，梳理《Shader开发实战》涉及的渲染管线、纹理采样与图形学基础。"
 tags:
   - 读书笔记
 ---

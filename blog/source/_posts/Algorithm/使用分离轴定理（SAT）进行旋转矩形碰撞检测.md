@@ -3,6 +3,7 @@ title: 使用分离轴定理（SAT）进行旋转矩形碰撞检测
 date: 2024-11-13 10:33:20
 categories:
 - 算法
+description: "以 Cocos Creator 实战为例，讲清分离轴定理检测旋转矩形碰撞的思路、公式与 TypeScript 实现。"
 tags:
 - 碰撞检测
 ---
@@ -139,7 +140,6 @@ isOverlapping(newCar:cc.Node, carSize: { width: number, height: number },existin
 &emsp;&emsp;通过应用分离轴定理（SAT），我们能够高效地检测旋转矩形之间的碰撞。我们首先计算出矩形的顶点，然后将这些顶点投影到矩形边的法向量上，最后通过比较投影区间来确定矩形是否发生碰撞。
 
 &emsp;&emsp;这种方法不仅适用于旋转矩形，也可以扩展到其他类型的凸多边形。通过此算法，我们能够确保游戏中的物体碰撞检测更加精确和高效。
-
 
 
 

@@ -3,6 +3,7 @@ title: ECS架构的实践与思考
 date: 2025-05-26 10:54:34
 categories:
 - 游戏开发
+description: "结合游戏开发经验，讨论 ECS 相比传统 OOP 的优势，以及实体、组件、系统的拆分方式。"
 tags:
 - ECS
 ---

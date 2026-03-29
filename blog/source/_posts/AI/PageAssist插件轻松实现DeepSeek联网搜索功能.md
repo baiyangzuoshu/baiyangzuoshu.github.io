@@ -3,6 +3,7 @@ title: PageAssist插件轻松实现DeepSeek联网搜索功能
 date: 2025-02-15 10:35:57
 categories:
 - AI
+description: "记录 PageAssist 插件的安装、模型接入与联网搜索配置，快速把 DeepSeek 能力接到浏览器侧。"
 tags:
 - PageAssist
 ---
@@ -51,7 +52,6 @@ Provider：选择刚刚新增的提供商，比如 硅基流动。
 
 2、点击左上角的 New Chat 按钮，打开输入框中的联网搜索功能。
 ![](/images/2025/as7.webp)
-
 
 
 

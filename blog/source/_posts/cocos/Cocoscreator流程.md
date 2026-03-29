@@ -3,6 +3,7 @@ title: Cocoscreator流程
 date: 2024-09-26 11:29:57
 categories:
   - Cocoscreator
+description: "从构建后的 web-mobile 目录出发，梳理 Cocos Creator Web 版本的启动链路与核心入口文件。"
 tags:
   - 源码
 ---
