@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
   <meta charset="utf-8">
   
   
@@ -82,14 +80,14 @@
         <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
       </div>
     </div>
   </div>
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-game/《停车场小游戏》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-game/《停车场小游戏》" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" class="article-date">
   <time class="dt-published" datetime="2025-01-20T07:12:06.000Z" itemprop="datePublished">2025-01-20</time>
@@ -152,7 +150,7 @@
 <h3 id="7-大数据量列表加载"><a href="#7-大数据量列表加载" class="headerlink" title="7.大数据量列表加载"></a>7.大数据量列表加载</h3><p>对于需要展示的大量数据，可以使用 TableView 或其他滑动列表，仅加载当前和下一屏的数据，避免一次性加载过多、造成性能消耗，并在滑动时动态增删数据以提升流畅度。</p>
 <h3 id="8-按钮点击问题"><a href="#8-按钮点击问题" class="headerlink" title="8.按钮点击问题"></a>8.按钮点击问题</h3><p>连续点击：玩家可能短时间内重复点击同一个按钮，需要做点击冷却或屏蔽防抖处理。<br>多个按钮同时响应：如果有多个按钮可能被玩家同时或短时间内快速点击，应建立统一的 UI 事件管理或排队机制，保证事件处理的顺序和独立性。</p>
 <h1 id="四、SDK-融合"><a href="#四、SDK-融合" class="headerlink" title="四、SDK 融合"></a>四、SDK 融合</h1><p>由于项目需在 Web、微信小游戏和终端应用中同时运行，为了简化多端兼容，可以通过 sdkAdapter 做统一封装。示例：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sdkAdapter.<span class="title function_">login</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (sdk === websdk) &#123;</span><br><span class="line">        websdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk === minisdk) &#123;</span><br><span class="line">        minisdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk === appsdk) &#123;</span><br><span class="line">        appsdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sdkAdapter.<span class="title function_">login</span>(<span class="params"></span>) {</span><br><span class="line">    <span class="keyword">if</span> (sdk === websdk) {</span><br><span class="line">        websdk.<span class="title function_">login</span>();</span><br><span class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (sdk === minisdk) {</span><br><span class="line">        minisdk.<span class="title function_">login</span>();</span><br><span class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (sdk === appsdk) {</span><br><span class="line">        appsdk.<span class="title function_">login</span>();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>通过这种适配方式，能够最大限度地复用代码，减少多平台切换时的开发与维护成本。</p>
 <h1 id="五、适配策略"><a href="#五、适配策略" class="headerlink" title="五、适配策略"></a>五、适配策略</h1><h3 id="1-设计分辨率和设备分辨率"><a href="#1-设计分辨率和设备分辨率" class="headerlink" title="1.设计分辨率和设备分辨率"></a>1.设计分辨率和设备分辨率</h3><pre><code>设备宽高比ratioWHDevice大于设计宽高比ratioWHDesign，左右出现黑边
     适配高度，高度=设计高度
@@ -196,7 +194,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" data-id="cmnaeo3a30011xn77328a3n44" data-title="《停车场小游戏》" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" data-id="cmnb0lo2l000irn77gvvqhw2e" data-title="《停车场小游戏》" class="article-share-link"><span class="fa fa-share">分享</span></a>
       <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
       
       
@@ -207,7 +205,7 @@
   </div>
   
     
-<nav id="article-nav">
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/game-development/">进入游戏开发专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2025/05/26/game/ECS架构的实践与思考/">    <div class="article-related-meta"><time>2025-05-26</time><span class="topic-pill topic-pill--static">游戏开发</span></div>    <h3 class="article-related-title">ECS架构的实践与思考</h3>    <p class="article-related-excerpt">随着游戏规模不断扩大，传统的面向对象（OOP）开发方式...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/03/22/cocos/Cocoscreator中实现纹理合批/">    <div class="article-related-meta"><time>2025-03-22</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocoscreator中实现纹理合批</h3>    <p class="article-related-excerpt">前言最近在优化停车场小游戏，其中有一个是减少 DC。停...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/01/25/cocos/Cocoscreator中实现TableView/">    <div class="article-related-meta"><time>2025-01-25</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocoscreator中实现TableView</h3>    <p class="article-related-excerpt">在游戏开发过程中，列表视图（TableView） 是一...</p>  </a></article>  </div></section><nav id="article-nav">
   
     <a href="/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
@@ -238,20 +236,7 @@
   </div>
   <div class="giscus"></div>
   <noscript>请启用 JavaScript 查看评论内容。</noscript>
-  <script src="https://giscus.app/client.js"
-          data-repo="baiyangzuoshu&#x2F;baiyangzuoshu.github.io"
-          data-repo-id="R_kgDOM2uYIA"
-          data-category="Announcements"
-          data-category-id="DIC_kwDOM2uYIM4C5eW1"
-          data-mapping="pathname"
-          data-strict="0"
-          data-reactions-enabled="1"
-          data-emit-metadata="0"
-          data-input-position="bottom"
-          data-theme="preferred_color_scheme"
-          data-lang="zh-CN"
-          crossorigin="anonymous"
-          async></script>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
 </section>
 
 
@@ -337,7 +322,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2026 白杨左书<br>
+      © 2026 白杨左书<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -373,5 +358,5 @@
   </div>
 <!-- hexo injector body_end start -->
 <script src="/js/local-search.js"></script>
-<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end --></body>
-</html>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>

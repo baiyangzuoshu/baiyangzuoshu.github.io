@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
   <meta charset="utf-8">
   
   
@@ -82,14 +80,14 @@
         <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
       </div>
     </div>
   </div>
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-cocos/Cocoscreator流程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-cocos/Cocoscreator流程" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" class="article-date">
   <time class="dt-published" datetime="2024-09-26T03:29:57.000Z" itemprop="datePublished">2024-09-26</time>
@@ -119,24 +117,24 @@
 <pre><code>当我们打出web后，在build目录下会生成一个web-mobile文件夹，里面就是我们发布后的项目了。
 </code></pre>
 <p>在 web-mobile 文件夹下，有一个 index.html 文件，这个文件就是我们项目的入口文件。在 index.html 文件<br>中会加载 index.js 文件，在 index.js 文件中会加载 application.js 文件，在 application.js 文件中会<br>调用 init 函数和 start 函数。<br>在 init 函数中会初始化游戏引擎，在 start 函数中会启动游戏引擎。都是通过 game.js 文件来调用的。<br>game.ts 在被加载时，就会</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export const game = cclegacy.game = new Game();</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export const game = cclegacy.game = new Game();</span><br></pre></td></tr></tbody></table></figure>
 
 <p>在 game:init 函数中，会做好启动引擎之前的工作，比如</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">screen.init();</span><br><span class="line">assetManager.init();</span><br><span class="line">director.init();</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">screen.init();</span><br><span class="line">assetManager.init();</span><br><span class="line">director.init();</span><br></pre></td></tr></tbody></table></figure>
 
 <p>在 game:step 函数中，会调用</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public step () &#123;</span><br><span class="line">    director.tick(this._calculateDT(true));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public step () {</span><br><span class="line">    director.tick(this._calculateDT(true));</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 
 <p>这里是游戏的主循环，每一帧都会调用一次。<br>在 director:tick 函数中，主要看 this._root!.frameMove(dt);这行代码，用于每帧执行渲染流程的入口函数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this._frameMoveBegin();</span><br><span class="line">this._frameMoveProcess();</span><br><span class="line">this._frameMoveEnd();</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this._frameMoveBegin();</span><br><span class="line">this._frameMoveProcess();</span><br><span class="line">this._frameMoveEnd();</span><br></pre></td></tr></tbody></table></figure>
 
 <p>_frameMoveBegin()清空场景和相机,<br>_frameMoveProcess()重新生成快照,主要看 this._batcher.update()这行代码，用于更新所有节点的渲染信息<br>_frameMoveEnd()渲染，this._pipeline.render(cameraList)这行代码，forwardStage:render(camera),<br>函数里面会调用 this._uiPhase.render(camera, renderPass)，用于渲染 UI</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const pso = PipelineStateManager.getOrCreatePipelineState(device, pass, shader, renderPass, inputAssembler);</span><br><span class="line">cmdBuff.bindPipelineState(pso);</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, pass.descriptorSet);</span><br><span class="line">const ds = batch.descriptorSet!;</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.LOCAL, ds);</span><br><span class="line">cmdBuff.bindInputAssembler(inputAssembler);</span><br><span class="line">cmdBuff.draw(inputAssembler);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const pso = PipelineStateManager.getOrCreatePipelineState(device, pass, shader, renderPass, inputAssembler);</span><br><span class="line">cmdBuff.bindPipelineState(pso);</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, pass.descriptorSet);</span><br><span class="line">const ds = batch.descriptorSet!;</span><br><span class="line">cmdBuff.bindDescriptorSet(SetIndex.LOCAL, ds);</span><br><span class="line">cmdBuff.bindInputAssembler(inputAssembler);</span><br><span class="line">cmdBuff.draw(inputAssembler);</span><br></pre></td></tr></tbody></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" data-id="cmnaeo3a0000ixn7765ld3u25" data-title="Cocoscreator流程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/09/26/cocos/Cocoscreator%E6%B5%81%E7%A8%8B/" data-id="cmnb0lo2o0017rn77flxx6yk7" data-title="Cocoscreator流程" class="article-share-link"><span class="fa fa-share">分享</span></a>
       <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
       
       
@@ -147,7 +145,7 @@
   </div>
   
     
-<nav id="article-nav">
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/game-development/">进入游戏开发专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2025/03/22/cocos/Cocoscreator中实现纹理合批/">    <div class="article-related-meta"><time>2025-03-22</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocoscreator中实现纹理合批</h3>    <p class="article-related-excerpt">前言最近在优化停车场小游戏，其中有一个是减少 DC。停...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/01/25/cocos/Cocoscreator中实现TableView/">    <div class="article-related-meta"><time>2025-01-25</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocoscreator中实现TableView</h3>    <p class="article-related-excerpt">在游戏开发过程中，列表视图（TableView） 是一...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/05/26/game/ECS架构的实践与思考/">    <div class="article-related-meta"><time>2025-05-26</time><span class="topic-pill topic-pill--static">游戏开发</span></div>    <h3 class="article-related-title">ECS架构的实践与思考</h3>    <p class="article-related-excerpt">随着游戏规模不断扩大，传统的面向对象（OOP）开发方式...</p>  </a></article>  </div></section><nav id="article-nav">
   
     <a href="/2024/09/29/week/2024/week2/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
@@ -178,20 +176,7 @@
   </div>
   <div class="giscus"></div>
   <noscript>请启用 JavaScript 查看评论内容。</noscript>
-  <script src="https://giscus.app/client.js"
-          data-repo="baiyangzuoshu&#x2F;baiyangzuoshu.github.io"
-          data-repo-id="R_kgDOM2uYIA"
-          data-category="Announcements"
-          data-category-id="DIC_kwDOM2uYIM4C5eW1"
-          data-mapping="pathname"
-          data-strict="0"
-          data-reactions-enabled="1"
-          data-emit-metadata="0"
-          data-input-position="bottom"
-          data-theme="preferred_color_scheme"
-          data-lang="zh-CN"
-          crossorigin="anonymous"
-          async></script>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
 </section>
 
 
@@ -277,7 +262,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2026 白杨左书<br>
+      © 2026 白杨左书<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -313,5 +298,5 @@
   </div>
 <!-- hexo injector body_end start -->
 <script src="/js/local-search.js"></script>
-<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end --></body>
-</html>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>
