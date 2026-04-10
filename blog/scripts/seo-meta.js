@@ -39,6 +39,47 @@ function toBoolean(value, fallback) {
   return fallback;
 }
 
+function normalizePath(input) {
+  const path = asString(input);
+
+  if (!path) {
+    return "/";
+  }
+
+  return path.startsWith("/") ? path : `/${path}`;
+}
+
+function toArray(value) {
+  if (!value) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value.toArray === "function") {
+    return value.toArray();
+  }
+
+  return Array.from(value);
+}
+
+function categoryEntries(page) {
+  return toArray(page && page.categories)
+    .map((category) => ({
+      name: asString(category && category.name),
+      path: normalizePath(category && category.path),
+    }))
+    .filter((category) => category.name);
+}
+
+function tagNames(page) {
+  return toArray(page && page.tags)
+    .map((tag) => asString(tag && tag.name))
+    .filter(Boolean);
+}
+
 function isPostPage(data) {
   const page = data && data.page ? data.page : null;
   const path = data && data.path ? String(data.path) : "";
@@ -60,6 +101,163 @@ function isPostPage(data) {
   }
 
   return Boolean(page.date && page.content && page._id);
+}
+
+function buildCanonicalUrl(siteUrl, pagePath) {
+  if (!siteUrl || !pagePath) {
+    return "";
+  }
+
+  let canonicalPath = String(pagePath).replace(/index\.html$/, "");
+  if (canonicalPath && !canonicalPath.startsWith("/")) {
+    canonicalPath = `/${canonicalPath}`;
+  }
+
+  const baseUrl = siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`;
+  return new URL(canonicalPath.replace(/^\//, ""), baseUrl).toString();
+}
+
+function toIsoDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  if (typeof value.toISOString === "function") {
+    return value.toISOString();
+  }
+
+  if (typeof value.format === "function") {
+    return value.format("YYYY-MM-DDTHH:mm:ssZ");
+  }
+
+  const text = asString(value);
+  if (!text) {
+    return "";
+  }
+
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? "" : parsed.toISOString();
+}
+
+function normalizeAssetUrl(siteUrl, input) {
+  const value = asString(input);
+
+  if (!siteUrl || !value) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  return new URL(value.replace(/^\//, ""), siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`).toString();
+}
+
+function extractImageUrl(page, siteUrl) {
+  const sources = [page && page.content, page && page.excerpt, page && page.raw];
+
+  for (const source of sources) {
+    if (!source) {
+      continue;
+    }
+
+    let match = String(source).match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match) {
+      return normalizeAssetUrl(siteUrl, match[1]);
+    }
+
+    match = String(source).match(/!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/);
+    if (match) {
+      return normalizeAssetUrl(siteUrl, match[1]);
+    }
+  }
+
+  return "";
+}
+
+function stringifyJsonLd(data) {
+  return JSON.stringify(data).replace(/<\//g, "<\\/");
+}
+
+function buildPostStructuredData(siteConfig, data, description, canonicalUrl) {
+  const page = data && data.page ? data.page : null;
+
+  if (!page || !canonicalUrl) {
+    return "";
+  }
+
+  const categories = categoryEntries(page);
+  const tags = tagNames(page);
+  const siteTitle = asString(siteConfig.title) || "Blog";
+  const authorName = asString(page.author || siteConfig.author || siteTitle);
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: asString(page.title) || siteTitle,
+    description,
+    mainEntityOfPage: canonicalUrl,
+    datePublished: toIsoDate(page.date),
+    dateModified: toIsoDate(page.updated || page.date),
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: siteTitle,
+    },
+    inLanguage: asString(siteConfig.language || "zh-CN"),
+  };
+
+  const image = extractImageUrl(page, siteConfig.url);
+  if (image) {
+    article.image = [image];
+  }
+
+  if (categories.length) {
+    article.articleSection = categories.map((category) => category.name);
+  }
+
+  if (tags.length) {
+    article.keywords = tags.join(", ");
+  }
+
+  const itemListElement = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "首页",
+      item: siteConfig.url,
+    },
+  ];
+
+  if (categories.length) {
+    itemListElement.push({
+      "@type": "ListItem",
+      position: itemListElement.length + 1,
+      name: categories[0].name,
+      item: normalizeAssetUrl(siteConfig.url, categories[0].path),
+    });
+  }
+
+  itemListElement.push({
+    "@type": "ListItem",
+    position: itemListElement.length + 1,
+    name: asString(page.title) || siteTitle,
+    item: canonicalUrl,
+  });
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement,
+  };
+
+  return [
+    '<script type="application/ld+json" data-schema="post-structured-data">',
+    stringifyJsonLd([article, breadcrumb]),
+    "</script>",
+  ].join("");
 }
 
 function commentsAllowed(page) {
@@ -442,22 +640,27 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
     }
   }
 
-  if (!data || !data.path || !this.config.url || result.includes('rel="canonical"')) {
+  if (!data || !data.path || !this.config.url) {
     return result;
   }
 
-  let canonicalPath = data.path.replace(/index\.html$/, "");
-  if (canonicalPath && !canonicalPath.startsWith("/")) {
-    canonicalPath = `/${canonicalPath}`;
+  const canonicalUrl = buildCanonicalUrl(this.config.url, data.path);
+  const headInsertions = [];
+
+  if (postPage && !result.includes('data-schema="post-structured-data"')) {
+    const structuredData = buildPostStructuredData(this.config, data, description, canonicalUrl);
+    if (structuredData) {
+      headInsertions.push(`  ${structuredData}`);
+    }
   }
 
-  const baseUrl = this.config.url.endsWith("/")
-    ? this.config.url
-    : `${this.config.url}/`;
-  const canonicalUrl = new URL(canonicalPath.replace(/^\//, ""), baseUrl).toString();
+  if (!result.includes('rel="canonical"') && canonicalUrl) {
+    headInsertions.push(`  <link rel="canonical" href="${canonicalUrl}">`);
+  }
 
-  return result.replace(
-    "</head>",
-    `\n  <link rel="canonical" href="${canonicalUrl}">\n</head>`
-  );
+  if (!headInsertions.length) {
+    return result;
+  }
+
+  return result.replace("</head>", `\n${headInsertions.join("\n")}\n</head>`);
 });

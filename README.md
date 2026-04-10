@@ -18,6 +18,14 @@ export HEXO_DEPLOY_TOKEN=你的 GitHub PAT
 npm run deploy
 ```
 
+压图后再发布：
+
+```bash
+cd blog
+export HEXO_DEPLOY_TOKEN=你的 GitHub PAT
+npm run publish
+```
+
 如果本机 SSH 已配置完成，也可以继续使用 SSH 发布。
 
 ## 启用 Giscus 评论
