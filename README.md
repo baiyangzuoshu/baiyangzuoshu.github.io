@@ -126,3 +126,33 @@ INDEXNOW_DRY_RUN=1 npm run indexnow
 
 - [IndexNow](https://www.indexnow.org/documentation)
 - [IndexNow FAQ](https://www.indexnow.org/faq)
+
+## 图片批处理压缩
+
+仓库内已提供批处理脚本：
+
+```bash
+cd blog
+npm run images:optimize
+```
+
+默认会递归处理 `blog/source` 下的 `jpg/jpeg/png/gif/webp` 文件，并且只在新文件更小时覆盖原图。
+
+也可以直接指定目录：
+
+```bash
+cd blog
+zsh ./tools/optimize-images.sh source/images/2025
+zsh ./tools/optimize-images.sh source/books/2
+```
+
+可选环境变量：
+
+- `MAX_JPEG_EDGE`
+- `JPEG_QUALITY`
+- `LARGE_JPEG_QUALITY`
+- `PNG_QUALITY`
+- `GIF_FPS`
+- `GIF_MAX_WIDTH`
+- `GIF_MEDIUM_WIDTH`
+- `WEBP_QUALITY`
