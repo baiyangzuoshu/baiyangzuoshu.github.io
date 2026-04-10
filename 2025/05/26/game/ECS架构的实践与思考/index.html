@@ -2,11 +2,11 @@
   <meta charset="utf-8">
   
   
-  <title>ECS架构的实践与思考 | 白杨左书</title>
+  <title>ECS 架构实践与思考：游戏开发中的实体、组件与系统 | 白杨左书</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="结合游戏开发经验，讨论 ECS 相比传统 OOP 的优...">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ECS架构的实践与思考">
+<meta property="og:title" content="ECS 架构实践与思考：游戏开发中的实体、组件与系统">
 <meta property="og:url" content="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/index.html">
 <meta property="og:site_name" content="白杨左书">
 <meta property="og:description" content="结合游戏开发经验，讨论 ECS 相比传统 OOP 的优...">
@@ -44,7 +44,7 @@
   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 })(window, document, "clarity", "script", "w2upclgnjh");
 </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
-  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"ECS架构的实践与思考","description":"结合游戏开发经验，讨论 ECS 相比传统 OOP 的优...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/","datePublished":"2025-05-26T02:54:34.000Z","dateModified":"2025-05-26T02:54:34.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2025/ECS.png"],"articleSection":["游戏开发"],"keywords":"ECS"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"游戏开发","item":"https://baiyangzuoshu.github.io/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"},{"@type":"ListItem","position":3,"name":"ECS架构的实践与思考","item":"https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/"}]}]</script>
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"ECS 架构实践与思考：游戏开发中的实体、组件与系统","description":"结合游戏开发经验，讨论 ECS 相比传统 OOP 的优...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/","datePublished":"2025-05-26T02:54:34.000Z","dateModified":"2025-05-26T02:54:34.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2025/ECS.png"],"articleSection":["游戏开发"],"keywords":"ECS"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"游戏开发","item":"https://baiyangzuoshu.github.io/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/"},{"@type":"ListItem","position":3,"name":"ECS 架构实践与思考：游戏开发中的实体、组件与系统","item":"https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/"}]}]</script>
   <link rel="canonical" href="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/">
 </head>
 
@@ -106,7 +106,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ECS架构的实践与思考
+      ECS 架构实践与思考：游戏开发中的实体、组件与系统
     </h1>
   
 
@@ -130,7 +130,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" data-id="cmnszl0q300131y778tsk4257" data-title="ECS架构的实践与思考" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/05/26/game/ECS%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83/" data-id="cmnszl0q300131y778tsk4257" data-title="ECS 架构实践与思考：游戏开发中的实体、组件与系统" class="article-share-link"><span class="fa fa-share">分享</span></a>
       <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
       
       
@@ -141,7 +141,7 @@
   </div>
   
     
-<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/game-development/">进入游戏开发专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2025/01/20/game/《停车场小游戏》/">    <div class="article-related-meta"><time>2025-01-20</time><span class="topic-pill topic-pill--static">游戏开发</span></div>    <h3 class="article-related-title">《停车场小游戏》</h3>    <p class="article-related-excerpt">记录停车场小游戏的核心玩法、车辆机制与项目设计思路，梳...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/03/22/cocos/Cocoscreator中实现纹理合批/">    <div class="article-related-meta"><time>2025-03-22</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocoscreator中实现纹理合批</h3>    <p class="article-related-excerpt">围绕停车场小游戏优化，说明 Cocos Creator...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/01/25/cocos/Cocoscreator中实现TableView/">    <div class="article-related-meta"><time>2025-01-25</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocoscreator中实现TableView</h3>    <p class="article-related-excerpt">结合代码实现拆解 Cocos Creator 通用 T...</p>  </a></article>  </div></section><nav id="article-nav">
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/game-development/">进入游戏开发专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2025/01/20/game/《停车场小游戏》/">    <div class="article-related-meta"><time>2025-01-20</time><span class="topic-pill topic-pill--static">游戏开发</span></div>    <h3 class="article-related-title">停车场小游戏项目拆解：玩法设计与系统实现</h3>    <p class="article-related-excerpt">记录停车场小游戏的核心玩法、车辆机制与项目设计思路，梳...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/03/22/cocos/Cocoscreator中实现纹理合批/">    <div class="article-related-meta"><time>2025-03-22</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocos Creator 纹理合批实战：减少 DC 的关键做法</h3>    <p class="article-related-excerpt">围绕停车场小游戏优化，说明 Cocos Creator...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/01/25/cocos/Cocoscreator中实现TableView/">    <div class="article-related-meta"><time>2025-01-25</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocos Creator TableView 实现：列表复用与滚动优化</h3>    <p class="article-related-excerpt">结合代码实现拆解 Cocos Creator 通用 T...</p>  </a></article>  </div></section><nav id="article-nav">
   
     <a href="/2025/05/30/week/2025/week34/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
@@ -238,7 +238,7 @@
           </li>
         
           <li>
-            <a href="/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/">从手写 UI 到 AI 拼 UI</a>
+            <a href="/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/">从手写 UI 到 AI 拼 UI：游戏界面开发方式的三次变化</a>
           </li>
         
           <li>

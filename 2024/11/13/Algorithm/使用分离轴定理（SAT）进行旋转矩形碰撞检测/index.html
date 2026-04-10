@@ -2,11 +2,11 @@
   <meta charset="utf-8">
   
   
-  <title>使用分离轴定理（SAT）进行旋转矩形碰撞检测 | 白杨左书</title>
+  <title>分离轴定理（SAT）实战：旋转矩形碰撞检测与 TypeScript 实现 | 白杨左书</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="以 Cocos Creator 实战为例，讲清分离轴定...">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用分离轴定理（SAT）进行旋转矩形碰撞检测">
+<meta property="og:title" content="分离轴定理（SAT）实战：旋转矩形碰撞检测与 TypeScript 实现">
 <meta property="og:url" content="https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/index.html">
 <meta property="og:site_name" content="白杨左书">
 <meta property="og:description" content="以 Cocos Creator 实战为例，讲清分离轴定...">
@@ -44,7 +44,7 @@
   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 })(window, document, "clarity", "script", "w2upclgnjh");
 </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
-  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"使用分离轴定理（SAT）进行旋转矩形碰撞检测","description":"以 Cocos Creator 实战为例，讲清分离轴定...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/","datePublished":"2024-11-13T02:33:20.000Z","dateModified":"2024-11-13T02:33:20.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2024/SAT.webp"],"articleSection":["算法"],"keywords":"碰撞检测"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"算法","item":"https://baiyangzuoshu.github.io/categories/%E7%AE%97%E6%B3%95/"},{"@type":"ListItem","position":3,"name":"使用分离轴定理（SAT）进行旋转矩形碰撞检测","item":"https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/"}]}]</script>
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"分离轴定理（SAT）实战：旋转矩形碰撞检测与 TypeScript 实现","description":"以 Cocos Creator 实战为例，讲清分离轴定...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/","datePublished":"2024-11-13T02:33:20.000Z","dateModified":"2024-11-13T02:33:20.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2024/SAT.webp"],"articleSection":["算法"],"keywords":"碰撞检测"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"算法","item":"https://baiyangzuoshu.github.io/categories/%E7%AE%97%E6%B3%95/"},{"@type":"ListItem","position":3,"name":"分离轴定理（SAT）实战：旋转矩形碰撞检测与 TypeScript 实现","item":"https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/"}]}]</script>
   <link rel="canonical" href="https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/">
 </head>
 
@@ -106,7 +106,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      使用分离轴定理（SAT）进行旋转矩形碰撞检测
+      分离轴定理（SAT）实战：旋转矩形碰撞检测与 TypeScript 实现
     </h1>
   
 
@@ -142,7 +142,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" data-id="cmnszl0q2000n1y778ubkczay" data-title="使用分离轴定理（SAT）进行旋转矩形碰撞检测" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/11/13/Algorithm/%E4%BD%BF%E7%94%A8%E5%88%86%E7%A6%BB%E8%BD%B4%E5%AE%9A%E7%90%86%EF%BC%88SAT%EF%BC%89%E8%BF%9B%E8%A1%8C%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" data-id="cmnszl0q2000n1y778ubkczay" data-title="分离轴定理（SAT）实战：旋转矩形碰撞检测与 TypeScript 实现" class="article-share-link"><span class="fa fa-share">分享</span></a>
       <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
       
       
@@ -153,7 +153,7 @@
   </div>
   
     
-<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/algorithm/">进入算法专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2025/10/10/Algorithm/二进制压缩算法/">    <div class="article-related-meta"><time>2025-10-10</time><span class="topic-pill topic-pill--static">算法</span></div>    <h3 class="article-related-title">二进制压缩算法</h3>    <p class="article-related-excerpt">结合棋盘分享链接场景，介绍如何用 TypeScript...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/08/09/Algorithm/初探BFS/">    <div class="article-related-meta"><time>2025-08-09</time><span class="topic-pill topic-pill--static">算法</span></div>    <h3 class="article-related-title">初探BFS</h3>    <p class="article-related-excerpt">从连连看类项目需求出发，梳理 BFS 的基本思想、历史...</p>  </a></article>  </div></section><nav id="article-nav">
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/algorithm/">进入算法专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2025/10/10/Algorithm/二进制压缩算法/">    <div class="article-related-meta"><time>2025-10-10</time><span class="topic-pill topic-pill--static">算法</span></div>    <h3 class="article-related-title">二进制压缩算法：用 TypeScript 压缩棋盘分享链接</h3>    <p class="article-related-excerpt">结合棋盘分享链接场景，介绍如何用 TypeScript...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/08/09/Algorithm/初探BFS/">    <div class="article-related-meta"><time>2025-08-09</time><span class="topic-pill topic-pill--static">算法</span></div>    <h3 class="article-related-title">BFS 入门：连连看路径搜索的 TypeScript 实现</h3>    <p class="article-related-excerpt">从连连看类项目需求出发，梳理 BFS 的基本思想、历史...</p>  </a></article>  </div></section><nav id="article-nav">
   
     <a href="/2024/11/15/week/2024/week9/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
@@ -167,7 +167,7 @@
   
     <a href="/2024/11/12/book/%E3%80%8A%E5%A4%A7%E7%A7%A6%E5%B8%9D%E5%9B%BD%E3%80%8B/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">《大秦帝国》</div>
+      <div class="article-nav-title">《大秦帝国》读书笔记：商鞅变法与秦国崛起</div>
     </a>
   
 </nav>
@@ -250,7 +250,7 @@
           </li>
         
           <li>
-            <a href="/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/">从手写 UI 到 AI 拼 UI</a>
+            <a href="/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/">从手写 UI 到 AI 拼 UI：游戏界面开发方式的三次变化</a>
           </li>
         
           <li>
