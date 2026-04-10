@@ -1,6 +1,7 @@
 ---
-title: 初探BFS
+title: "BFS 入门：连连看路径搜索的 TypeScript 实现"
 date: 2025-08-09 19:28:41
+permalink: "2025/08/09/Algorithm/初探BFS/"
 categories:
   - 算法
 description: "从连连看类项目需求出发，梳理 BFS 的基本思想、历史背景与 TypeScript 实现方式。"

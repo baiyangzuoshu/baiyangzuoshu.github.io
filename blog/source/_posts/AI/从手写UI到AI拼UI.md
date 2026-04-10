@@ -1,6 +1,7 @@
 ---
-title: 从手写 UI 到 AI 拼 UI
+title: "从手写 UI 到 AI 拼 UI：游戏界面开发方式的三次变化"
 date: 2026-03-31 10:00:00
+permalink: "2026/03/31/AI/从手写UI到AI拼UI/"
 categories:
 - AI
 description: "从 cocos2d-x 手写界面，到 Cocos Creator 可视化搭建，再到 AI 自动生成 UI，我对这三代开发方式变化的一点看法。"

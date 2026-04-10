@@ -1,6 +1,7 @@
 ---
-title: Cocoscreator中实现TableView
+title: "Cocos Creator TableView 实现：列表复用与滚动优化"
 date: 2025-01-25 09:17:59
+permalink: "2025/01/25/cocos/Cocoscreator中实现TableView/"
 categories:
   - Cocoscreator
 description: "结合代码实现拆解 Cocos Creator 通用 TableView 的数据绑定、节点复用与滚动性能优化。"

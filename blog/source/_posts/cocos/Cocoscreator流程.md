@@ -1,6 +1,7 @@
 ---
-title: Cocoscreator流程
+title: "Cocos Creator Web 启动流程：从 index.html 到引擎启动"
 date: 2024-09-26 11:29:57
+permalink: "2024/09/26/cocos/Cocoscreator流程/"
 categories:
   - Cocoscreator
 description: "从构建后的 web-mobile 目录出发，梳理 Cocos Creator Web 版本的启动链路与核心入口文件。"

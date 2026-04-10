@@ -1,6 +1,7 @@
 ---
-title: ECS架构的实践与思考
+title: "ECS 架构实践与思考：游戏开发中的实体、组件与系统"
 date: 2025-05-26 10:54:34
+permalink: "2025/05/26/game/ECS架构的实践与思考/"
 categories:
 - 游戏开发
 description: "结合游戏开发经验，讨论 ECS 相比传统 OOP 的优势，以及实体、组件、系统的拆分方式。"
