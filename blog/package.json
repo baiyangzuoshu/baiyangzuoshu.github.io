@@ -7,7 +7,7 @@
     "clean": "hexo clean",
     "deploy": "hexo deploy",
     "indexnow": "hexo indexnow",
-    "images:optimize": "zsh ./tools/optimize-images.sh",
+    "images:optimize": "bash ./tools/optimize-images.sh",
     "publish": "npm run images:optimize && npm run deploy",
     "server": "hexo server"
   },

@@ -150,8 +150,8 @@ npm run images:optimize
 
 ```bash
 cd blog
-zsh ./tools/optimize-images.sh source/images/2025
-zsh ./tools/optimize-images.sh source/books/2
+bash ./tools/optimize-images.sh source/images/2025
+bash ./tools/optimize-images.sh source/books/2
 ```
 
 可选环境变量：

@@ -1,7 +1,16 @@
-#!/bin/zsh
+#!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT"
+
 ROOT_DIR="${1:-source}"
+if [ ! -d "$ROOT_DIR" ]; then
+  echo "Directory not found: $ROOT_DIR" >&2
+  exit 1
+fi
+
 JPEG_QUALITY="${JPEG_QUALITY:-75}"
 LARGE_JPEG_QUALITY="${LARGE_JPEG_QUALITY:-72}"
 MAX_JPEG_EDGE="${MAX_JPEG_EDGE:-1800}"
@@ -20,6 +29,16 @@ saved_png=0
 saved_gif=0
 saved_webp=0
 
+make_tmp_path() {
+  local prefix="$1"
+  local suffix="${2:-}"
+  local base
+
+  base=$(mktemp "/tmp/${prefix}.XXXXXX")
+  rm -f "$base"
+  printf '%s%s\n' "$base" "$suffix"
+}
+
 optimize_jpg() {
   local file="$1"
   local old_size new_size width height max_dim quality tmp
@@ -34,7 +53,7 @@ optimize_jpg() {
     quality="$LARGE_JPEG_QUALITY"
   fi
 
-  tmp=$(mktemp /tmp/optimize-jpg.XXXXXX.jpg)
+  tmp=$(make_tmp_path "optimize-jpg" ".jpg")
 
   if [ "$max_dim" -gt "$MAX_JPEG_EDGE" ]; then
     sips -Z "$MAX_JPEG_EDGE" -s format jpeg -s formatOptions "$quality" "$file" --out "$tmp" >/dev/null
@@ -59,7 +78,7 @@ optimize_png() {
   local old_size new_size tmp
 
   old_size=$(stat -f%z "$file")
-  tmp=$(mktemp /tmp/optimize-png.XXXXXX.png)
+  tmp=$(make_tmp_path "optimize-png" ".png")
 
   if pngquant --quality="$PNG_QUALITY" --speed 1 --output "$tmp" --force "$file" >/dev/null 2>&1; then
     new_size=$(stat -f%z "$tmp")
@@ -81,7 +100,7 @@ optimize_gif() {
   local old_size new_size width target_width tmp palette
 
   old_size=$(stat -f%z "$file")
-  width=$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$file" | tr -d '\r')
+  width=$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$file" < /dev/null | tr -d '\r')
   target_width="$width"
 
   if [ "$width" -gt "$GIF_MAX_WIDTH" ]; then
@@ -90,11 +109,11 @@ optimize_gif() {
     target_width="$GIF_MEDIUM_WIDTH"
   fi
 
-  tmp=$(mktemp /tmp/optimize-gif.XXXXXX.gif)
-  palette=$(mktemp /tmp/optimize-gif-palette.XXXXXX.png)
+  tmp=$(make_tmp_path "optimize-gif" ".gif")
+  palette=$(make_tmp_path "optimize-gif-palette" ".png")
 
-  if ffmpeg -y -i "$file" -vf "fps=${GIF_FPS},scale=${target_width}:-1:flags=lanczos,palettegen=max_colors=96:reserve_transparent=on" "$palette" >/dev/null 2>&1 && \
-     ffmpeg -y -i "$file" -i "$palette" -lavfi "fps=${GIF_FPS},scale=${target_width}:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5" "$tmp" >/dev/null 2>&1; then
+  if ffmpeg -nostdin -y -i "$file" -vf "fps=${GIF_FPS},scale=${target_width}:-1:flags=lanczos,palettegen=max_colors=96:reserve_transparent=on" "$palette" >/dev/null 2>&1 && \
+     ffmpeg -nostdin -y -i "$file" -i "$palette" -lavfi "fps=${GIF_FPS},scale=${target_width}:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5" "$tmp" >/dev/null 2>&1; then
     new_size=$(stat -f%z "$tmp")
     if [ "$new_size" -lt "$old_size" ]; then
       mv "$tmp" "$file"
@@ -116,7 +135,7 @@ optimize_webp() {
   local old_size new_size tmp
 
   old_size=$(stat -f%z "$file")
-  tmp=$(mktemp /tmp/optimize-webp.XXXXXX.webp)
+  tmp=$(make_tmp_path "optimize-webp" ".webp")
 
   if cwebp -quiet -q "$WEBP_QUALITY" "$file" -o "$tmp"; then
     new_size=$(stat -f%z "$tmp")

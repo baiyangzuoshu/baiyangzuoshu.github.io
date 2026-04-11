@@ -814,6 +814,40 @@
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
+.book-nine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 28px 0 32px;
+}
+
+.book-nine-grid a {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 243, 235, 0.98));
+  border: 1px solid rgba(78, 62, 42, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 16px 32px rgba(55, 41, 24, 0.08);
+  display: block;
+  overflow: hidden;
+  padding: 10px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.book-nine-grid a:hover {
+  box-shadow: 0 18px 36px rgba(55, 41, 24, 0.14);
+  transform: translateY(-2px);
+}
+
+.book-nine-grid img {
+  aspect-ratio: 3 / 4;
+  background: #f6f1e7;
+  border-radius: 12px;
+  box-shadow: none;
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
 .article-share-box--custom {
   z-index: 30;
   margin-left: 0;
@@ -943,6 +977,11 @@
 
   .home-sidebar-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .book-nine-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .home-weekly-link {
