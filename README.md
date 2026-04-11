@@ -154,6 +154,14 @@ bash ./tools/optimize-images.sh source/images/2025
 bash ./tools/optimize-images.sh source/books/2
 ```
 
+Windows 下可直接使用同一个 npm 命令，或者手动执行：
+
+```bat
+cd blog
+npm run images:optimize
+tools\optimize-images.bat source\images\2025
+```
+
 可选环境变量：
 
 - `MAX_JPEG_EDGE`
