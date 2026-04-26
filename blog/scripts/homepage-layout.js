@@ -71,6 +71,15 @@ function excerpt(post, limit) {
   return truncate(toPlainText(description), limit || 140);
 }
 
+function postModeLabel(post) {
+  return isWeekly(post) ? "周刊" : "专题";
+}
+
+function renderStaticPill(label, modifier) {
+  if (!label) return "";
+  return `<span class="home-pill${modifier ? ` ${modifier}` : ""}">${escapeHTML(label)}</span>`;
+}
+
 function renderCategoryPills(post, limit) {
   const categories = categoryEntries(post).slice(0, limit || 2);
 
@@ -84,15 +93,21 @@ function renderCategoryPills(post, limit) {
     .join("");
 }
 
-function renderLeadCard(post) {
+function renderLeadCard(post, options) {
   if (!post) return "";
 
+  const settings = options || {};
   const image = extractImage(post);
-  const summary = excerpt(post, 120);
+  const summary = excerpt(post, settings.summaryLimit || 120);
   const url = normalizePath(post.path);
+  const classes = ["home-card", "home-card--lead"];
+
+  if (settings.className) {
+    classes.push(settings.className);
+  }
 
   return [
-    '<article class="home-card home-card--lead">',
+    `<article class="${classes.join(" ")}">`,
     image
       ? '    <a class="home-card-art" href="' +
         escapeHTML(url) +
@@ -103,7 +118,9 @@ function renderLeadCard(post) {
         '"></a>'
       : '    <div class="home-card-art home-card-art--placeholder"><span>专题文章</span></div>',
     '    <div class="home-card-body">',
-    '      <div class="home-card-meta"><time>' +
+    '      <div class="home-card-meta">' +
+      (settings.flagLabel ? renderStaticPill(settings.flagLabel, "home-pill--static") : "") +
+      '<time>' +
       escapeHTML(formatDate(post)) +
       "</time>" +
       renderCategoryPills(post, 2) +
@@ -119,14 +136,22 @@ function renderLeadCard(post) {
   ].join("");
 }
 
-function renderMiniCard(post) {
+function renderMiniCard(post, options) {
+  const settings = options || {};
   const url = normalizePath(post.path);
-  const summary = excerpt(post, 72);
+  const summary = excerpt(post, settings.summaryLimit || 72);
+  const classes = ["home-card", "home-card--mini"];
+
+  if (settings.className) {
+    classes.push(settings.className);
+  }
 
   return [
-    '<article class="home-card home-card--mini">',
+    `<article class="${classes.join(" ")}">`,
     '    <div class="home-card-body">',
-    '      <div class="home-card-meta"><time>' +
+    '      <div class="home-card-meta">' +
+      (settings.flagLabel ? renderStaticPill(settings.flagLabel, "home-pill--static") : "") +
+      '<time>' +
       escapeHTML(formatDate(post)) +
       "</time>" +
       renderCategoryPills(post, 1) +
@@ -310,28 +335,62 @@ function buildSidebar(hexo, allPosts) {
 }
 
 function buildHomepage(hexo, allPosts) {
+  const latestLead = allPosts[0];
+  const latestStack = allPosts.slice(1, 5);
+  const latestShown = new Set(
+    [latestLead, ...latestStack].filter(Boolean).map((post) => post.path)
+  );
   const weeklyPosts = allPosts.filter(isWeekly);
   const featurePosts = allPosts.filter((post) => !isWeekly(post));
+  const featureDeck = featurePosts.filter((post) => !latestShown.has(post.path));
+  const weeklyDeck = weeklyPosts.filter((post) => !latestShown.has(post.path));
+  const featureLead = featureDeck[0];
+  const featureStack = featureDeck.slice(1, 5);
+  const weeklyList = weeklyDeck.slice(0, 8);
   const leadPost = featurePosts[0];
   const weeklyPath = findCategoryPath(hexo, "周刊");
   const archivePath = normalizePath(hexo.config.archive_dir || "archives");
-  const streamPosts = [];
-
-  for (let index = 0; index < 3; index++) {
-    if (featurePosts[index]) {
-      streamPosts.push(featurePosts[index]);
-    }
-
-    if (weeklyPosts[index]) {
-      streamPosts.push(weeklyPosts[index]);
-    }
-  }
+  const featureShown = new Set(
+    [featureLead, ...featureStack].filter(Boolean).map((post) => post.path)
+  );
+  const weeklyShown = new Set(weeklyList.filter(Boolean).map((post) => post.path));
+  const streamPosts = allPosts
+    .filter(
+      (post) =>
+        !latestShown.has(post.path) &&
+        !featureShown.has(post.path) &&
+        !weeklyShown.has(post.path)
+    )
+    .slice(0, 6);
 
   return [
     '<div class="home-split-layout">',
+    '  <section class="home-panel home-panel--latest">',
+    '    <div class="home-section-head">',
+    '      <div><p class="home-kicker">最新博客</p><h2>最近更新</h2></div>',
+    '      <a class="home-section-link" href="' + escapeHTML(archivePath) + '">全部归档</a>',
+    "    </div>",
+    '    <div class="home-latest-grid">',
+    renderLeadCard(latestLead, {
+      className: "home-card--latest",
+      flagLabel: postModeLabel(latestLead),
+      summaryLimit: 138,
+    }),
+    '      <div class="home-latest-stack">',
+    latestStack
+      .map((post) =>
+        renderMiniCard(post, {
+          className: "home-card--latest-mini",
+          flagLabel: postModeLabel(post),
+          summaryLimit: 78,
+        })
+      )
+      .join(""),
+    "      </div>",
+    "    </div>",
+    "  </section>",
     '  <section class="home-hero-panel">',
-    '    <p class="home-kicker">站点概览</p>',
-    '    <h2 class="home-hero-title">专题文章与每周见闻分层呈现。</h2>',
+    '    <p class="home-kicker">浏览方式</p>',
     '    <div class="home-hero-stats">',
     '      <div class="home-stat"><span class="home-stat-value">' +
       escapeHTML(String(featurePosts.length)) +
@@ -347,33 +406,40 @@ function buildHomepage(hexo, allPosts) {
     "  </section>",
     '  <section class="home-panel home-panel--feature">',
     '    <div class="home-section-head">',
-    '      <div><p class="home-kicker">专题文章</p><h2>非周刊更新</h2></div>',
-    '      <a class="home-section-link" href="' + escapeHTML(archivePath) + '">查看全部</a>',
+    '      <div><p class="home-kicker">专题聚焦</p><h2>长期主题</h2></div>',
+      '      <a class="home-section-link" href="' + escapeHTML(archivePath) + '">查看全部</a>',
     "    </div>",
     '    <div class="home-feature-grid">',
-    renderLeadCard(leadPost),
+    renderLeadCard(featureLead || leadPost),
     '      <div class="home-feature-stack">',
-    featurePosts.slice(1, 5).map(renderMiniCard).join(""),
+    (featureStack.length ? featureStack : featurePosts.slice(1, 5)).map(renderMiniCard).join(""),
     "      </div>",
     "    </div>",
     "  </section>",
     '  <section class="home-panel home-panel--weekly">',
     '    <div class="home-section-head">',
-    '      <div><p class="home-kicker">每周见闻</p><h2>周刊更新</h2></div>',
-    '      <a class="home-section-link" href="' + escapeHTML(weeklyPath) + '">进入周刊</a>',
+    '      <div><p class="home-kicker">每周见闻</p><h2>最新周刊</h2></div>',
+      '      <a class="home-section-link" href="' + escapeHTML(weeklyPath) + '">进入周刊</a>',
     "    </div>",
     '    <ol class="home-weekly-list">',
-    weeklyPosts.slice(0, 8).map(renderWeeklyItem).join(""),
+    (weeklyList.length ? weeklyList : weeklyPosts.slice(0, 8)).map(renderWeeklyItem).join(""),
     "    </ol>",
     "  </section>",
-    '  <section class="home-panel home-panel--stream">',
-    '    <div class="home-section-head">',
-      '      <div><p class="home-kicker">最近更新</p><h2>最新发布</h2></div>',
-    "    </div>",
-    '    <div class="home-stream-grid">',
-    streamPosts.map(renderStreamItem).join(""),
-    "    </div>",
-    "  </section>",
+    streamPosts.length
+      ? [
+          '  <section class="home-panel home-panel--stream">',
+          '    <div class="home-section-head">',
+          '      <div><p class="home-kicker">继续浏览</p><h2>更多更新</h2></div>',
+          '      <a class="home-section-link" href="' +
+            escapeHTML(archivePath) +
+            '">查看全部</a>',
+          "    </div>",
+          '    <div class="home-stream-grid">',
+          streamPosts.map(renderStreamItem).join(""),
+          "    </div>",
+          "  </section>",
+        ].join("")
+      : "",
     "</div>",
   ].join("");
 }

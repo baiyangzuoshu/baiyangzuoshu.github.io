@@ -28,6 +28,8 @@ function Get-EnvOrDefault {
 
 $jpegQuality = [int](Get-EnvOrDefault -Name "JPEG_QUALITY" -DefaultValue "75")
 $largeJpegQuality = [int](Get-EnvOrDefault -Name "LARGE_JPEG_QUALITY" -DefaultValue "72")
+$jpegSecondPassQuality = [int](Get-EnvOrDefault -Name "JPEG_SECOND_PASS_QUALITY" -DefaultValue "68")
+$jpegSecondPassMinSize = [int](Get-EnvOrDefault -Name "JPEG_SECOND_PASS_MIN_SIZE" -DefaultValue "350000")
 $maxJpegEdge = [int](Get-EnvOrDefault -Name "MAX_JPEG_EDGE" -DefaultValue "1800")
 $pngQuality = Get-EnvOrDefault -Name "PNG_QUALITY" -DefaultValue "65-80"
 $gifFps = [int](Get-EnvOrDefault -Name "GIF_FPS" -DefaultValue "8")
@@ -151,30 +153,49 @@ function Optimize-Jpg {
   $dimensions = Get-ImageDimensions $Path
   $maxDim = [Math]::Max($dimensions.Width, $dimensions.Height)
   $quality = $jpegQuality
+  $bestTmp = $null
 
   if ($maxDim -gt $maxJpegEdge -or $oldSize -gt 800000) {
     $quality = $largeJpegQuality
   }
 
   $tmp = New-TempPath -Prefix "optimize-jpg" -Extension ".jpg"
+  $bestTmp = $tmp
 
   try {
-    Save-Jpeg -SourcePath $Path -DestinationPath $tmp -Quality $quality -MaxEdge $maxJpegEdge
-    $newSize = Get-FileSize $tmp
+    Save-Jpeg -SourcePath $Path -DestinationPath $bestTmp -Quality $quality -MaxEdge $maxJpegEdge
+    $bestSize = Get-FileSize $bestTmp
 
-    if ($newSize -lt $oldSize) {
-      Move-Item -Force -LiteralPath $tmp -Destination $Path
+    if ($bestSize -ge $oldSize -and $oldSize -ge $jpegSecondPassMinSize) {
+      $retryTmp = New-TempPath -Prefix "optimize-jpg-retry" -Extension ".jpg"
+      Save-Jpeg -SourcePath $Path -DestinationPath $retryTmp -Quality $jpegSecondPassQuality -MaxEdge $maxJpegEdge
+      $retrySize = Get-FileSize $retryTmp
+
+      if ($retrySize -lt $bestSize) {
+        if (Test-Path $bestTmp) {
+          Remove-Item -Force -LiteralPath $bestTmp
+        }
+        $bestTmp = $retryTmp
+        $bestSize = $retrySize
+      }
+      else {
+        Remove-Item -Force -LiteralPath $retryTmp
+      }
+    }
+
+    if ($bestSize -lt $oldSize) {
+      Move-Item -Force -LiteralPath $bestTmp -Destination $Path
       $script:countJpg++
-      $script:savedJpg += ($oldSize - $newSize)
-      Write-Host "jpg  $Path  $oldSize -> $newSize"
+      $script:savedJpg += ($oldSize - $bestSize)
+      Write-Host "jpg  $Path  $oldSize -> $bestSize"
     }
     else {
-      Remove-Item -Force -LiteralPath $tmp
+      Remove-Item -Force -LiteralPath $bestTmp
     }
   }
   finally {
-    if (Test-Path $tmp) {
-      Remove-Item -Force -LiteralPath $tmp
+    if ($bestTmp -and (Test-Path $bestTmp)) {
+      Remove-Item -Force -LiteralPath $bestTmp
     }
   }
 }
