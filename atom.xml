@@ -6,7 +6,7 @@
   <link href="https://baiyangzuoshu.github.io/atom.xml" rel="self"/>
   
   <link href="https://baiyangzuoshu.github.io/"/>
-  <updated>2026-04-26T02:00:00.000Z</updated>
+  <updated>2026-05-06T02:00:00.000Z</updated>
   <id>https://baiyangzuoshu.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>AI 写代码后，更需要架构师能力</title>
+    <link href="https://baiyangzuoshu.github.io/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/"/>
+    <id>https://baiyangzuoshu.github.io/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/</id>
+    <published>2026-05-06T02:00:00.000Z</published>
+    <updated>2026-05-06T02:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;这段时间使用 Codex、DeepSeek、Claude 这些 AI 工具写代码后，我越来越明显地感觉到：AI 并没有降低对程序员能力的要求，反而把要求往上提了一层。以前写代码，很多时间花在具体实现上；现在具体实现可以交给 AI，但你必须知道要让它做什么、做到哪里、不能碰哪里。</p><p>&emsp;&emsp;换句话说，AI 写代码之后，更需要人具备架构师的能力。</p><p>&emsp;&emsp;AI 很擅长执行。你让它写一个接口、补一个组件、改一段逻辑、生成一组测试，它往往能很快给出结果。尤其是在需求边界清楚、上下文完整、约束明确的时候，它的效率非常高。过去半天才能完成的重复性开发，现在可能十几分钟就能推进到可运行状态。</p><p>&emsp;&emsp;但问题也在这里。AI 太擅长执行了。如果你没有给它清楚的目标，它也会继续执行；如果你没有告诉它边界，它就可能扩大修改范围；如果你没有说明项目里的分层、模块职责、数据流和异常处理方式，它就会按照自己“看起来合理”的方式实现功能。代码表面上跑通了，实际上却给系统埋下了维护成本。</p><p>&emsp;&emsp;很多时候，AI 写出来的问题不是语法错，也不是功能完全不能用，而是架构上不干净。比如本来应该在 service 层处理的逻辑，被它塞进了 controller；本来应该复用已有组件，它重新写了一套类似实现；本来只是改一个小功能，它顺手改了公共工具函数；本来项目有统一错误处理，它又加了一套局部判断。这些问题短期看不明显，长期会让项目越来越乱。</p><p>&emsp;&emsp;所以使用 AI 写代码，第一件事不是急着让它开写，而是先划定边界。你要告诉它：这次只改哪些文件，不改哪些文件；新增逻辑放在哪一层；是否允许改公共接口；是否需要兼容旧数据；错误应该如何返回；测试覆盖到什么程度。边界越清楚，AI 越像一个高效工程师；边界越模糊，AI 越像一个精力充沛但方向不稳定的实习生。</p><p>&emsp;&emsp;第二件事，是把任务拆成可验证的小块。不要直接说“帮我实现一个完整系统”，而是先让它理解现有结构，再让它实现其中一部分。比如先补数据模型，再补服务逻辑，再补接口，再补测试。每一步都有输入、输出和验收标准。这样做不是为了限制 AI，而是为了让它始终在正确轨道上推进。</p><p>&emsp;&emsp;第三件事，是人要做最终判断。AI 可以写代码，但不能替你承担架构责任。它不知道这个项目未来会不会扩展，不知道哪些模块是历史包袱，不知道哪些接口已经被外部依赖，也不知道团队的维护习惯。它只能根据当前上下文推断，而架构判断需要经验、取舍和长期视角。</p><p>&emsp;&emsp;以前我们常说，程序员要从“写代码的人”变成“解决问题的人”。AI 出现后，这句话变得更具体了：程序员要从“亲自实现每一行代码的人”，变成“定义问题、拆解系统、设定边界、验收结果的人”。真正拉开差距的，不再只是手速，而是你能不能把一个模糊需求拆成清晰结构。</p><p>&emsp;&emsp;AI 会让代码生成越来越便宜，但不会让架构变得便宜。相反，代码越容易生成，架构越重要。因为糟糕的代码过去写得慢，破坏速度有限；现在 AI 可以很快写出大量代码，如果没有人控制方向，系统变坏的速度也会变快。</p><p>&emsp;&emsp;所以我现在使用 AI 写代码时，先想清楚目标，再描述边界，再让 AI 实现，最后审查它是否符合项目结构。AI 负责把砖搬得更快，人负责决定墙应该建在哪里。只有这样，AI 才是在提高生产力，而不是在制造新的技术债。</p>]]></content>
+    
+    
+    <summary type="html">使用 Codex、DeepSeek、Claude 写代...</summary>
+    
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
+    
+    <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="架构" scheme="https://baiyangzuoshu.github.io/tags/%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
   
   <entry>
     <title>GPT 的三段历史：从语言模型到 ChatGPT 爆发</title>
@@ -421,27 +446,6 @@
     
     
     <summary type="html">新闻1.陈华接任茅台集团董事长 2.保时捷销售利润暴跌...</summary>
-    
-    
-    
-    <category term="周刊" scheme="https://baiyangzuoshu.github.io/categories/%E5%91%A8%E5%88%8A/"/>
-    
-    
-    <category term="见闻" scheme="https://baiyangzuoshu.github.io/tags/%E8%A7%81%E9%97%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>每周见闻 - 第52 期</title>
-    <link href="https://baiyangzuoshu.github.io/2025/10/24/week/2025/week52/"/>
-    <id>https://baiyangzuoshu.github.io/2025/10/24/week/2025/week52/</id>
-    <published>2025-10-24T05:39:28.000Z</published>
-    <updated>2025-10-24T05:39:28.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/2025/20251022092411_361_4.png"></p><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a href="https://mp.weixin.qq.com/s/wvlKTDLJh22ZRDd-5KPBIA">1.BBA失守中国市场，奔驰三季度交付量大跌27%</a></p><p><a href="https://mp.weixin.qq.com/s/F0hOCHRmAILIekXyBCEhpA?scene=1&click_id=51">2.京东、美团、饿了么：试点取消骑手超时罚款</a></p><p><a href="https://mp.weixin.qq.com/s/Oy0u-vMRhraTj70iLnwlkA?scene=1">3.曹德旺辞去董事长职务，曹晖接任</a></p><p><a href="https://mp.weixin.qq.com/s/faKrue9qIIfxIBeDUEzALQ">4.黄金总市值，超30万亿美元</a></p><p><a href="https://mp.weixin.qq.com/s/FThXVC11CeQOEgILThxnTQ">5.卢浮宫多件藏品被盗</a></p><p><a href="https://mp.weixin.qq.com/s/Dh4pbRmZWC4nEBNtqtP6Ew">6.高市早苗当选首位女首相，但日本政治乱局远未终结</a></p><p><a href="https://mp.weixin.qq.com/s/3rDX36x0nfeCgh_BoIm8Sg?scene=1&click_id=67">7.沪指，刷新年内新高</a></p><p><a href="https://mp.weixin.qq.com/s/QB0uYMN04g53Lcu9M9UTVg">8.四川发现全球新物种</a></p><p><a href="https://mp.weixin.qq.com/s/Ovuk8Ac2tsKWMcucH3iDSg?scene=1&click_id=62">9.亚马逊云服务大规模宕机15小时，损失至少数十亿美元，波及上千家企业</a></p><p><a href="https://mp.weixin.qq.com/s/ic3xYZCeWH274QO9iKC3fg?scene=1&click_id=61">10.冰岛首次发现蚊子</a></p><p><a href="https://tech.ifeng.com/c/8ngh7sl7muu">11.Omdia：预计今年全球微短剧收入达110亿美元，中国市场独占83%</a></p><p><a href="https://www.news.cn/local/20251018/e962394a130b4b808680e30e1b0028f3/c.html">12.杨振宁逝世</a></p><p><a href="https://tech.ifeng.com/c/8nbz8OB1cXq">13.55名中国iPhone用户向监管总局投诉苹果：滥用市场支配地位</a></p><p><a href="https://tech.ifeng.com/c/8nUPhsh5iSj">14.美国铸币局官宣：苹果联合创始人乔布斯将登上美国创新一美元硬币</a></p><p><a href="https://www.news.cn/20251015/5386bd52145943c89a6ae7ad3401fb9f/c.html">15.《蔡国强：升龙》烟花秀事件责任方被追责</a></p><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="https://mp.weixin.qq.com/s/8yo1HXp7mEyVAv8THIf_7A?scene=1">1.农村小学空了，城镇小学满了：一位前挂职博士对教育公平的思考</a></p><p><a href="https://mp.weixin.qq.com/s/bLUXVShpNTbz7OKE0y-TcA?scene=1&click_id=66">2.一位入殓师的生死笔记</a></p><p><a href="https://tech.ifeng.com/c/8ngv8wUQOj2">3.这届年轻人，为何负债旅行？</a></p><h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a href="https://mp.weixin.qq.com/s/QLcxou8d9n2mWLiZUWw2YA">1.快手发布开源编程模型，720亿参数，创下编程能力新纪录</a></p><p><a href="https://mp.weixin.qq.com/s/n5DF8aJ4ycojuQ-GPqlVpQ">2.谢赛宁团队用RAE实现从8%到84%的飞跃，宣告VAE时代结束</a></p><p><a href="https://mp.weixin.qq.com/s/gNkWiar5Et-UGlTnCQfC-Q?scene=1&click_id=58">3.百度0.9B参数模型登顶全球第一，聊聊PaddleOCR-VL背后的技术细节</a></p><p><a href="https://tech.ifeng.com/c/8ngQa8iUHFX">4.字节跳动Seed3D 1.0 发布：一张图生成高精度3D模型</a></p><p><a href="https://tech.ifeng.com/c/8ncqIoQNng7">5.DeepSeek开源3B OCR模型：97%精度刷新长文本压缩极限</a></p><p><a href="https://tech.ifeng.com/c/8nUzoPYrriJ">6.OpenAI Sora 2更新：所有用户均能生成15秒视频，Pro最长25秒</a></p><p><a href="https://www.ithome.com/0/891/262.htm">7.ChatGPT Atlas 正式发布</a></p><h2 id="影视剧"><a href="#影视剧" class="headerlink" title="影视剧"></a>影视剧</h2><p><img src="/images/2025/p2325132291.webp" alt="魔幻手机"><br>公元2060年，科学家发明了一种穿梭多维空间的手机，取名“傻妞”（舒畅 饰）。“傻妞”穿越回唐朝，它协助孙悟空（丁健 饰）制服黄眉大王（陈创 饰），连战数日能量耗尽，穿过时光隧道，落在当代生性梗直的小千（李滨 饰）手中。“傻妞”的出现对小千来说如有神助，他请来孙悟空师兄弟，击败了贪念尚存的黄眉大王。游所为（焦恩俊 饰）趁小千喝醉得到“傻妞”，但同时也收获了贪婪。他让黒客东子（曲高位 饰）为其复制“傻妞”，同样贪婪的东子和王天霸媳妇孙飞燕（张倩 饰）得知“傻妞”魔力，悄悄多复制一台占为已有。知晓真相的游所为不容他人夺己之爱，他把东子和孙飞燕发配到千年以上的古战场，从此三人水火不容，由此拉开了当今与未来、未来与古代、正义与邪恶的时空大战……</p>]]></content>
-    
-    
-    <summary type="html">新闻1.BBA失守中国市场，奔驰三季度交付量大跌27%...</summary>
     
     
     
