@@ -1,0 +1,310 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  
+  
+  <title>C 语言的历史：从 Unix 实验室到现代系统编程 | 白杨左书</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="梳理 C 语言从 BCPL、B 语言到 Unix、K&amp;...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C 语言的历史：从 Unix 实验室到现代系统编程">
+<meta property="og:url" content="https://baiyangzuoshu.github.io/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/index.html">
+<meta property="og:site_name" content="白杨左书">
+<meta property="og:description" content="梳理 C 语言从 BCPL、B 语言到 Unix、K&amp;...">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-18T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-18T02:00:00.000Z">
+<meta property="article:author" content="白杨左书">
+<meta property="article:tag" content="编程">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="计算机历史">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="梳理 C 语言从 BCPL、B 语言到 Unix、K&amp;...">
+  
+    <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/2024/favicon32.ico">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css">
+<script>
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "w2upclgnjh");
+</script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"C 语言的历史：从 Unix 实验室到现代系统编程","description":"梳理 C 语言从 BCPL、B 语言到 Unix、K&...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/","datePublished":"2026-05-18T02:00:00.000Z","dateModified":"2026-05-18T02:00:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","articleSection":["编程"],"keywords":"编程, C语言, 计算机历史"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"编程","item":"https://baiyangzuoshu.github.io/categories/%E7%BC%96%E7%A8%8B/"},{"@type":"ListItem","position":3,"name":"C 语言的历史：从 Unix 实验室到现代系统编程","item":"https://baiyangzuoshu.github.io/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/"}]}]</script>
+  <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">白杨左书</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有品性的丰满，知识就是伪装</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-programming/C语言的历史：从Unix实验室到现代系统编程" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/" class="article-date">
+  <time class="dt-published" datetime="2026-05-18T02:00:00.000Z" itemprop="datePublished">2026-05-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      C 语言的历史：从 Unix 实验室到现代系统编程
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>  C 语言是一门很特别的语言。它不算年轻，也不追求语法华丽，但直到今天，操作系统、编译器、数据库、嵌入式设备、运行时和大量底层库，仍然离不开它。理解 C 语言的历史，其实也是理解现代软件工业的一条主线：计算机从实验室走向工程化，软件从机器相关走向可移植，程序员从直接操纵硬件走向构建大型系统。</p>
+<h3 id="由来：从-CPL、BCPL-到-B"><a href="#由来：从-CPL、BCPL-到-B" class="headerlink" title="由来：从 CPL、BCPL 到 B"></a>由来：从 CPL、BCPL 到 B</h3><p>  C 语言不是凭空出现的。它的血脉可以追溯到 1960 年代的 CPL 和 BCPL。CPL 试图成为一种强大的通用语言，但设计复杂；BCPL 则由 Martin Richards 在 1960 年代后期设计，目标更朴素：简单、紧凑、适合系统编程。</p>
+<p>  后来，Ken Thompson 在贝尔实验室基于 BCPL 设计了 B 语言。B 语言已经有了很多后来 C 的影子，但它主要面向早期机器，类型系统很弱。那个时代的硬件资源很紧张，语言必须足够小、足够贴近机器，否则根本跑不起来。</p>
+<p>  这就是 C 诞生前的背景：程序员需要一种比汇编高级、但又不像大型语言那样笨重的工具。它要能写操作系统，要能直接处理内存和机器字，又要能让代码在不同机器之间迁移。</p>
+<h3 id="诞生：Unix-需要一门新语言"><a href="#诞生：Unix-需要一门新语言" class="headerlink" title="诞生：Unix 需要一门新语言"></a>诞生：Unix 需要一门新语言</h3><p>  C 语言真正诞生于贝尔实验室的 Unix 项目。1969 年前后，Ken Thompson、Dennis Ritchie 等人开始开发 Unix。早期 Unix 很多部分用汇编写，这在性能上直接，但在可维护性和移植性上都很困难。</p>
+<p>  Dennis Ritchie 在 B 语言基础上继续改进，加入更明确的类型系统、结构体、指针等能力，逐渐形成了 C 语言。大约到 1972 年，C 已经开始被用于 Unix 开发；到 1973 年，Unix 内核的重要部分被 C 重写。这一步非常关键，因为它证明了高级语言不仅能写应用，也能写操作系统。</p>
+<p>  C 的成功不只是语法成功，而是和 Unix 绑定在了一起。Unix 需要 C 来获得可移植性，C 也借 Unix 获得真实系统的锤炼。二者互相成就，最终影响了后来的操作系统、网络、编译器和整个开源软件世界。</p>
+<h3 id="发展：K-R-C-与标准化"><a href="#发展：K-R-C-与标准化" class="headerlink" title="发展：K&amp;R C 与标准化"></a>发展：K&amp;R C 与标准化</h3><p>  1978 年，Brian Kernighan 和 Dennis Ritchie 出版《The C Programming Language》。这本书后来被称为 K&amp;R，它不仅是 C 语言教材，也在很长时间里承担了事实标准的角色。很多程序员就是通过这本书认识 C 的。</p>
+<p>  随着 Unix 传播，C 也快速扩散到高校、研究机构和商业公司。问题随之出现：不同编译器对 C 的实现并不完全一致。如果没有统一标准，代码可移植性就会受到影响。</p>
+<p>  于是标准化开始推进。1989 年，ANSI 发布 C 标准，通常称为 ANSI C 或 C89；1990 年，ISO 也发布对应标准，也就是 C90。这个阶段的意义在于，C 从贝尔实验室和 Unix 社区里的实用语言，变成了工业界共同遵守的标准语言。</p>
+<p>  之后 C 继续演进。C99 引入了很多现代化能力，比如 <code>//</code> 注释、变长数组、<code>inline</code>、更完整的整数类型等；C11 引入线程、原子操作和更明确的内存模型；C17 主要是修正和维护；目前最新正式发布的 ISO 标准是 ISO/IEC 9899:2024，通常称为 C23。它继续清理历史包袱，也补充了一些更适合现代开发的语言和库特性。</p>
+<h3 id="影响：现代语言的共同祖先"><a href="#影响：现代语言的共同祖先" class="headerlink" title="影响：现代语言的共同祖先"></a>影响：现代语言的共同祖先</h3><p>  C 的影响远远超出了它本身。C++ 直接从 C 扩展而来，Objective-C、Java、C#、JavaScript、Go、Rust 等语言，都能看到 C 风格语法的影子。大括号、分号、表达式、控制流、函数调用方式，很多都成为后来程序语言的共同习惯。</p>
+<p>  更重要的是，C 建立了一套系统编程的思维方式。它让程序员清楚地看到内存、地址、指针、栈、堆、结构体和二进制布局。高级语言可以隐藏这些细节，但很多底层问题最终还是会回到这些概念上。</p>
+<p>  这也是为什么学习 C 仍然有价值。哪怕以后主要写 Java、Go、Rust 或 Python，理解 C 都能帮助你理解操作系统、网络、编译、性能和内存问题。C 像是一层底座，不总是在台前，但一直在支撑上层软件。</p>
+<h3 id="直到现在：仍在核心位置"><a href="#直到现在：仍在核心位置" class="headerlink" title="直到现在：仍在核心位置"></a>直到现在：仍在核心位置</h3><p>  今天，C 语言已经五十多年历史了。它当然有明显缺点：手动内存管理容易出错，指针带来安全风险，未定义行为让调试变复杂，大型工程也需要额外规范约束。很多安全问题，确实和 C/C++ 这类底层语言的内存模型有关。</p>
+<p>  但 C 仍然没有被替代。原因很现实：它足够贴近硬件，编译器成熟，运行时负担小，ABI 稳定，生态庞大。Linux 内核、嵌入式系统、数据库核心、图形库、语言解释器、驱动程序，仍然大量使用 C。很多新语言即使自己更安全，也需要和 C ABI 交互，因为 C 已经成为系统软件世界的共同接口。</p>
+<p>  所以 C 语言的历史不是一门旧语言被淘汰的历史，而是一门基础语言不断被重新定位的历史。它从 Unix 实验室走来，经历 K&amp;R、ANSI、ISO 标准化，再走到 C23。今天它不再是所有场景的最佳选择，但在需要控制性能、内存、二进制接口和底层资源的地方，C 仍然是绕不开的语言。</p>
+<p>  理解 C，也是在理解软件和机器之间那层最直接的关系。</p>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.bell-labs.com/usr/dmr/www/chist.html">Dennis M. Ritchie: The Development of the C Language</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.iso.org/standard/82075.html">ISO/IEC 9899:2024 - Programming languages - C</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.open-std.org/jtc1/sc22/wg14/www/standards">WG14 - The Standard</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/" data-id="cmpjl3zja000xdy77b2v357yp" data-title="C 语言的历史：从 Unix 实验室到现代系统编程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2026/05/14/AI/DeepSeek-TUI在终端里使用DeepSeek写代码/">    <div class="article-related-meta"><time>2026-05-14</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">DeepSeek-TUI：在终端里使用 DeepSeek 写代码</h3>    <p class="article-related-excerpt">介绍 DeepSeek-TUI 是什么，以及如何安装、...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/05/06/AI/AI写代码后更需要架构师能力/">    <div class="article-related-meta"><time>2026-05-06</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">AI 写代码后，更需要架构师能力</h3>    <p class="article-related-excerpt">使用 Codex、DeepSeek、Claude 写代...</p>  </a></article>  </div></section><nav id="article-nav">
+  
+    <a href="/2026/05/24/week/2026/week70/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          每周见闻 - 第70 期
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/17/week/2026/week69/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">每周见闻 - 第69 期</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments" class="comments-panel">
+  <div class="comments-panel-head">
+    <p class="comments-panel-kicker">GitHub Discussions</p>
+    <h2>评论</h2>
+    <p class="comments-panel-note">欢迎继续交流，也可以直接在 GitHub Discussions 中参与讨论。</p>
+  </div>
+  <div class="giscus"></div>
+  <noscript>请启用 JavaScript 查看评论内容。</noscript>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
+</section>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cocoscreator/">Cocoscreator</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%80%9D%E8%80%83/">思考</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%97%8F%E4%B9%A6/">藏书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 12.5px;">AI</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 10px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12.5px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 15px;">古籍</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 15px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/24/week/2026/week70/">每周见闻 - 第70 期</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/programming/C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%8E%86%E5%8F%B2/">C 语言的历史：从 Unix 实验室到现代系统编程</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/week/2026/week69/">每周见闻 - 第69 期</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/">DeepSeek-TUI：在终端里使用 DeepSeek 写代码</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/week/2026/week68/">每周见闻 - 第68 期</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      © 2026 白杨左书<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>
