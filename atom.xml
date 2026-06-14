@@ -6,7 +6,7 @@
   <link href="https://baiyangzuoshu.github.io/atom.xml" rel="self"/>
   
   <link href="https://baiyangzuoshu.github.io/"/>
-  <updated>2026-06-13T01:01:43.000Z</updated>
+  <updated>2026-06-14T02:00:00.000Z</updated>
   <id>https://baiyangzuoshu.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案</title>
+    <link href="https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/"/>
+    <id>https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/</id>
+    <published>2026-06-14T02:00:00.000Z</published>
+    <updated>2026-06-14T02:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;近半年我一直在探索一个低成本高效果的 AI 编程工作流：用 Codex 做架构设计和代码审查，用 DeepSeek 做细节实现。但实际操作时会碰到一个技术障碍——新版 Codex CLI 对接的是 OpenAI Responses API，而 DeepSeek 暴露的是 OpenAI Chat Completions API（也就是 <code>/chat/completions</code>）。两种协议的请求体、流式事件和返回结构都不一样，直接往 Codex 配置里填 DeepSeek 的接口地址，轻则模型列表不对，重则请求 404 或 400。</p><p>&emsp;&emsp;社区里已经有不少人碰到同样的问题，直到我发现了 <a href="https://github.com/farion1231/cc-switch">cc-switch</a>——一个专门为 AI 编程工具设计的桌面端管理器，内置了针对 Codex + Chat API 供应商的本地路由方案。本文就是记录这个方案的来龙去脉和配置步骤。</p><h3 id="cc-switch-是什么"><a href="#cc-switch-是什么" class="headerlink" title="cc-switch 是什么"></a>cc-switch 是什么</h3><p>&emsp;&emsp;cc-switch 是一个跨平台桌面应用（Windows&#x2F;macOS&#x2F;Linux，基于 Tauri 2），定位是 AI 编程工具的”全能管理器”。它支持 Claude Code、Claude Desktop、Codex、Gemini CLI、OpenCode、OpenClaw、Hermes 七个主流工具，在 UI 里统一管理供应商、一键切换模型、同步 MCP 和 Skills。</p><p>&emsp;&emsp;对 Codex 用户来说，cc-switch 最核心的功能是<strong>本地路由</strong>：它在 <code>127.0.0.1:15721</code> 上拉起一个本地代理，让 Codex 始终连接本地路由（仍以 Responses API 发请求），路由内部判断当前供应商是否是 Chat 格式，如果是就做协议转换。整个过程对 Codex 透明，不需要你修改任何 <code>config.toml</code>。</p><p>&emsp;&emsp;cc-switch 内置了 50+ 供应商预设，包括 DeepSeek、Kimi、MiniMax、SiliconFlow、阿里百炼、字节豆包等，填个 API Key 就能直接用。GitHub 上目前已有 100k+ star，开源协议宽松。</p><h3 id="为什么需要本地路由"><a href="#为什么需要本地路由" class="headerlink" title="为什么需要本地路由"></a>为什么需要本地路由</h3><p>&emsp;&emsp;问题出在协议层。Codex CLI（新版本）面向的是 OpenAI Responses API，请求路径是 <code>/responses</code> 或 <code>/v1/responses</code>，而 DeepSeek 的 API 兼容的是传统的 Chat Completions 格式，路径是 <code>/chat/completions</code>。两者的请求体结构和 SSE 事件格式完全不同。</p><p>&emsp;&emsp;cc-switch 的本地路由方案用一个四步链路解决这个问题：</p><ol><li><strong>Codex 接管</strong>：路由启用后，cc-switch 把 Codex 的 live 配置指向 <code>http://127.0.0.1:15721/v1</code>，并保持 <code>wire_api = &quot;responses&quot;</code>。</li><li><strong>供应商标记</strong>：DeepSeek 预设的 <code>meta.apiFormat = &quot;openai_chat&quot;</code> 告诉路由——真实上游是 Chat Completions。</li><li><strong>请求改写</strong>：路由把 Codex 发来的 <code>/responses</code> 路径改写成 <code>/chat/completions</code>，同时把 Responses 请求体转换为 Chat 请求体。</li><li><strong>响应回译</strong>：上游返回后，路由再把 Chat 的 JSON 或 SSE 流转回 Codex 能理解的 Responses 格式。</li></ol><p>&emsp;&emsp;这个方案的精妙之处在于，真正的 DeepSeek API Key 始终保存在 cc-switch 的 Provider 配置里，由本地路由在转发时注入。Codex 的 live 配置里只会看到一个占位符，不用担心 Key 泄露。</p><h3 id="配置步骤"><a href="#配置步骤" class="headerlink" title="配置步骤"></a>配置步骤</h3><p>&emsp;&emsp;前提条件：已安装 cc-switch 并启动、已安装 Codex CLI 并至少运行过一次（确保 <code>~/.codex/config.toml</code> 目录结构存在）、有 DeepSeek API Key。</p><h4 id="第一步：添加-Codex-供应商"><a href="#第一步：添加-Codex-供应商" class="headerlink" title="第一步：添加 Codex 供应商"></a>第一步：添加 Codex 供应商</h4><p>&emsp;&emsp;打开 cc-switch，切换到顶部的 <code>Codex</code> 标签，点击右上角加号添加供应商。在弹出的表单中选择内置预设 <code>DeepSeek</code>，只需要做两件事：填入你的 DeepSeek API Key，然后保存。</p><p>&emsp;&emsp;预设里已经内置了 DeepSeek 的请求基地址 <code>https://api.deepseek.com</code>、默认模型（如 <code>DeepSeek-V4-Flash</code>）、模型列表和 thinking&#x2F;reasoning 参数，并且自动开启了”需要本地路由映射”。你不需要手动拼接口路径，协议转换全部交给路由层。</p><h4 id="第二步：开启本地路由并接管-Codex"><a href="#第二步：开启本地路由并接管-Codex" class="headerlink" title="第二步：开启本地路由并接管 Codex"></a>第二步：开启本地路由并接管 Codex</h4><p>&emsp;&emsp;进入 cc-switch 设置里的”路由”页面，展开”本地路由”。完成两个开关操作：</p><ul><li>打开”路由总开关”，启动本地服务，默认地址是 <code>127.0.0.1:15721</code>。</li><li>在”路由启用”中打开 <code>Codex</code> 开关。如果只想让 Codex 走路由，Claude 和 Gemini 的开关可以保持关闭。</li></ul><p>&emsp;&emsp;接管后 cc-switch 会自动修改 Codex 的 live 配置，把认证信息替换为占位符。这一步很快，配置会被原子写入，不会出现写一半崩掉的情况。</p><h4 id="第三步：切换供应商并重启-Codex"><a href="#第三步：切换供应商并重启-Codex" class="headerlink" title="第三步：切换供应商并重启 Codex"></a>第三步：切换供应商并重启 Codex</h4><p>&emsp;&emsp;回到 Codex 供应商列表，点击 DeepSeek 供应商的”启用”按钮。如果看到”需要路由”标记，说明这个供应商必须在路由运行时使用——没有启动路由的话 cc-switch 会弹出提示。</p><p>&emsp;&emsp;切换后建议重启当前 Codex 终端会话。原因是 Codex 进程可能已经读取过旧的 <code>config.toml</code>，而 <code>model_catalog_json</code> 生成的模型目录通常需要新进程才能刷新。</p><p>&emsp;&emsp;进入 Codex 后可以用 <code>/model</code> 查看当前加载的模型，应该能看到 DeepSeek 预设的模型名。目前 Codex app 不支持多模型选择，会默认使用配置里的第一个模型。发一个小问题测试一下，观察路由面板的请求数有没有增长，确认请求确实经过了本地路由。</p><h3 id="其它-Chat-供应商的支持"><a href="#其它-Chat-供应商的支持" class="headerlink" title="其它 Chat 供应商的支持"></a>其它 Chat 供应商的支持</h3><p>&emsp;&emsp;cc-switch 对 Chat 格式供应商的支持覆盖很广。DeepSeek、Kimi、MiniMax、SiliconFlow 等主流供应商都有内置预设，按上述流程直接用就行。预设里没覆盖的供应商，选择自定义配置，按对方文档填 API Key、base URL 和模型名，把”API 格式”选为 <code>OpenAI Chat Completions (需开启路由)</code> 即可。</p><p>&emsp;&emsp;如果你的上游供应商直接支持 OpenAI Responses API（比如 OpenRouter 的某些模型），就不需要打开”需要本地路由映射”，cc-switch 可以 Responses 直连，不走 Chat 转换。</p><h3 id="常见问题排查"><a href="#常见问题排查" class="headerlink" title="常见问题排查"></a>常见问题排查</h3><p>&emsp;&emsp;<strong>Codex 报 404 或找不到 <code>/responses</code></strong>：通常是没有开启 Codex 接管，或者手动把上游 Chat 地址直接写给了 Codex。检查 <code>~/.codex/config.toml</code> 是否指向 <code>http://127.0.0.1:15721/v1</code>。</p><p>&emsp;&emsp;<strong>DeepSeek 上游报 404</strong>：确认当前供应商来自内置预设（不是手动自定义的），并且 Codex 路由已启用。如果是自定义供应商，检查 base URL 是否为服务根地址，而不是带 <code>/chat/completions</code> 的完整路径。</p><p>&emsp;&emsp;<strong><code>/model</code> 看不到 DeepSeek 模型</strong>：保存供应商后重启 Codex。cc-switch 会生成 <code>cc-switch-model-catalog.json</code> 并写入 <code>model_catalog_json</code> 路径，但正在运行的 Codex 进程不会热加载模型目录。</p><p>&emsp;&emsp;<strong>开了路由但请求走错供应商</strong>：确认三处状态一致：Codex 标签下当前供应商是 DeepSeek、本地路由服务正在运行、”路由启用”里的 Codex 开关已打开。</p><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>&emsp;&emsp;cc-switch 解决了一个实际且高频的问题：协议不兼容。它的本地路由方案让 Codex 可以用 DeepSeek、Kimi、MiniMax 等 Chat 格式供应商，不需要改 Codex 源码，也不需要手动维护复杂的代理脚本。</p><p>&emsp;&emsp;对我自己的工作流意义更大：Codex 负责规划，DeepSeek 负责执行，cc-switch 在中间做无缝的协议转换。三个工具各司其职，一个 GUI 统一管理，配置成本降到最低。</p><p>&emsp;&emsp;参考链接：</p><ul><li><a href="https://github.com/farion1231/cc-switch">cc-switch GitHub 仓库</a></li><li><a href="https://ccswitch.io/">cc-switch 官网</a></li><li><a href="https://github.com/farion1231/cc-switch/blob/main/docs/guides/codex-deepseek-routing-guide-zh.md">Codex + DeepSeek 路由指南（官方文档）</a></li><li><a href="https://api-docs.deepseek.com/">DeepSeek API 文档</a></li></ul>]]></content>
+    
+    
+    <summary type="html">介绍 cc-switch 如何解决 Codex 与 D...</summary>
+    
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
+    
+    
+    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
+    
+    <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="Codex" scheme="https://baiyangzuoshu.github.io/tags/Codex/"/>
+    
+    <category term="cc-switch" scheme="https://baiyangzuoshu.github.io/tags/cc-switch/"/>
+    
+  </entry>
   
   <entry>
     <title>每周见闻 - 第72 期</title>
@@ -219,11 +248,11 @@
     <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
     
     
+    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
+    
     <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
     
     <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
     
   </entry>
   
@@ -450,29 +479,6 @@
     
     
     <category term="见闻" scheme="https://baiyangzuoshu.github.io/tags/%E8%A7%81%E9%97%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>从手写 UI 到 AI 拼 UI：游戏界面开发方式的三次变化</title>
-    <link href="https://baiyangzuoshu.github.io/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/"/>
-    <id>https://baiyangzuoshu.github.io/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/</id>
-    <published>2026-03-31T02:00:00.000Z</published>
-    <updated>2026-03-31T02:00:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>&emsp;&emsp;这几年做游戏开发，一个很明显的变化，就是 UI 的生产方式一直在变。十年前我在使用 cocos2d-x，那时候做界面基本就是“手搓”。按钮放哪、背景图怎么对齐、列表怎么排版、不同分辨率怎么适配，都要开发自己写代码处理。UI 不是不能做，而是成本很高，很多时间其实花在了重复劳动上。一个登录界面、一个背包界面，真正复杂的业务逻辑还没开始，光把节点摆好、响应接好，就已经消耗了不少精力。</p><p>&emsp;&emsp;到了 2020 年以后，开始更多使用 Cocos Creator，情况就不一样了。Creator 把 UI 搭建从“写代码”变成了“可视化拼接”。节点层级、组件挂载、资源拖拽、布局调整，很多事情都可以直接在编辑器里完成。对开发来说，效率提升是非常明显的。以前要反复改坐标、改锚点、重新编译才能看到效果，现在在编辑器里拖一拖、点一点，立刻就能看到结果。某种意义上，这一代工具把 UI 开发门槛拉低了，也把很多机械性的工作从程序员手里拿走了。</p><p>&emsp;&emsp;而现在，AI 又把这件事往前推了一步。它开始尝试“自动拼 UI”。也就是说，开发者不一定非要手动摆节点，也不一定非要自己一个控件一个控件去拖。你只要把需求描述清楚，AI 就有机会先给出一个初版界面，甚至把部分组件结构、样式层级、交互流程一并生成出来。从趋势上看，UI 的生产方式已经从“程序员自己实现”，走到了“工具辅助搭建”，再走到了“AI 参与生成”。</p><p>&emsp;&emsp;不过我觉得，这里面最关键的一点不是 AI 会不会画界面，而是你有没有把足够准确的语料喂给它。这里的语料，不只是几句自然语言提示词，更重要的是和项目相关的 API、组件规范、命名规则、交互约束、页面结构，甚至是现有工程里的资源组织方式。AI 不是凭空理解你的项目，它生成出来的 UI 好不好，很大程度取决于你给它的信息是否完整。如果没有这些上下文，AI 能做的往往只是“看起来像那么回事”的 demo，而不是能真正接进项目里的 UI。</p><p>&emsp;&emsp;所以我更倾向于把现在这个阶段理解成：AI 不是代替人来做 UI，而是把开发者的工作重心往前移了。以前我们主要在“实现”上花时间，现在更多是在“描述”和“约束”上花时间。你要先把接口定义清楚，把页面状态想明白，把组件边界整理好，再把这些内容交给 AI。谁的工程规范更清晰，谁的 API 设计更稳定，谁就更容易把 AI 用起来。</p><p>&emsp;&emsp;从 cocos2d-x 到 Cocos Creator，再到今天 AI 开始拼 UI，我看到的不是某一种工具替代另一种工具，而是 UI 开发正在不断抽象、不断提效。手写代码解决的是“能不能做”，可视化编辑解决的是“能不能更快做”，AI 现在尝试解决的，则是“能不能先帮你做出第一版”。至于最后效果怎么样，还是取决于开发者对业务、工具和工程上下文的理解。</p>]]></content>
-    
-    
-    <summary type="html">从 cocos2d-x 手写界面，到 Cocos Cr...</summary>
-    
-    
-    
-    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
-    
-    
-    <category term="UI" scheme="https://baiyangzuoshu.github.io/tags/UI/"/>
-    
-    <category term="Cocoscreator" scheme="https://baiyangzuoshu.github.io/tags/Cocoscreator/"/>
     
   </entry>
   

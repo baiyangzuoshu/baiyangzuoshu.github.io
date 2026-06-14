@@ -1,0 +1,320 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  
+  
+  <title>cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案 | 白杨左书</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="介绍 cc-switch 如何解决 Codex 与 D...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案">
+<meta property="og:url" content="https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/index.html">
+<meta property="og:site_name" content="白杨左书">
+<meta property="og:description" content="介绍 cc-switch 如何解决 Codex 与 D...">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-14T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-14T02:00:00.000Z">
+<meta property="article:author" content="白杨左书">
+<meta property="article:tag" content="DeepSeek">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="编程">
+<meta property="article:tag" content="Codex">
+<meta property="article:tag" content="cc-switch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="介绍 cc-switch 如何解决 Codex 与 D...">
+  
+    <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/2024/favicon32.ico">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css">
+<script>
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "w2upclgnjh");
+</script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案","description":"介绍 cc-switch 如何解决 Codex 与 D...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/","datePublished":"2026-06-14T02:00:00.000Z","dateModified":"2026-06-14T02:00:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","articleSection":["AI"],"keywords":"DeepSeek, AI, 编程, Codex, cc-switch"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案","item":"https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/"}]}]</script>
+  <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">白杨左书</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有品性的丰满，知识就是伪装</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-AI/cc-switch：用DeepSeek驱动Codex的本地路由方案" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/" class="article-date">
+  <time class="dt-published" datetime="2026-06-14T02:00:00.000Z" itemprop="datePublished">2026-06-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>  近半年我一直在探索一个低成本高效果的 AI 编程工作流：用 Codex 做架构设计和代码审查，用 DeepSeek 做细节实现。但实际操作时会碰到一个技术障碍——新版 Codex CLI 对接的是 OpenAI Responses API，而 DeepSeek 暴露的是 OpenAI Chat Completions API（也就是 <code>/chat/completions</code>）。两种协议的请求体、流式事件和返回结构都不一样，直接往 Codex 配置里填 DeepSeek 的接口地址，轻则模型列表不对，重则请求 404 或 400。</p>
+<p>  社区里已经有不少人碰到同样的问题，直到我发现了 <a target="_blank" rel="noopener" href="https://github.com/farion1231/cc-switch">cc-switch</a>——一个专门为 AI 编程工具设计的桌面端管理器，内置了针对 Codex + Chat API 供应商的本地路由方案。本文就是记录这个方案的来龙去脉和配置步骤。</p>
+<h3 id="cc-switch-是什么"><a href="#cc-switch-是什么" class="headerlink" title="cc-switch 是什么"></a>cc-switch 是什么</h3><p>  cc-switch 是一个跨平台桌面应用（Windows/macOS/Linux，基于 Tauri 2），定位是 AI 编程工具的”全能管理器”。它支持 Claude Code、Claude Desktop、Codex、Gemini CLI、OpenCode、OpenClaw、Hermes 七个主流工具，在 UI 里统一管理供应商、一键切换模型、同步 MCP 和 Skills。</p>
+<p>  对 Codex 用户来说，cc-switch 最核心的功能是<strong>本地路由</strong>：它在 <code>127.0.0.1:15721</code> 上拉起一个本地代理，让 Codex 始终连接本地路由（仍以 Responses API 发请求），路由内部判断当前供应商是否是 Chat 格式，如果是就做协议转换。整个过程对 Codex 透明，不需要你修改任何 <code>config.toml</code>。</p>
+<p>  cc-switch 内置了 50+ 供应商预设，包括 DeepSeek、Kimi、MiniMax、SiliconFlow、阿里百炼、字节豆包等，填个 API Key 就能直接用。GitHub 上目前已有 100k+ star，开源协议宽松。</p>
+<h3 id="为什么需要本地路由"><a href="#为什么需要本地路由" class="headerlink" title="为什么需要本地路由"></a>为什么需要本地路由</h3><p>  问题出在协议层。Codex CLI（新版本）面向的是 OpenAI Responses API，请求路径是 <code>/responses</code> 或 <code>/v1/responses</code>，而 DeepSeek 的 API 兼容的是传统的 Chat Completions 格式，路径是 <code>/chat/completions</code>。两者的请求体结构和 SSE 事件格式完全不同。</p>
+<p>  cc-switch 的本地路由方案用一个四步链路解决这个问题：</p>
+<ol>
+<li><strong>Codex 接管</strong>：路由启用后，cc-switch 把 Codex 的 live 配置指向 <code>http://127.0.0.1:15721/v1</code>，并保持 <code>wire_api = "responses"</code>。</li>
+<li><strong>供应商标记</strong>：DeepSeek 预设的 <code>meta.apiFormat = "openai_chat"</code> 告诉路由——真实上游是 Chat Completions。</li>
+<li><strong>请求改写</strong>：路由把 Codex 发来的 <code>/responses</code> 路径改写成 <code>/chat/completions</code>，同时把 Responses 请求体转换为 Chat 请求体。</li>
+<li><strong>响应回译</strong>：上游返回后，路由再把 Chat 的 JSON 或 SSE 流转回 Codex 能理解的 Responses 格式。</li>
+</ol>
+<p>  这个方案的精妙之处在于，真正的 DeepSeek API Key 始终保存在 cc-switch 的 Provider 配置里，由本地路由在转发时注入。Codex 的 live 配置里只会看到一个占位符，不用担心 Key 泄露。</p>
+<h3 id="配置步骤"><a href="#配置步骤" class="headerlink" title="配置步骤"></a>配置步骤</h3><p>  前提条件：已安装 cc-switch 并启动、已安装 Codex CLI 并至少运行过一次（确保 <code>~/.codex/config.toml</code> 目录结构存在）、有 DeepSeek API Key。</p>
+<h4 id="第一步：添加-Codex-供应商"><a href="#第一步：添加-Codex-供应商" class="headerlink" title="第一步：添加 Codex 供应商"></a>第一步：添加 Codex 供应商</h4><p>  打开 cc-switch，切换到顶部的 <code>Codex</code> 标签，点击右上角加号添加供应商。在弹出的表单中选择内置预设 <code>DeepSeek</code>，只需要做两件事：填入你的 DeepSeek API Key，然后保存。</p>
+<p>  预设里已经内置了 DeepSeek 的请求基地址 <code>https://api.deepseek.com</code>、默认模型（如 <code>DeepSeek-V4-Flash</code>）、模型列表和 thinking/reasoning 参数，并且自动开启了”需要本地路由映射”。你不需要手动拼接口路径，协议转换全部交给路由层。</p>
+<h4 id="第二步：开启本地路由并接管-Codex"><a href="#第二步：开启本地路由并接管-Codex" class="headerlink" title="第二步：开启本地路由并接管 Codex"></a>第二步：开启本地路由并接管 Codex</h4><p>  进入 cc-switch 设置里的”路由”页面，展开”本地路由”。完成两个开关操作：</p>
+<ul>
+<li>打开”路由总开关”，启动本地服务，默认地址是 <code>127.0.0.1:15721</code>。</li>
+<li>在”路由启用”中打开 <code>Codex</code> 开关。如果只想让 Codex 走路由，Claude 和 Gemini 的开关可以保持关闭。</li>
+</ul>
+<p>  接管后 cc-switch 会自动修改 Codex 的 live 配置，把认证信息替换为占位符。这一步很快，配置会被原子写入，不会出现写一半崩掉的情况。</p>
+<h4 id="第三步：切换供应商并重启-Codex"><a href="#第三步：切换供应商并重启-Codex" class="headerlink" title="第三步：切换供应商并重启 Codex"></a>第三步：切换供应商并重启 Codex</h4><p>  回到 Codex 供应商列表，点击 DeepSeek 供应商的”启用”按钮。如果看到”需要路由”标记，说明这个供应商必须在路由运行时使用——没有启动路由的话 cc-switch 会弹出提示。</p>
+<p>  切换后建议重启当前 Codex 终端会话。原因是 Codex 进程可能已经读取过旧的 <code>config.toml</code>，而 <code>model_catalog_json</code> 生成的模型目录通常需要新进程才能刷新。</p>
+<p>  进入 Codex 后可以用 <code>/model</code> 查看当前加载的模型，应该能看到 DeepSeek 预设的模型名。目前 Codex app 不支持多模型选择，会默认使用配置里的第一个模型。发一个小问题测试一下，观察路由面板的请求数有没有增长，确认请求确实经过了本地路由。</p>
+<h3 id="其它-Chat-供应商的支持"><a href="#其它-Chat-供应商的支持" class="headerlink" title="其它 Chat 供应商的支持"></a>其它 Chat 供应商的支持</h3><p>  cc-switch 对 Chat 格式供应商的支持覆盖很广。DeepSeek、Kimi、MiniMax、SiliconFlow 等主流供应商都有内置预设，按上述流程直接用就行。预设里没覆盖的供应商，选择自定义配置，按对方文档填 API Key、base URL 和模型名，把”API 格式”选为 <code>OpenAI Chat Completions (需开启路由)</code> 即可。</p>
+<p>  如果你的上游供应商直接支持 OpenAI Responses API（比如 OpenRouter 的某些模型），就不需要打开”需要本地路由映射”，cc-switch 可以 Responses 直连，不走 Chat 转换。</p>
+<h3 id="常见问题排查"><a href="#常见问题排查" class="headerlink" title="常见问题排查"></a>常见问题排查</h3><p>  <strong>Codex 报 404 或找不到 <code>/responses</code></strong>：通常是没有开启 Codex 接管，或者手动把上游 Chat 地址直接写给了 Codex。检查 <code>~/.codex/config.toml</code> 是否指向 <code>http://127.0.0.1:15721/v1</code>。</p>
+<p>  <strong>DeepSeek 上游报 404</strong>：确认当前供应商来自内置预设（不是手动自定义的），并且 Codex 路由已启用。如果是自定义供应商，检查 base URL 是否为服务根地址，而不是带 <code>/chat/completions</code> 的完整路径。</p>
+<p>  <strong><code>/model</code> 看不到 DeepSeek 模型</strong>：保存供应商后重启 Codex。cc-switch 会生成 <code>cc-switch-model-catalog.json</code> 并写入 <code>model_catalog_json</code> 路径，但正在运行的 Codex 进程不会热加载模型目录。</p>
+<p>  <strong>开了路由但请求走错供应商</strong>：确认三处状态一致：Codex 标签下当前供应商是 DeepSeek、本地路由服务正在运行、”路由启用”里的 Codex 开关已打开。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>  cc-switch 解决了一个实际且高频的问题：协议不兼容。它的本地路由方案让 Codex 可以用 DeepSeek、Kimi、MiniMax 等 Chat 格式供应商，不需要改 Codex 源码，也不需要手动维护复杂的代理脚本。</p>
+<p>  对我自己的工作流意义更大：Codex 负责规划，DeepSeek 负责执行，cc-switch 在中间做无缝的协议转换。三个工具各司其职，一个 GUI 统一管理，配置成本降到最低。</p>
+<p>  参考链接：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/farion1231/cc-switch">cc-switch GitHub 仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://ccswitch.io/">cc-switch 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/farion1231/cc-switch/blob/main/docs/guides/codex-deepseek-routing-guide-zh.md">Codex + DeepSeek 路由指南（官方文档）</a></li>
+<li><a target="_blank" rel="noopener" href="https://api-docs.deepseek.com/">DeepSeek API 文档</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/" data-id="cmqd0sq5y000cee778sv34u5f" data-title="cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2026/05/14/AI/DeepSeek-TUI在终端里使用DeepSeek写代码/">    <div class="article-related-meta"><time>2026-05-14</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">DeepSeek-TUI：在终端里使用 DeepSeek 写代码</h3>    <p class="article-related-excerpt">介绍 DeepSeek-TUI 是什么，以及如何安装、...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/05/06/AI/AI写代码后更需要架构师能力/">    <div class="article-related-meta"><time>2026-05-06</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">AI 写代码后，更需要架构师能力</h3>    <p class="article-related-excerpt">使用 Codex、DeepSeek、Claude 写代...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/04/26/AI/GPT的三段历史/">    <div class="article-related-meta"><time>2026-04-26</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">GPT 的三段历史：从语言模型到 ChatGPT 爆发</h3>    <p class="article-related-excerpt">读《吴军讲 GPT》后，对 GPT 历史的一个三阶段梳...</p>  </a></article>  </div></section><nav id="article-nav">
+  
+  
+    <a href="/2026/06/13/week/2026/week72/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">每周见闻 - 第72 期</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments" class="comments-panel">
+  <div class="comments-panel-head">
+    <p class="comments-panel-kicker">GitHub Discussions</p>
+    <h2>评论</h2>
+    <p class="comments-panel-note">欢迎继续交流，也可以直接在 GitHub Discussions 中参与讨论。</p>
+  </div>
+  <div class="giscus"></div>
+  <noscript>请启用 JavaScript 查看评论内容。</noscript>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
+</section>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cocoscreator/">Cocoscreator</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%80%9D%E8%80%83/">思考</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%97%8F%E4%B9%A6/">藏书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 16px;">AI</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 10px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 12px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 14px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">编程</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 14px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 18px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/">cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案</a>
+          </li>
+        
+          <li>
+            <a href="/2026/06/13/week/2026/week72/">每周见闻 - 第72 期</a>
+          </li>
+        
+          <li>
+            <a href="/2026/06/06/week/2026/week71/">每周见闻 - 第71 期</a>
+          </li>
+        
+          <li>
+            <a href="/2026/06/06/thoughts/%E4%BB%8E%E7%BA%B8%E5%B8%81%E5%88%B0%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/">从纸币到抖音支付：我的支付方式变化</a>
+          </li>
+        
+          <li>
+            <a href="/2026/06/05/thoughts/LeanCloud%E7%9A%84%E5%85%B4%E8%B5%B7%E5%B7%85%E5%B3%B0%E4%B8%8E%E8%90%BD%E5%B9%95/">LeanCloud 的兴起、巅峰与落幕：AI 摧毁了旧式 BaaS</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      © 2026 白杨左书<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>
