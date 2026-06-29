@@ -6,7 +6,7 @@
   <link href="https://baiyangzuoshu.github.io/atom.xml" rel="self"/>
   
   <link href="https://baiyangzuoshu.github.io/"/>
-  <updated>2026-06-27T23:55:56.000Z</updated>
+  <updated>2026-06-29T02:00:00.000Z</updated>
   <id>https://baiyangzuoshu.github.io/</id>
   
   <author>
@@ -17,16 +17,70 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>昔日百度靠着芯片活下来</title>
+    <link href="https://baiyangzuoshu.github.io/2026/06/29/thoughts/%E6%98%94%E6%97%A5%E7%99%BE%E5%BA%A6%E9%9D%A0%E7%9D%80%E8%8A%AF%E7%89%87%E6%B4%BB%E4%B8%8B%E6%9D%A5/"/>
+    <id>https://baiyangzuoshu.github.io/2026/06/29/thoughts/%E6%98%94%E6%97%A5%E7%99%BE%E5%BA%A6%E9%9D%A0%E7%9D%80%E8%8A%AF%E7%89%87%E6%B4%BB%E4%B8%8B%E6%9D%A5/</id>
+    <published>2026-06-29T02:00:00.000Z</published>
+    <updated>2026-06-29T02:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;6 月 29 日看到一条消息：百度旗下 AI 芯片公司昆仑芯据称计划赴港 IPO，目标估值约 500 亿美元。报道里还提到，部分投资者被要求认购相当于计划申购金额数倍的芯片产品。消息本身还没有被正式核实，但它足够说明一件事：百度今天真正被市场重新审视的，不只是搜索，而是它在 AI 芯片上的位置。</p><p>&emsp;&emsp;如果把这件事放回百度自己的历史里看，就会发现这不是一条突兀的新闻。百度最早是靠搜索起家，靠广告变现，长期占据中国互联网的核心入口之一。后来移动互联网冲击搜索流量，短视频和内容平台重塑用户习惯，百度的老优势开始变弱。这个时候，百度必须找新的支柱，而芯片就是它押得比较早的一张牌。</p><p>&emsp;&emsp;昆仑芯最早是 2012 年百度内部的 AI 芯片研发部门，之后逐渐独立运营，但百度仍然保持控股。这条线很重要。它说明百度不是今天才开始做芯片，而是在 AI 还没有彻底爆发的时候，就已经把算力当成战略资产来看了。对于一家互联网公司来说，做芯片并不轻松，它意味着投入周期长、研发门槛高、商业化慢，但一旦 AI 时代真正到来，算力就会从后台变成前台。</p><p>&emsp;&emsp;过去，互联网公司的竞争焦点是流量、用户、广告和产品体验。今天，AI 时代的竞争焦点越来越像硬科技公司的逻辑：模型、数据、算力、芯片、供应链。百度之所以会被反复提到昆仑芯，正是因为它不是单纯在卖一个硬件，而是在补齐 AI 时代最底层的能力链条。</p><p>&emsp;&emsp;从这个角度看，说百度“靠着芯片活下来”并不夸张，但更准确地说，它是靠着芯片争取到了重新进入主赛道的资格。搜索业务可以继续提供现金流，AI 业务可以讲未来，而芯片则是未来能否落地的地基。没有算力，模型很难跑起来；没有芯片，算力成本就很难被自己掌控。</p><p>&emsp;&emsp;这也是为什么昆仑芯若真的 IPO，会被市场看得很重。它不只是一个子公司的融资动作，更像是百度把“AI 自主可控”这件事往资本市场上推了一步。百度需要证明自己不只是一个老牌互联网公司，而是一个能把大模型、云服务和芯片一起串起来的 AI 平台公司。</p><p>&emsp;&emsp;当然，芯片不是万能药。芯片能解决的是性能、成本和供应链的问题，不能自动解决产品问题、场景问题和商业化问题。百度真正要面对的，仍然是怎样把芯片能力变成可持续收入，怎样把 AI 能力变成用户愿意长期使用的产品。</p><p>&emsp;&emsp;所以我看这条新闻时，最直接的感受不是“百度又要翻身了”，而是“百度终于把自己的命门搬到了台前”。以前外界看百度，更多看搜索和广告；现在再看百度，不能不看芯片。它过去靠入口活，现在必须靠底层能力活。这个变化本身，就很能代表中国互联网公司在 AI 时代的转向。</p><p>参考：</p><ul><li><a href="https://tech.ifeng.com/c/8uJusN34wVh">消息称百度旗下昆仑芯瞄准500亿美元估值，计划赴港IPO</a></li></ul>]]></content>
+    
+    
+    <summary type="html">读百度旗下昆仑芯拟赴港 IPO 的消息，回看百度从搜索...</summary>
+    
+    
+    
+    <category term="思考" scheme="https://baiyangzuoshu.github.io/categories/%E6%80%9D%E8%80%83/"/>
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
+    
+    <category term="百度" scheme="https://baiyangzuoshu.github.io/tags/%E7%99%BE%E5%BA%A6/"/>
+    
+    <category term="昆仑芯" scheme="https://baiyangzuoshu.github.io/tags/%E6%98%86%E4%BB%91%E8%8A%AF/"/>
+    
+    <category term="芯片" scheme="https://baiyangzuoshu.github.io/tags/%E8%8A%AF%E7%89%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MCP、skill、agent：三者到底是什么</title>
+    <link href="https://baiyangzuoshu.github.io/2026/06/28/AI/MCP-skill-agent%E4%B8%89%E8%80%85%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/"/>
+    <id>https://baiyangzuoshu.github.io/2026/06/28/AI/MCP-skill-agent%E4%B8%89%E8%80%85%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/</id>
+    <published>2026-06-28T02:00:00.000Z</published>
+    <updated>2026-06-28T02:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;最近我越来越频繁地看到三个词：<code>MCP</code>、<code>skill</code>、<code>agent</code>。它们经常一起出现，容易让人误以为是同一件事。其实不是。最简单的理解是：<code>MCP</code> 解决“接什么工具”，<code>skill</code> 解决“怎么做这类任务”，<code>agent</code> 解决“谁来调度这些东西”。</p><h3 id="先说结论"><a href="#先说结论" class="headerlink" title="先说结论"></a>先说结论</h3><p>&emsp;&emsp;如果把 AI 系统比作一个团队，那么：</p><p>&emsp;&emsp;<code>agent</code> 是项目负责人，负责看目标、拆任务、决定什么时候调用工具。</p><p>&emsp;&emsp;<code>skill</code> 是工作方法和任务模板，告诉 agent 遇到这类问题时应该怎么做。</p><p>&emsp;&emsp;<code>MCP</code> 是统一接口，负责把外部数据源、工具和应用接进来。</p><p>&emsp;&emsp;三者不在一个层级上，所以不能混着看。</p><h3 id="MCP-是什么"><a href="#MCP-是什么" class="headerlink" title="MCP 是什么"></a>MCP 是什么</h3><p>&emsp;&emsp;MCP 全称是 <code>Model Context Protocol</code>。按照官方定义，它是一个开放标准，用来把 AI 应用连接到外部系统，比如本地文件、数据库、搜索引擎、计算器和工作流。你可以把它理解成 AI 世界里的 <code>USB-C</code> 接口：插上以后，模型就能标准化地访问外部能力。</p><p>&emsp;&emsp;MCP 重点解决的是集成问题。以前每个模型、每个工具、每个应用都要单独写适配器，形成 <code>N x M</code> 的重复开发。MCP 把这件事变成统一协议，外部系统只要按 MCP server 暴露能力，AI 应用就能按 MCP client 去接。</p><p>&emsp;&emsp;所以 MCP 不是“聪明”本身，也不是“任务执行”本身，它是连接层。</p><h3 id="skill-是什么"><a href="#skill-是什么" class="headerlink" title="skill 是什么"></a>skill 是什么</h3><p>&emsp;&emsp;skill 更像一种可复用的任务说明书。官方对 Agent Skills 的描述是：给 AI coding assistant 的可移植指令集，用来提供某一类任务所需的领域知识。它通常会把一类工作拆成固定步骤、约束和参考材料，像 <code>SKILL.md</code>、<code>references/</code> 这样的结构。</p><p>&emsp;&emsp;你可以把 skill 理解为“方法论封装”。比如做 MCP server 的 skill，里面会告诉 agent：先问清楚目标、部署方式、工具面大小、认证方式，再决定生成哪种 server 模板。它不是执行器，而是把经验和规范打包好，让 agent 不至于每次都从零摸索。</p><p>&emsp;&emsp;在我看来，skill 的价值在于把“好做法”固定下来。它让 agent 不只是会调用工具，还知道在什么场景下该调用什么工具、先问什么问题、怎么收敛范围。</p><h3 id="agent-是什么"><a href="#agent-是什么" class="headerlink" title="agent 是什么"></a>agent 是什么</h3><p>&emsp;&emsp;agent 才是真正干活的那层。它有目标、有上下文、有记忆，也会选择工具、执行步骤、判断结果。简单说，agent 不是一个单次回答的模型，而是一个可以持续工作、反复试错、完成任务的运行体。</p><p>&emsp;&emsp;比如你让它“帮我改这个项目的登录流程”，agent 会先读项目，再决定是否需要查文档、看代码、改文件、跑测试、回退失败修改。它不是只输出一段文本，而是会组织一连串动作。</p><p>&emsp;&emsp;所以 agent 关注的是任务闭环：理解目标，拆分动作，调用工具，检查结果，继续迭代。</p><h3 id="三者怎么配合"><a href="#三者怎么配合" class="headerlink" title="三者怎么配合"></a>三者怎么配合</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">  U[用户目标] --&gt; A[Agent]</span><br><span class="line">  A --&gt; S[Skill]</span><br><span class="line">  A --&gt; M[MCP]</span><br><span class="line">  S --&gt; A</span><br><span class="line">  M --&gt; X[文件 / 数据库 / 搜索 / 本地工具]</span><br><span class="line">  X --&gt; M --&gt; A</span><br><span class="line">  A --&gt; R[结果]</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;这个关系图里，<code>skill</code> 和 <code>MCP</code> 都服务于 <code>agent</code>，但职责不同。<code>skill</code> 更像策略和模板，<code>MCP</code> 更像通路和接口，<code>agent</code> 则是把目标变成结果的人。</p><p>&emsp;&emsp;举个实际例子。你想让 AI 帮你写一个博客生成脚本。</p><p>&emsp;&emsp;<code>skill</code> 会告诉它：先确认输入格式、输出目录、模板规则、是否支持草稿和标签。</p><p>&emsp;&emsp;<code>MCP</code> 会让它接上本地文件系统、Git、终端、甚至数据库。</p><p>&emsp;&emsp;<code>agent</code> 会实际决定：先读现有文章，再生成脚本，最后跑测试，检查输出。</p><h3 id="最容易混淆的地方"><a href="#最容易混淆的地方" class="headerlink" title="最容易混淆的地方"></a>最容易混淆的地方</h3><p>&emsp;&emsp;最常见的误解，是把 <code>skill</code> 当成 <code>agent</code>。实际上 skill 只是说明书，没有自己行动的能力。</p><p>&emsp;&emsp;另一个误解，是把 <code>MCP</code> 当成 <code>agent</code>。MCP 只是协议，它解决“怎么接”的问题，不解决“接了以后做什么”的问题。</p><p>&emsp;&emsp;还有一种误解，是以为有了 <code>MCP</code> 就够了。其实不够。MCP 只是把工具接进来，如果没有 skill 去约束方法，没有 agent 去调度执行，最后还是会变成一堆孤立接口。</p><h3 id="为什么现在这三个词会一起出现"><a href="#为什么现在这三个词会一起出现" class="headerlink" title="为什么现在这三个词会一起出现"></a>为什么现在这三个词会一起出现</h3><p>&emsp;&emsp;因为 AI 正在从“会聊天”变成“会办事”。当模型开始真正参与软件开发、数据查询、办公自动化和内容生成时，系统就必须同时具备三个东西：接外部工具的标准接口、可复用的任务方法、能持续执行任务的智能体。</p><p>&emsp;&emsp;这就是 <code>MCP + skill + agent</code> 的组合价值。MCP 让工具接得上，skill 让方法传得开，agent 让任务跑得起来。</p><p>&emsp;&emsp;如果只做 agent，不做 MCP，工具集成会很乱；如果只有 MCP，没有 skill，系统会越用越靠随机探索；如果只有 skill，没有 agent，方法论再好也落不到执行上。</p><p>&emsp;&emsp;所以这三者不是替代关系，而是分层关系。理解这一点，后面再看任何 AI coding 工具、桌面助手或者自动化框架，思路都会清楚很多。</p><p>参考：</p><ul><li><a href="https://modelcontextprotocol.io/docs/getting-started/intro">What is the Model Context Protocol (MCP)?</a></li><li><a href="https://modelcontextprotocol.io/docs/develop/build-with-agent-skills">Build with Agent Skills</a></li></ul>]]></content>
+    
+    
+    <summary type="html">用一篇短文讲清 MCP、skill 和 agent 的...</summary>
+    
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
+    
+    <category term="MCP" scheme="https://baiyangzuoshu.github.io/tags/MCP/"/>
+    
+    <category term="skill" scheme="https://baiyangzuoshu.github.io/tags/skill/"/>
+    
+    <category term="agent" scheme="https://baiyangzuoshu.github.io/tags/agent/"/>
+    
+  </entry>
+  
+  <entry>
     <title>每周见闻 - 第 74期</title>
     <link href="https://baiyangzuoshu.github.io/2026/06/28/week74/"/>
     <id>https://baiyangzuoshu.github.io/2026/06/28/week74/</id>
     <published>2026-06-27T23:55:56.000Z</published>
     <updated>2026-06-27T23:55:56.000Z</updated>
     
-    <content type="html"><![CDATA[<p>![中国银行逃税](&#x2F;images&#x2F;2026&#x2F;bank of china.webp)</p><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a href="https://www.zaobao.com.sg/finance/china/story20260625-9261249">1.中国银行被指逃避税近24亿元人民币</a></p><p><a href="https://mp.weixin.qq.com/s/kJ_MQ9VcDZYGZ09ShLIoBg">2.OpenAI发布首款AI芯片</a></p><p><a href="https://tech.ifeng.com/c/8uFFVTMgtnY">3.2026年《财富》中国科技50强：华为、字节、宁德时代领衔</a></p><p><a href="https://tech.ifeng.com/c/8uH38cXpjdp">4.大众计划全球裁员10万人、连关4家德国本土工厂</a></p><p><a href="https://mp.weixin.qq.com/s/JXk-V2GdmebtwK5Y7itRjQ">5.豆包专业版发布，采用三级阶梯定价方案：标准套餐连续包月68元，加强套餐连续包月200元，高级套餐连续包月500元</a></p><p><a href="https://tech.ifeng.com/c/8u9KEpsHLSw">6.腾讯推出面向来华游客的跨境微信支付应用TenPayGo</a></p><p><a href="https://tech.ifeng.com/c/8uBaDUOlhw8">7.全球首款量产太阳能电单车发布：续航达193km</a></p><p><a href="https://tech.ifeng.com/c/8u9w5WKRXS0">8.华为鸿蒙HarmonyOS 7.0将相机拍照默认格式从JPG切换为HEIF</a></p><p><a href="https://mp.weixin.qq.com/s/aUznOtZUEh0AYcEj8R0IFg">9.纸尿裤调查记者呼吁成立调查组，金佰利等回应</a></p><p><a href="https://tech.ifeng.com/c/8uIFZ3zXgxU">10.AI批量造App，也在批量埋雷</a></p><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="https://mp.weixin.qq.com/s/1JSouB3HpsJ-WCkuc5gkrg">1.蔡皋捧起安徒生奖，也捧起了中国原创绘本的春天</a></p><p><a href="https://mp.weixin.qq.com/s/h_kG2hH800Wu6cn58w-eig">2.家长投诉纠纷下，一个30岁上海幼师的离世</a></p><p><a href="https://mp.weixin.qq.com/s/n7Xe9fu_38qOvX7ClDZ0UQ">3.从人手一支到无人问津，蓝色圆珠笔咋成了时代的眼泪</a></p><p><a href="https://mp.weixin.qq.com/s/MWjnYarZmk935EqpZVALbw">4.动作游戏设计的SSS方法</a></p><p><a href="https://mp.weixin.qq.com/s/ie3jimVC1oElxWDOIYQ8vg">5.一个被拐女人，和她背负了37年的重婚罪</a></p><p><a href="https://mp.weixin.qq.com/s/xzYBdOENUWt5WQBxzLejzw">6.涉近十亿元、万余名农户，一桩因开荒引发的土地纠纷</a></p><h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a href="https://tech.ifeng.com/c/8uE1Ldd4o6N">1.高通宣布39亿美元收购Modular，补强AI软件能力</a></p><p><a href="https://tech.ifeng.com/c/8uDRua3XDeR">2.ChatGPT语音最大规模升级：双向AI语音模型Bidi 1已上线测试</a></p><p><a href="https://tech.ifeng.com/c/8uBqB6LMgIn">3.豆包大模型2.1 Pro发布：百万Token输入定价6元</a></p><p><a href="https://mp.weixin.qq.com/s/zm9u5A5jhQCD1FrnSNLwfA">4.DeepSeek-OCR推进一大步！百度Unlimited-OCR将KV cache压成常数，性能SOTA</a></p><p><a href="https://tech.ifeng.com/c/8uGY9W7U7YM">5.GPT-5.6正式发布</a></p><h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a href="https://tech.ifeng.com/c/8uFGai4HYTS">1.《2026全球独角兽榜》发布：Anthropic超OpenAI登顶，字节跳动第三</a></p><p><a href="https://tech.ifeng.com/c/8uGQMDLui3h">2.Pad、Mac突然涨价苹果股价大跌：市值一夜蒸发1.8万亿</a></p><p><a href="https://tech.ifeng.com/c/8uDQJPXV6lC">3.阿里云QoderWork推“峰谷Token”夜间折扣，Qwen3.7-Max低至2折</a></p><h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p><img src="/images/2026/s34391342.jpg" alt="十九世纪文学之主潮"><br>“当时有一本好书《十九世纪文学之主潮》，巨著，涵盖十九世纪整个世界文学，有全译中文本，每个作家都有肖像，道林纸精印，我翻来覆去读。现在的大陆、港、台作家们可能不记得这回事，书也绝版了。译者韩侍桁（亦曾译川端康成之《雪国》），好像没去台湾，也许在大陆，但从不见人提起。</p><p>著者，大名鼎鼎：勃兰兑斯（Georg Brandes，1842-1927）”</p><p>——木心《文学回忆录》</p><p>“从1936年起，韩侍桁所译的《十九世纪文学之主潮》由商务印刷馆陆续出版了前四卷（1936年推出第1,2卷，1937年和1939年又分别推出第3,4卷）。该书的第5.6卷却未能印成。抗战胜利后，韩侍桁从后几卷中抽出部分章节，分别辑成《拜伦评传》，《法国作家评传》和《海涅评传》，由国际文化服务社于1948年至1953年陆续出版。”</p><p>盖此书是“五四”以来首部较为完整地译成中文的西方文学史著作。</p>]]></content>
+    <content type="html"><![CDATA[<p><img src="/images/2026/bankOfChina.webp" alt="中国银行逃税"></p><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a href="https://www.zaobao.com.sg/finance/china/story20260625-9261249">1.中国银行被指逃避税近24亿元人民币</a></p><p><a href="https://mp.weixin.qq.com/s/kJ_MQ9VcDZYGZ09ShLIoBg">2.OpenAI发布首款AI芯片</a></p><p><a href="https://tech.ifeng.com/c/8uFFVTMgtnY">3.2026年《财富》中国科技50强：华为、字节、宁德时代领衔</a></p><p><a href="https://tech.ifeng.com/c/8uH38cXpjdp">4.大众计划全球裁员10万人、连关4家德国本土工厂</a></p><p><a href="https://mp.weixin.qq.com/s/JXk-V2GdmebtwK5Y7itRjQ">5.豆包专业版发布，采用三级阶梯定价方案：标准套餐连续包月68元，加强套餐连续包月200元，高级套餐连续包月500元</a></p><p><a href="https://tech.ifeng.com/c/8u9KEpsHLSw">6.腾讯推出面向来华游客的跨境微信支付应用TenPayGo</a></p><p><a href="https://tech.ifeng.com/c/8uBaDUOlhw8">7.全球首款量产太阳能电单车发布：续航达193km</a></p><p><a href="https://tech.ifeng.com/c/8u9w5WKRXS0">8.华为鸿蒙HarmonyOS 7.0将相机拍照默认格式从JPG切换为HEIF</a></p><p><a href="https://mp.weixin.qq.com/s/aUznOtZUEh0AYcEj8R0IFg">9.纸尿裤调查记者呼吁成立调查组，金佰利等回应</a></p><p><a href="https://tech.ifeng.com/c/8uIFZ3zXgxU">10.AI批量造App，也在批量埋雷</a></p><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="https://mp.weixin.qq.com/s/1JSouB3HpsJ-WCkuc5gkrg">1.蔡皋捧起安徒生奖，也捧起了中国原创绘本的春天</a></p><p><a href="https://mp.weixin.qq.com/s/h_kG2hH800Wu6cn58w-eig">2.家长投诉纠纷下，一个30岁上海幼师的离世</a></p><p><a href="https://mp.weixin.qq.com/s/n7Xe9fu_38qOvX7ClDZ0UQ">3.从人手一支到无人问津，蓝色圆珠笔咋成了时代的眼泪</a></p><p><a href="https://mp.weixin.qq.com/s/MWjnYarZmk935EqpZVALbw">4.动作游戏设计的SSS方法</a></p><p><a href="https://mp.weixin.qq.com/s/ie3jimVC1oElxWDOIYQ8vg">5.一个被拐女人，和她背负了37年的重婚罪</a></p><p><a href="https://mp.weixin.qq.com/s/xzYBdOENUWt5WQBxzLejzw">6.涉近十亿元、万余名农户，一桩因开荒引发的土地纠纷</a></p><h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a href="https://tech.ifeng.com/c/8uE1Ldd4o6N">1.高通宣布39亿美元收购Modular，补强AI软件能力</a></p><p><a href="https://tech.ifeng.com/c/8uDRua3XDeR">2.ChatGPT语音最大规模升级：双向AI语音模型Bidi 1已上线测试</a></p><p><a href="https://tech.ifeng.com/c/8uBqB6LMgIn">3.豆包大模型2.1 Pro发布：百万Token输入定价6元</a></p><p><a href="https://mp.weixin.qq.com/s/zm9u5A5jhQCD1FrnSNLwfA">4.DeepSeek-OCR推进一大步！百度Unlimited-OCR将KV cache压成常数，性能SOTA</a></p><p><a href="https://tech.ifeng.com/c/8uGY9W7U7YM">5.GPT-5.6正式发布</a></p><h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a href="https://tech.ifeng.com/c/8uFGai4HYTS">1.《2026全球独角兽榜》发布：Anthropic超OpenAI登顶，字节跳动第三</a></p><p><a href="https://tech.ifeng.com/c/8uGQMDLui3h">2.Pad、Mac突然涨价苹果股价大跌：市值一夜蒸发1.8万亿</a></p><p><a href="https://tech.ifeng.com/c/8uDQJPXV6lC">3.阿里云QoderWork推“峰谷Token”夜间折扣，Qwen3.7-Max低至2折</a></p><h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p><img src="/images/2026/s34391342.jpg" alt="十九世纪文学之主潮"><br>“当时有一本好书《十九世纪文学之主潮》，巨著，涵盖十九世纪整个世界文学，有全译中文本，每个作家都有肖像，道林纸精印，我翻来覆去读。现在的大陆、港、台作家们可能不记得这回事，书也绝版了。译者韩侍桁（亦曾译川端康成之《雪国》），好像没去台湾，也许在大陆，但从不见人提起。</p><p>著者，大名鼎鼎：勃兰兑斯（Georg Brandes，1842-1927）”</p><p>——木心《文学回忆录》</p><p>“从1936年起，韩侍桁所译的《十九世纪文学之主潮》由商务印刷馆陆续出版了前四卷（1936年推出第1,2卷，1937年和1939年又分别推出第3,4卷）。该书的第5.6卷却未能印成。抗战胜利后，韩侍桁从后几卷中抽出部分章节，分别辑成《拜伦评传》，《法国作家评传》和《海涅评传》，由国际文化服务社于1948年至1953年陆续出版。”</p><p>盖此书是“五四”以来首部较为完整地译成中文的西方文学史著作。</p>]]></content>
     
     
-    <summary type="html">![中国银行逃税](/images/2026/bank...</summary>
+    <summary type="html">新闻1.中国银行被指逃避税近24亿元人民币 2.Ope...</summary>
     
     
     
@@ -100,13 +154,13 @@
     <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
     
     
-    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
-    
-    <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
-    
     <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
     
     <category term="Reasonix" scheme="https://baiyangzuoshu.github.io/tags/Reasonix/"/>
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
+    
+    <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
     
   </entry>
   
@@ -127,11 +181,11 @@
     <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
     
     
+    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
+    
     <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
     
     <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
     
     <category term="Codex" scheme="https://baiyangzuoshu.github.io/tags/Codex/"/>
     
@@ -342,11 +396,11 @@
     <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
     
     
+    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
+    
     <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
     
     <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
     
   </entry>
   
@@ -439,48 +493,6 @@
     <category term="ChatGPT" scheme="https://baiyangzuoshu.github.io/tags/ChatGPT/"/>
     
     <category term="人工智能" scheme="https://baiyangzuoshu.github.io/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>每周见闻 - 第66 期</title>
-    <link href="https://baiyangzuoshu.github.io/2026/04/26/week/2026/week66/"/>
-    <id>https://baiyangzuoshu.github.io/2026/04/26/week/2026/week66/</id>
-    <published>2026-04-26T00:45:07.000Z</published>
-    <updated>2026-04-26T00:45:07.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/2026/dsv4.jpeg"></p><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a href="https://mp.weixin.qq.com/s/E-SQxTXow6qdL1AEgD3lUg?from=singlemessage&isappinstalled=0&scene=1&clicktime=1777164792&enterid=1777164792">1.华谊兄弟被正式申请破产</a></p><p><a href="https://tech.ifeng.com/c/8sbckTPv8HZ">2.扎克伯格裁员8000人 员工迎来28天“地狱折磨”：焦虑、压力、疑问</a></p><p><a href="https://tech.ifeng.com/c/8saNtSHDQLf">3.中国首款原生Robotaxi Eva Cab亮相北京车展</a></p><p><a href="https://tech.ifeng.com/c/8sYMaKi4KIw">4.中国科学院：黑磷快充电池关键技术取得重要突破 仅需10分钟即可充入理论容量的80％</a></p><p><a href="https://tech.ifeng.com/c/8sWxJhB3cDM">5.叠纸游戏《无限暖暖》4月24日登陆苹果Mac平台，暂不支持MacBook Neo与英特尔芯片设备</a></p><p><a href="https://mp.weixin.qq.com/s/72wZ2sLyrE5RQ0enShV2DA">6.苹果公司宣布特努斯将接替库克担任CEO</a></p><p><a href="https://tech.ifeng.com/c/8sTYIz8fUMe">7.曝字节跳动2025年净利润骤降超70% AI算力采购成“吞金兽”</a></p><p><a href="https://mp.weixin.qq.com/s/p6NWUxgi29P_YamNEIrD2Q">8.文物何时归还中国？法国全票通过相关法案背后</a></p><p><a href="https://mp.weixin.qq.com/s/_EPXViWtLhrMUMN78h1FOQ">9.走向 AGI，高德为什么要从机器导盲犬开始？</a></p><p><a href="https://mp.weixin.qq.com/s/ZV_irel86VaJCag1BLU15A">10.央视披露特大偷渡案细节</a></p><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="https://mp.weixin.qq.com/s/QPdGePuNDc36NnzBd3tX3Q?from=singlemessage&isappinstalled=0&scene=1&clicktime=1777164781&enterid=1777164781">1.39岁的横店“戏王”，为何已经“无戏可拍”？</a></p><p><a href="https://tech.ifeng.com/c/8saFsVIZMRZ">2.山姆的挑战者，一年亏了25亿</a></p><p><a href="https://mp.weixin.qq.com/s/v_FfxLfisJVj7PK51uP91A">3.黔山秀水间，旅居正当时</a></p><p><a href="https://mp.weixin.qq.com/s/OR5VAWJokOi2r-9FdMCjuA">4.乡村来了超级工作队</a></p><p><a href="https://mp.weixin.qq.com/s/JzGiOQpCAjWzsTB_-l_J0A?from=singlemessage&isappinstalled=0&scene=1&clicktime=1777164546&enterid=1777164546">5.孙俪：成名20年，还是没有安全感</a></p><h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a href="https://mp.weixin.qq.com/s/8bxXqS2R8Fx5-1TLDBiEDg">1.DeepSeek-V4 的预览版本正式上线并同步开源</a></p><p><a href="https://mp.weixin.qq.com/s/aqyOHvWoe9rcf5HUNCOzFQ">2.小红书把Z-Image打造成人人都能本地跑的GPT-4o</a></p><p><a href="https://tech.ifeng.com/c/8sZmvNP3Ybx">3.小米发布MiMo-V2.5-TTS&#x2F;ASR语音大模型</a></p><p><a href="https://tech.ifeng.com/c/8sYXd1Lmbmu">4.字节跳动发布3D生成大模型Seed3D 2.0，在几何&#x2F;纹理材质生成上取得SOTA</a></p><p><a href="https://tech.ifeng.com/c/8sYl73iOPJy">5.混元迄今最智能的模型：腾讯发布并开源Hy3 preview语言模型</a></p><p><a href="https://mp.weixin.qq.com/s/B5EOgzTbvvsbM4haS6TEYA">6.月之暗面开源发布了 Kimi K2.6 模型</a></p><p><a href="https://mp.weixin.qq.com/s/ayCqAlXSR8oSHEKn-F5ygQ">7.OpenAI最强绘图模型ChatGPT Images 2.0来了</a></p><h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a href="https://tech.ifeng.com/c/8sZ4W7dWkuy">1.OpenAI发布工作流Agent，GPTs进入倒计时</a></p><p><a href="https://mp.weixin.qq.com/s/5LsxAmuags3HEjAovHDtDg">2.谷歌全新深度研究智能体再进化：企业级工作流的坚实底座</a></p><p><a href="https://tech.ifeng.com/c/8sWdaCvfBwp">3.深夜更新Deep Research智能体，支持MCP、原生图表</a></p><p><a href="https://mp.weixin.qq.com/s/rJG5DY5pTMyym3UoZt-kZQ">4.关于ChemBlender的rdkit库安装问题</a></p><p><a href="">5.OpenAI Codex推出Chronicle功能：通过录制屏幕构建上下文记忆库</a></p><h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>詩經，或曰詩三百。本稱詩，漢武帝獨尊儒術，列為經典，故曰經。</p><p>泛錄詩也。分風、雅、頌，合三百有五。詩人不可考，蓋自周初，中原周圍，皆有產詩。至春秋間，孔子正樂，刊定三百又五篇，又六篇笙詩有目無辭，遂成。至有漢，列當六經。</p><p>詩廣錄周代之謳，為文學之始。史記謂古有詩三千，孔子刪詩而成三百，然左傳載子未弱冠已有詩集，故事不可考。<br><img src="/images/2026/Shi_Jing.jpg" alt="诗经"></p>]]></content>
-    
-    
-    <summary type="html">新闻1.华谊兄弟被正式申请破产 2.扎克伯格裁员800...</summary>
-    
-    
-    
-    <category term="周刊" scheme="https://baiyangzuoshu.github.io/categories/%E5%91%A8%E5%88%8A/"/>
-    
-    
-    <category term="见闻" scheme="https://baiyangzuoshu.github.io/tags/%E8%A7%81%E9%97%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>每周见闻 - 第 65期</title>
-    <link href="https://baiyangzuoshu.github.io/2026/04/19/week/2026/week65/"/>
-    <id>https://baiyangzuoshu.github.io/2026/04/19/week/2026/week65/</id>
-    <published>2026-04-19T01:10:59.000Z</published>
-    <updated>2026-04-19T01:10:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/2026/38FF2CDB3A57A58F04C52E9B01C21E3FA8C3C12B_size69_w636_h784.webp"></p><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a href="https://mp.weixin.qq.com/s/ZV_irel86VaJCag1BLU15A">1.央视披露特大偷渡案细节</a></p><p><a href="https://tech.ifeng.com/c/8sQRHofkVYV">2.三星Galaxy Z TriFold三折叠手机在美国停售，生命周期短暂</a></p><p><a href="https://tech.ifeng.com/c/8sONRDCZVtg">3.“杭州六小龙”之一群核科技港股上市，开盘大涨170%</a></p><p><a href="https://tech.ifeng.com/c/8sKuBCFpqNh">4.英伟达发布全球首个开源量子AI模型Ising</a></p><p><a href="https://tech.ifeng.com/c/8sKu6maXGM4">5.谷歌Windows桌面搜索应用上线，对标苹果macOS Spotlight</a></p><p><a href="https://tech.ifeng.com/c/8sKpyShYDJJ">6.亚马逊800亿收购卫星巨头，联手苹果阻击马斯克星链</a></p><p><a href="https://mp.weixin.qq.com/s/SN__MWKN6REQDLy0Aodq2Q">7.猪价创8年新低</a></p><p><a href="https://tech.ifeng.com/c/8sHefjyep5E">8.深圳首条人形机器人中试产线投运：可减少量产时造不出、造太贵等问题</a></p><p><a href="https://tech.ifeng.com/c/8sHhFtghR6N">9.软银、NEC、本田、索尼联合成立日本AI基盘模型开发</a></p><p><a href="https://tech.ifeng.com/c/8sEonVHRjau">10.张雪机车夺冠复刻版45秒拍卖500万</a></p><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="https://mp.weixin.qq.com/s/_EPXViWtLhrMUMN78h1FOQ">1.走向 AGI，高德为什么要从机器导盲犬开始</a></p><p><a href="https://mp.weixin.qq.com/s/OYC8dW9wxcn-_K8LZm1hng?from=singlemessage&isappinstalled=0&scene=1&clicktime=1776600635&enterid=1776600635">2.Q1国内游戏涨13.38%，新品+双端拉动</a></p><p><a href="https://mp.weixin.qq.com/s/XTxB5AtEiJ0lDZFSmxm94Q">3.全球第一大律所“暴雷”：梅向荣和疯狂扩张下的失序业务</a></p><p><a href="https://mp.weixin.qq.com/s/w0wjB1hvVMjjGL29ayKkPA">4.ChemBlender 2.0来袭！开启晶体结构可视化新纪元！</a></p><h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a href="https://tech.ifeng.com/c/8sQDtoGWBUJ">1.Claude推出“Figma杀手”，设计软件股暴跌</a></p><p><a href="https://mp.weixin.qq.com/s/2i8L3mSJHpn2JpUtdnQLIA">2.OpenAI Codex重大更新：第二个Claude Code已经来了</a></p><p><a href="https://mp.weixin.qq.com/s/bXglAwzlzF7Cm1HnvHovMg">3.OpenAI掀翻AI图像生成，极度逼真，立刻商用</a></p><p><a href="https://mp.weixin.qq.com/s/4KlQa5jxULGEXFONe6NwOw">4.Claude Opus 4.7发布</a></p><h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a href="https://tech.ifeng.com/c/8sNlqpFFxyp">1.美国Hermes Agent被质疑抄袭中国团队：竟反咬一口威胁删号</a></p><p><a href="https://mp.weixin.qq.com/s/vAE8KmnM2Mhbq4Y4Xacenw">2.DeepSeek 95 后研究员郭达雅近亿元年薪入职字节，中国大厂开启 AI Coding 大战</a></p><p><a href="https://tech.ifeng.com/c/8sMT0otzRzt">3.不做鞋子搞科技 Allbirds困境中转型豪赌AI：股价暴涨582%</a></p><p><a href="https://tech.ifeng.com/c/8sJPGr93Bx5">4.Linux 7.0重磅发布！Intel、AMD齐欢喜</a></p><p><a href="https://tech.ifeng.com/c/8sJBzymelxW">5.告别双版本混乱，Mac版苹果iWork生产力套件迈向Creator Studio统一生态</a></p><h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>在此剧的世界中有一个传言：永夜来临，人间浩劫。剧情讲述边军小卒宁缺（陈飞宇饰）为了替冤枉而死的家人申冤，带着侍女桑桑（宋伊人饰）来到都城。宁缺努力不懈，考入了最高学府书院，成为书院领袖夫子（郑少秋饰）的亲传弟子，负责协助处理国家事务和保护人民，并成功为家人平反冤案。桑桑出现奇怪的症状，宁缺带她去求医，发现桑桑是永夜降世载体，更成为了被追杀的目标。宁缺为了保护桑桑，二人到处流浪，并发现天下人崇拜的昊天是永夜幕后黑手，制造了桑桑残酷的命运。在昊天的煽动下，大战爆发，宁缺和书院众人在民众的帮助下，奋勇抵抗侵略者。昊天控制桑桑，发动永夜浩劫，宁缺与昊天决战，成功消灭了昊天，寻回桑桑。从此世间再无永夜，人间恢复了和平，宁缺与桑桑幸福相守。<br><img src="/images/2026/EverNight.jpeg" alt="将夜"></p>]]></content>
-    
-    
-    <summary type="html">新闻1.央视披露特大偷渡案细节 2.三星Galaxy ...</summary>
-    
-    
-    
-    <category term="周刊" scheme="https://baiyangzuoshu.github.io/categories/%E5%91%A8%E5%88%8A/"/>
-    
-    
-    <category term="见闻" scheme="https://baiyangzuoshu.github.io/tags/%E8%A7%81%E9%97%BB/"/>
     
   </entry>
   

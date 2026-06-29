@@ -86,6 +86,251 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-cocos/Cocoscreator中实现TableView" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/" class="article-date">
+  <time class="dt-published" datetime="2025-01-25T01:17:59.000Z" itemprop="datePublished">2025-01-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Cocoscreator/">Cocoscreator</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/">Cocos Creator TableView 实现：列表复用与滚动优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img loading="lazy" decoding="async" src="/images/2025/20250207140231.png" alt="TableView"></p>
+<p>在游戏开发过程中，列表视图（TableView） 是一种常见且实用的 UI 组件，用于展示大量数据，如排行榜、物品列表、任务列表等。为了确保游戏的性能和用户体验，如何在 Cocos Creator 中高效地实现一个可复用、性能优异的 TableView 成为开发者们关注的重点。本文将基于提供的代码示例，详细解析如何在 Cocos Creator 中实现一个通用的 TableView 组件。</p>
+<h2 id="1-TableView-组件概述"><a href="#1-TableView-组件概述" class="headerlink" title="1. TableView 组件概述"></a>1. TableView 组件概述</h2><p>TableView 是一种用于展示长列表数据的 UI 组件，通过动态复用和虚拟渲染技术，仅渲染可视区域内的列表项，从而大幅提升性能，尤其在处理大量数据时尤为重要。<br>以下是 TableView 组件的主要功能：</p>
+<ul>
+<li>数据绑定：将数据源与列表项进行绑定，动态展示内容。</li>
+<li>点击事件处理：为每个列表项注册点击事件，实现交互功能。</li>
+<li>动态复用：根据滚动方向和位置复用列表项节点，减少内存和 CPU 开销。</li>
+<li>性能优化：通过计算可见项数和缓冲区，确保滚动的流畅性和渲染效率。</li>
+</ul>
+<p>本文将详细解析两个核心组件：ItemCell 和 TableView，并通过具体的代码示例展示如何实现一个高效的 TableView 组件。</p>
+<h2 id="2-ItemCell-组件详解"><a href="#2-ItemCell-组件详解" class="headerlink" title="2. ItemCell 组件详解"></a>2. ItemCell 组件详解</h2><p>ItemCell 是每个列表项的核心组件，负责绑定数据和处理点击事件。以下是 ItemCell 组件的详细解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">import type &#123; TableViewItem &#125; from &quot;../../Scripts/types&quot;;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 通用的 ItemCell 组件</span><br><span class="line"> * 负责绑定数据并处理点击事件</span><br><span class="line"> */</span><br><span class="line">class ItemCell extends cc.Component &#123;</span><br><span class="line">    private _itemId = 0;</span><br><span class="line">    private clickCallback!: (itemId: number, node: cc.Node) =&gt; void;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 绑定数据的方法，由外部传入具体的绑定逻辑</span><br><span class="line">     * @param index 数据索引</span><br><span class="line">     * @param data 数据对象</span><br><span class="line">     * @param bindCallback 数据绑定回调</span><br><span class="line">     */</span><br><span class="line">    public bindData(index: number, data: unknown, bindCallback: (node: cc.Node, data: unknown) =&gt; void) &#123;</span><br><span class="line">        this._itemId = index;</span><br><span class="line">        bindCallback(this.node, data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取当前项的索引</span><br><span class="line">     */</span><br><span class="line">    public getItemId(): number &#123;</span><br><span class="line">        return this._itemId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 注册点击事件</span><br><span class="line">     * @param callback 点击事件回调</span><br><span class="line">     */</span><br><span class="line">    public registerClick(callback: (itemId: number, node: cc.Node) =&gt; void) &#123;</span><br><span class="line">        this.clickCallback = callback;</span><br><span class="line">        const eventNode = this.node.getChildByName(&quot;event&quot;);</span><br><span class="line">        if (eventNode) &#123;</span><br><span class="line">            eventNode.on(&quot;click&quot;, this.onClick, this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 注销点击事件</span><br><span class="line">     */</span><br><span class="line">    public unregisterClick() &#123;</span><br><span class="line">        const eventNode = this.node.getChildByName(&quot;event&quot;);</span><br><span class="line">        if (eventNode) &#123;</span><br><span class="line">            eventNode.off(&quot;click&quot;, this.onClick, this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 点击事件处理</span><br><span class="line">     */</span><br><span class="line">    private onClick() &#123;</span><br><span class="line">        if (this.clickCallback) &#123;</span><br><span class="line">            this.clickCallback(this._itemId, this.node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected onDestroy() &#123;</span><br><span class="line">        this.unregisterClick();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="功能解析"><a href="#功能解析" class="headerlink" title="功能解析"></a>功能解析</h4><p>属性</p>
+<ul>
+<li>_itemId: 当前列表项的索引，用于标识该项在数据源中的位置。</li>
+<li>clickCallback: 列表项被点击时的回调函数。</li>
+</ul>
+<p>方法</p>
+<ul>
+<li>bindData(index, data, bindCallback): 绑定数据到列表项。接收数据索引、数据对象和一个数据绑定回调，由外部传入具体的绑定逻辑。</li>
+<li>getItemId(): 获取当前列表项的索引。</li>
+<li>registerClick(callback): 注册点击事件回调。假设每个列表项有一个名为 “event” 的子节点作为点击区域。</li>
+<li>unregisterClick(): 注销点击事件，防止内存泄漏。</li>
+<li>onClick(): 处理点击事件，触发外部传入的 clickCallback。</li>
+<li>onDestroy(): 生命周期方法，组件销毁时自动注销点击事件。</li>
+</ul>
+<p>关键点</p>
+<ul>
+<li>数据绑定：bindData 方法通过外部传入的 bindCallback 将数据绑定到节点上，确保组件的复用性和灵活性。</li>
+<li>事件管理：registerClick 和 unregisterClick 方法负责管理点击事件的注册和注销，确保事件处理的正确性和内存的有效管理。</li>
+<li>组件销毁：在组件销毁时自动注销事件，防止内存泄漏。</li>
+</ul>
+<h2 id="TableView-组件详解"><a href="#TableView-组件详解" class="headerlink" title="TableView 组件详解"></a>TableView 组件详解</h2><p>TableView 是整个列表的管理组件，负责初始化列表、管理可见项、处理滚动事件和复用列表项。以下是 TableView 组件的详细解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line">// scripts/TableView/TableView.ts</span><br><span class="line">/**</span><br><span class="line"> * 通用的 TableView 组件</span><br><span class="line"> * 负责管理 ScrollView 中的列表项复用</span><br><span class="line"> */</span><br><span class="line">export default class TableView extends cc.Component &#123;</span><br><span class="line">    private scrollView!: cc.ScrollView;</span><br><span class="line">    private itemPrefab!: cc.Node;</span><br><span class="line">    private itemHeight = 70;</span><br><span class="line">    private spacingY = 10;</span><br><span class="line">    private datas: unknown[] = [];</span><br><span class="line">    private items: cc.Node[] = [];</span><br><span class="line">    private visibleCount = 0;</span><br><span class="line">    private bufferZone = 0;</span><br><span class="line">    private totalCount = 0;</span><br><span class="line">    private lastContentPosY = 0;</span><br><span class="line"></span><br><span class="line">    // 数据绑定回调，由外部传入</span><br><span class="line">    private bindDataCallback!: (node: cc.Node, data: unknown) =&gt; void;</span><br><span class="line">    // 点击事件回调，由外部传入</span><br><span class="line">    private clickCallback!: (itemId: number, node: cc.Node) =&gt; void;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 初始化 TableView</span><br><span class="line">     * @param v1 TableViewItem 类型对象，包含必要的组件和配置</span><br><span class="line">     * @param datas 数据数组</span><br><span class="line">     * @param cb 回调对象，包含 bindCallback 和 clickCallback</span><br><span class="line">     */</span><br><span class="line">    public initialize(</span><br><span class="line">        v1: TableViewItem,</span><br><span class="line">        datas: unknown[],</span><br><span class="line">        cb: &#123;</span><br><span class="line">            bindCallback: (node: cc.Node, data: unknown) =&gt; void,</span><br><span class="line">            clickCallback: (itemId: number, node: cc.Node) =&gt; void</span><br><span class="line">        &#125;</span><br><span class="line">    ) &#123;</span><br><span class="line">        this.scrollView = v1.scrollView;</span><br><span class="line">        this.itemPrefab = v1.itemPrefab;</span><br><span class="line">        this.itemHeight = v1.itemHeight;</span><br><span class="line">        this.spacingY = v1.spacingY;</span><br><span class="line">        this.datas = datas;</span><br><span class="line">        this.totalCount = this.datas.length;</span><br><span class="line">        this.bindDataCallback = cb.bindCallback;</span><br><span class="line">        this.clickCallback = cb.clickCallback;</span><br><span class="line"></span><br><span class="line">        // 计算可见数量（根据 ScrollView 显示区域高度）</span><br><span class="line">        const viewHeight = this.scrollView.node.height * 4 / 2; // 这行代码需要根据实际情况调整</span><br><span class="line">        this.visibleCount = Math.ceil(viewHeight / (this.itemHeight + this.spacingY)) + 2;</span><br><span class="line">        this.bufferZone = viewHeight / 2;</span><br><span class="line"></span><br><span class="line">        // 设置 Content 的总高度</span><br><span class="line">        this.scrollView.content.height = this.totalCount * (this.itemHeight + this.spacingY);</span><br><span class="line"></span><br><span class="line">        // 初始化可见的节点池</span><br><span class="line">        for (let i = 0; i &lt; this.visibleCount &amp;&amp; i &lt; datas.length; i++) &#123;</span><br><span class="line">            const itemNode = cc.instantiate(this.itemPrefab);</span><br><span class="line">            itemNode.parent = this.scrollView.content;</span><br><span class="line">            itemNode.setPosition(0, -((i + 1) * (this.itemHeight + this.spacingY)));</span><br><span class="line">            const itemCell = itemNode.addComponent(ItemCell);</span><br><span class="line">            itemCell.bindData(i, this.datas[i], this.bindDataCallback);</span><br><span class="line">            itemCell.registerClick(this.clickCallback);</span><br><span class="line">            this.items.push(itemNode);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        this.lastContentPosY = this.scrollView.content.y;</span><br><span class="line">        this.scrollView.scrollToTop();</span><br><span class="line">        // 注册滚动事件</span><br><span class="line">        this.scrollView.node.on(&#x27;scrolling&#x27;, this.onScrolling, this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public destroyEvent() &#123;</span><br><span class="line">        // 移除滚动事件监听</span><br><span class="line">        if (this.scrollView) &#123;</span><br><span class="line">            this.scrollView.node.off(&#x27;scrolling&#x27;, this.onScrolling, this);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 移除所有 Item 的点击事件监听</span><br><span class="line">        for (const item of this.items) &#123;</span><br><span class="line">            const itemCell = item.getComponent(ItemCell);</span><br><span class="line">            itemCell.unregisterClick();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 滚动事件处理</span><br><span class="line">     */</span><br><span class="line">    private onScrolling() &#123;</span><br><span class="line">        const currY = this.scrollView.content.y;</span><br><span class="line">        const isScrollingDown = currY &gt; this.lastContentPosY;</span><br><span class="line"></span><br><span class="line">        for (const item of this.items) &#123;</span><br><span class="line">            const itemCell = item.getComponent(ItemCell);</span><br><span class="line">            const itemId = itemCell.getItemId();</span><br><span class="line">            const viewPos = this.getPositionInView(item);</span><br><span class="line"></span><br><span class="line">            if (isScrollingDown) &#123;</span><br><span class="line">                // 往下滚动，检查是否需要复用到底部</span><br><span class="line">                if (viewPos.y &gt; this.bufferZone) &#123;</span><br><span class="line">                    const newId = itemId + this.items.length;</span><br><span class="line">                    if (newId &lt; this.totalCount) &#123;</span><br><span class="line">                        const newY = item.y - this.items.length * (this.itemHeight + this.spacingY);</span><br><span class="line">                        item.setPosition(0, newY);</span><br><span class="line">                        itemCell.bindData(newId, this.datas[newId], this.bindDataCallback);</span><br><span class="line">                        itemCell.registerClick(this.clickCallback);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // 往上滚动，检查是否需要复用到顶部</span><br><span class="line">                if (viewPos.y &lt; -this.bufferZone) &#123;</span><br><span class="line">                    const newId = itemId - this.items.length;</span><br><span class="line">                    if (newId &gt;= 0) &#123;</span><br><span class="line">                        const newY = item.y + this.items.length * (this.itemHeight + this.spacingY);</span><br><span class="line">                        item.setPosition(0, newY);</span><br><span class="line">                        itemCell.bindData(newId, this.datas[newId], this.bindDataCallback);</span><br><span class="line">                        itemCell.registerClick(this.clickCallback);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        this.lastContentPosY = currY;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取节点在 ScrollView.view 上的坐标</span><br><span class="line">     * @param item 节点</span><br><span class="line">     */</span><br><span class="line">    private getPositionInView(item: cc.Node): cc.Vec3 &#123;</span><br><span class="line">        const worldPos = item.parent.convertToWorldSpaceAR(item.position);</span><br><span class="line">        const viewPos = this.scrollView.node.convertToNodeSpaceAR(worldPos);</span><br><span class="line">        return viewPos;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected onDestroy(): void &#123;</span><br><span class="line">        this.destroyEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="功能解析-1"><a href="#功能解析-1" class="headerlink" title="功能解析"></a>功能解析</h3><p>属性</p>
+<ul>
+<li>scrollView: 引用 ScrollView 组件，用于管理滚动和内容布局。</li>
+<li>itemPrefab: 列表项的预制体，用于动态实例化列表项。</li>
+<li>itemHeight 和 spacingY: 单个列表项的高度和垂直间距，用于计算内容布局。</li>
+<li>datas: 数据源数组，包含所有要展示的数据。</li>
+<li>items: 当前可见的列表项节点数组。</li>
+<li>visibleCount: 根据 ScrollView 的高度和列表项高度计算出的可见列表项数量。</li>
+<li>bufferZone: 缓冲区，用于提前复用列表项，确保滚动的流畅性。</li>
+<li>totalCount: 数据源的总数量。</li>
+<li>lastContentPosY: 记录上一次滚动位置，用于判断滚动方向。</li>
+</ul>
+<p>回调</p>
+<ul>
+<li>bindDataCallback: 数据绑定回调，由外部传入，用于将数据绑定到列表项。</li>
+<li>clickCallback: 点击事件回调，由外部传入，用于处理列表项的点击事件。</li>
+</ul>
+<p>方法</p>
+<ul>
+<li>initialize(v1, datas, cb): 初始化 TableView 组件。设置 ScrollView、预制体、列表项高度和间距，计算可见列表项数量，设置内容高度，实例化可见范围内的列表项，并注册滚动事件。</li>
+<li>destroyEvent(): 销毁时移除滚动事件监听器，并注销所有列表项的点击事件，防止内存泄漏。</li>
+<li>onScrolling(): 处理滚动事件，根据滚动方向和位置复用列表项。向下滚动时，复用列表项到底部；向上滚动时，复用列表项到顶部。</li>
+<li>getPositionInView(item): 获取列表项在 ScrollView 视图中的位置，用于判断是否需要复用。</li>
+<li>onDestroy(): 生命周期方法，组件销毁时调用 destroyEvent()。</li>
+</ul>
+<h3 id="关键点："><a href="#关键点：" class="headerlink" title="关键点："></a>关键点：</h3><ul>
+<li>动态复用：通过计算可见列表项数量和缓冲区，动态复用列表项节点，避免大量节点的创建和销毁。</li>
+<li>事件管理：合理注册和注销滚动事件和点击事件，确保组件的正确性和内存管理。</li>
+<li>数据绑定：通过外部传入的 bindDataCallback 实现数据与 UI 的绑定，增强组件的复用性和灵活性。</li>
+</ul>
+<h2 id="4-使用指南"><a href="#4-使用指南" class="headerlink" title="4. 使用指南"></a>4. 使用指南</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 初始化 TableView</span><br><span class="line">const tableView = this.myScrollView.node.addComponent(TableView);</span><br><span class="line">// 定义数据绑定回调</span><br><span class="line">const bindCallback = this.bindRankItem.bind(this);</span><br><span class="line">// 定义点击事件回调</span><br><span class="line">const clickCallback = this.onTableViewItemClick.bind(this);</span><br><span class="line"></span><br><span class="line">// 注入依赖</span><br><span class="line">tableView.initialize(&#123;</span><br><span class="line">    scrollView: this.myScrollView,</span><br><span class="line">    itemPrefab: this.cloneItem,</span><br><span class="line">    itemHeight: 70,</span><br><span class="line">    spacingY: 10</span><br><span class="line">&#125;, this.itemArr, &#123;</span><br><span class="line">    bindCallback: bindCallback,</span><br><span class="line">    clickCallback: clickCallback</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h3><pre><code>#### 配置对象：
+* scrollView: 引用的 ScrollView 组件。
+* itemPrefab: 列表项的预制体。
+* itemHeight: 单个列表项的高度。
+* spacingY: 列表项之间的垂直间距。
+* 数据数组：itemArr 包含所有要展示的数据。
+
+* 回调对象：
+* bindCallback: 数据绑定回调函数。
+* clickCallback: 点击事件回调函数。
+</code></pre>
+<p>通过以上步骤，TableView 组件将根据数据源动态生成和复用列表项，实现高效的列表展示。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/25/cocos/Cocoscreator%E4%B8%AD%E5%AE%9E%E7%8E%B0TableView/" data-id="cmqz68l32002ggr772d6z3hwq" data-title="Cocos Creator TableView 实现：列表复用与滚动优化" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-game/《停车场小游戏》" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" class="article-date">
+  <time class="dt-published" datetime="2025-01-20T07:12:06.000Z" itemprop="datePublished">2025-01-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/">停车场小游戏项目拆解：玩法设计与系统实现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img loading="lazy" decoding="async" src="/images/2025/car.png" alt="停车场小游戏"></p>
+<h1 id="一、项目概述"><a href="#一、项目概述" class="headerlink" title="一、项目概述"></a>一、项目概述</h1><p>该停车场项目以一块尺寸为 1200×450 的平面场地为基础，玩家可在其中操控多种类型的车辆完成装载与驶离的任务。项目整体玩法结合了蔬果的装载和不同车辆特性的管理，并在此基础上加入了道具系统、特殊车辆以及多种变动性机制，增加了游戏的策略深度与趣味性。</p>
+<h1 id="二、玩法简介"><a href="#二、玩法简介" class="headerlink" title="二、玩法简介"></a>二、玩法简介</h1><h3 id="1-基础车辆"><a href="#1-基础车辆" class="headerlink" title="1.基础车辆"></a>1.基础车辆</h3><ul>
+<li>4格车：可承载 4 个蔬果</li>
+<li>6格车：可承载 6 个蔬果</li>
+<li>10格车：可承载 10 个蔬果<br>这些车辆的移动受道路畅通情况限制：如果车辆前方有其他车辆阻挡，则只能等待前方车辆驶离后方可继续前进。</li>
+</ul>
+<h3 id="2-特殊车辆"><a href="#2-特殊车辆" class="headerlink" title="2.特殊车辆"></a>2.特殊车辆</h3><ol>
+<li>传送带车：传送带上可一次性驶出 8 辆车；停车场内同类型只能一次性驶出 1 辆车。</li>
+<li>问号车：该车会隐藏其他基本车的颜色与方向信息，增加不确定性。</li>
+<li>冰冻车：需要在停车场中先行驶出若干辆车后，它才会解冻并恢复为基础车状态。</li>
+</ol>
+<h3 id="3-道具系统"><a href="#3-道具系统" class="headerlink" title="3.道具系统"></a>3.道具系统</h3><ul>
+<li>刷新：在停车场内存在同类的基础车时，能够让它们进行位置和角度的相互交换。</li>
+<li>清除：可随机选中停车场的一辆基础车，并将其直接放入 VIP 停车位中驶离。</li>
+<li>排序：可对蔬果的前 30 个数据进行重新排列，以满足玩家的需求。</li>
+</ul>
+<h1 id="三、常见问题与解决思路"><a href="#三、常见问题与解决思路" class="headerlink" title="三、常见问题与解决思路"></a>三、常见问题与解决思路</h1><h3 id="1-碰撞检测"><a href="#1-碰撞检测" class="headerlink" title="1.碰撞检测"></a>1.碰撞检测</h3><p>由于车辆可能在同一时刻或极短时间间隔内产生多处碰撞，不能只检测第一次接触或最先发生碰撞的对象，而需要一个通用的多次、全域检测机制来确保所有车辆都能正确地响应碰撞事件。</p>
+<h3 id="2-动态阻塞与等待"><a href="#2-动态阻塞与等待" class="headerlink" title="2.动态阻塞与等待"></a>2.动态阻塞与等待</h3><p>车辆若被前方车辆阻挡，需要动态判断能否移动。如果只做实时判断，一旦出现局部卡顿，就会导致逻辑失效、车辆消失。因此，需要考虑以固定或预测方式计算车辆的移动与阻塞关系，规避性能抖动带来的位置丢失。</p>
+<h3 id="3-日志打印卡顿"><a href="#3-日志打印卡顿" class="headerlink" title="3.日志打印卡顿"></a>3.日志打印卡顿</h3><p>当游戏中需打印大量日志或输出数据时，会导致界面卡顿甚至无响应。应考虑优化日志打印的频率或使用异步输出机制，以减少对主线程的占用。</p>
+<h3 id="4-果蔬算法设计"><a href="#4-果蔬算法设计" class="headerlink" title="4.果蔬算法设计"></a>4.果蔬算法设计</h3><ul>
+<li>以每辆车为单位，根据“权重”进行分组，定义 diff 作为分组偏移量。</li>
+<li>当 1 权重分组的车辆出现时，需要将 diff % 的蔬果前移到 0 权重的分组。</li>
+<li>在分组中，第一辆车会取 1、2、3、4 单位蔬果，奇数的百分比由表字段 odd 控制，然后与分组内的第三辆车进行交换，依次再处理第二辆车的逻辑……</li>
+<li>通过精细的分组和调度，尽量保证游戏中蔬果的分配和流动符合设计预期。</li>
+</ul>
+<h3 id="5-编辑器生成-ID-冲突"><a href="#5-编辑器生成-ID-冲突" class="headerlink" title="5.编辑器生成 ID 冲突"></a>5.编辑器生成 ID 冲突</h3><p>在项目开发过程中，可能出现多个资源、节点生成相同 ID 的情况。需在编辑器或生成逻辑中引入唯一标识符机制，或在后端做二次检测，避免重复 ID 造成的混乱。</p>
+<h3 id="6-车辆行驶与坐标转换"><a href="#6-车辆行驶与坐标转换" class="headerlink" title="6.车辆行驶与坐标转换"></a>6.车辆行驶与坐标转换</h3><p>不应只依赖实时判断车辆移动，若在关键帧卡顿，车辆的移动数据易丢失。</p>
+<ul>
+<li>可采用世界坐标系，将每辆车的 vx、vy 作为方向速度，预先计算到达上下左右边界的时间点：</li>
+<li>到达下边或左右边时，可进行打开或变道</li>
+<li>到达左右边时，再进行向上的开车逻辑</li>
+<li>当车辆到达顶部后则驶入车位<br>通过提前计算，降低实时计算压力，并可在卡顿后快速恢复。</li>
+</ul>
+<h3 id="7-大数据量列表加载"><a href="#7-大数据量列表加载" class="headerlink" title="7.大数据量列表加载"></a>7.大数据量列表加载</h3><p>对于需要展示的大量数据，可以使用 TableView 或其他滑动列表，仅加载当前和下一屏的数据，避免一次性加载过多、造成性能消耗，并在滑动时动态增删数据以提升流畅度。</p>
+<h3 id="8-按钮点击问题"><a href="#8-按钮点击问题" class="headerlink" title="8.按钮点击问题"></a>8.按钮点击问题</h3><p>连续点击：玩家可能短时间内重复点击同一个按钮，需要做点击冷却或屏蔽防抖处理。<br>多个按钮同时响应：如果有多个按钮可能被玩家同时或短时间内快速点击，应建立统一的 UI 事件管理或排队机制，保证事件处理的顺序和独立性。</p>
+<h1 id="四、SDK-融合"><a href="#四、SDK-融合" class="headerlink" title="四、SDK 融合"></a>四、SDK 融合</h1><p>由于项目需在 Web、微信小游戏和终端应用中同时运行，为了简化多端兼容，可以通过 sdkAdapter 做统一封装。示例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sdkAdapter.<span class="title function_">login</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (sdk === websdk) &#123;</span><br><span class="line">        websdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk === minisdk) &#123;</span><br><span class="line">        minisdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sdk === appsdk) &#123;</span><br><span class="line">        appsdk.<span class="title function_">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过这种适配方式，能够最大限度地复用代码，减少多平台切换时的开发与维护成本。</p>
+<h1 id="五、适配策略"><a href="#五、适配策略" class="headerlink" title="五、适配策略"></a>五、适配策略</h1><h3 id="1-设计分辨率和设备分辨率"><a href="#1-设计分辨率和设备分辨率" class="headerlink" title="1.设计分辨率和设备分辨率"></a>1.设计分辨率和设备分辨率</h3><pre><code>设备宽高比ratioWHDevice大于设计宽高比ratioWHDesign，左右出现黑边
+    适配高度，高度=设计高度
+             宽度=设备宽*（设计高/设备高）
+设备宽高比ratioWHDevice小于于设计宽高比ratioWHDesign，上下出现黑边
+    适配宽度，宽度=设计宽度
+             高度=设计宽度/（设备宽/设备高）
+
+如果(ratioWHDevice &lt; 1.3) || (ratioWHDevice &gt; ratioWHDesign * 2)，则是异形屏幕
+    高度=设计高度
+    宽度=设计宽度
+    充满屏幕，可能左右或者上下有黑边
+</code></pre>
+<h3 id="2-安全区域"><a href="#2-安全区域" class="headerlink" title="2.安全区域"></a>2.安全区域</h3><pre><code>    动态获取设备灵动岛或者摄像机位置区域
+</code></pre>
+<h3 id="3-背景图和道路图片应该分开来"><a href="#3-背景图和道路图片应该分开来" class="headerlink" title="3.背景图和道路图片应该分开来"></a>3.背景图和道路图片应该分开来</h3><pre><code>    道路图片放在设计分辨率之内，背景图应该是设计分辨率的两倍大小，这样适配异形屏就没什么问题
+</code></pre>
+<h1 id="六、资源整理"><a href="#六、资源整理" class="headerlink" title="六、资源整理"></a>六、资源整理</h1><h3 id="1-静态合图"><a href="#1-静态合图" class="headerlink" title="1.静态合图"></a>1.静态合图</h3><p>将零散的小图标或素材进行打包合图，既能减少加载请求次数，又能避免过多小尺寸资源带来的管理复杂度。</p>
+<h3 id="2-动态合图"><a href="#2-动态合图" class="headerlink" title="2.动态合图"></a>2.动态合图</h3><p>在运行时根据需求将某些纹理动态合并成一张大图，能在一定程度上减少 GPU 的绘图调用次数和 CPU 负载，防止设备过热。</p>
+<h1 id="七、3D-转-2D-渲染"><a href="#七、3D-转-2D-渲染" class="headerlink" title="七、3D 转 2D 渲染"></a>七、3D 转 2D 渲染</h1><p>采用“9 张图渲染 32 个方向”的方法：</p>
+<ol>
+<li>先准备 9 张基础朝向图</li>
+<li>将 360 度拆分成 32 个小角度，每个 11.25 度为一档</li>
+<li>在表中记录 32 个角度的偏移量、镜像信息及对应的图片下标</li>
+<li>根据需要的角度读取对应图像并对其进行镜像或旋转，从而渲染出车辆在不同方向的外观<br>这种方法能有效减少资源量，提升运行效率。</li>
+</ol>
+<h1 id="八、流程控制"><a href="#八、流程控制" class="headerlink" title="八、流程控制"></a>八、流程控制</h1><h3 id="1-循环引用问题"><a href="#1-循环引用问题" class="headerlink" title="1.循环引用问题"></a>1.循环引用问题</h3><p>在复杂的场景与业务逻辑中，若模块之间互相调用容易形成循环依赖，需对模块进行解耦或分层处理，避免难以排查的逻辑错误。</p>
+<h3 id="2-UI-控制"><a href="#2-UI-控制" class="headerlink" title="2.UI 控制"></a>2.UI 控制</h3><p>为保证界面一致性，可在 UIController 模块做统一管理：如界面打开、关闭以及动画过渡等，避免在各个子模块中进行分散的 UI 调用。</p>
+<h1 id="九、测试与优化"><a href="#九、测试与优化" class="headerlink" title="九、测试与优化"></a>九、测试与优化</h1><ol>
+<li><p>持续测试，持续改进<br>根据项目迭代需求，不断进行功能测试、性能测试、兼容性测试等，及时修复 Bug 并优化性能，保证项目的稳定性与流畅度。</p>
+</li>
+<li><p>健壮性与异常场景<br>确保游戏在网络波动、设备资源不足或玩家异常操作等情况下依旧能平稳运行，避免出现崩溃或数据丢失。</p>
+</li>
+</ol>
+<h1 id="十、充值与补单"><a href="#十、充值与补单" class="headerlink" title="十、充值与补单"></a>十、充值与补单</h1><p>在游戏内购或充值环节，常会面临以下问题：</p>
+<ol>
+<li>未到账：部分第三方支付或网络异常时，出现扣费成功但游戏内未到账。</li>
+<li>掉单与补单：为尽量避免丢失订单，需要在游戏服务端进行订单校验与存储。当确认出现掉单，立即执行补单操作，为玩家补发对应道具或货币。<br>通过对接支付平台的回调接口，并在服务器端做状态记录与检查，可降低掉单问题对玩家体验的影响。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/20/game/%E3%80%8A%E5%81%9C%E8%BD%A6%E5%9C%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%E3%80%8B/" data-id="cmqz68l2z001agr77bor16bse" data-title="停车场小游戏项目拆解：玩法设计与系统实现" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2025/week18" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/01/18/week/2025/week18/" class="article-date">
@@ -130,7 +375,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/18/week/2025/week18/" data-id="cmqx13hvg0048vi777q8q0bvq" data-title="每周见闻 - 第 18 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/18/week/2025/week18/" data-id="cmqz68l390062gr777ruw3ufr" data-title="每周见闻 - 第 18 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -189,7 +434,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/12/week/2025/week17/" data-id="cmqx13hvg0043vi774cm23dp6" data-title="每周见闻 - 第17 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/12/week/2025/week17/" data-id="cmqz68l39005zgr77gh8j1oxh" data-title="每周见闻 - 第17 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -250,7 +495,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/04/week/2025/week16/" data-id="cmqx13hvg0040vi77bnyj1u8j" data-title="每周见闻 - 第 16期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/04/week/2025/week16/" data-id="cmqz68l39005wgr7791vo3uei" data-title="每周见闻 - 第 16期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -307,7 +552,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2025/01/01/book/%E3%80%8A%E4%B8%87%E5%8E%86%E5%8D%81%E4%BA%94%E5%B9%B4%E3%80%8B/" data-id="cmqx13hv9000wvi775pbq4qdj" data-title="《万历十五年》读书笔记：张居正之后的晚明困局" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2025/01/01/book/%E3%80%8A%E4%B8%87%E5%8E%86%E5%8D%81%E4%BA%94%E5%B9%B4%E3%80%8B/" data-id="cmqz68l2z001ggr778eupatov" data-title="《万历十五年》读书笔记：张居正之后的晚明困局" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -368,7 +613,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/27/week/2024/week15/" data-id="cmqx13hve0030vi77537fhx7f" data-title="每周见闻 - 第15 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/27/week/2024/week15/" data-id="cmqz68l34003agr77besq32vk" data-title="每周见闻 - 第15 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -426,7 +671,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/20/week/2024/week14/" data-id="cmqx13hvd002wvi770hqc2lys" data-title="每周见闻 - 第 14期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/20/week/2024/week14/" data-id="cmqz68l330032gr770wvu75ku" data-title="每周见闻 - 第 14期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -486,7 +731,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/13/week/2024/week13/" data-id="cmqx13hvd002svi776nmzbwjk" data-title="每周见闻 - 第 13期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/13/week/2024/week13/" data-id="cmqz68l330036gr77fss8h40k" data-title="每周见闻 - 第 13期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -548,126 +793,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/12/07/week/2024/week12/" data-id="cmqx13hvd002ovi77diwy36ld" data-title="每周见闻 - 第12期" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2024/week11" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/11/29/week/2024/week11/" class="article-date">
-  <time class="dt-published" datetime="2024-11-29T07:23:31.000Z" itemprop="datePublished">2024-11-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/11/29/week/2024/week11/">每周见闻 - 第11期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img loading="lazy" decoding="async" src="/images/2024/bg2024120406.webp"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/T-qowqn09zwLqKf8vS4XMQ">1.西安幸福航空被曝长期欠薪，飞行员送外卖补贴家用</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/N1wyR0XkNYE3WyLr8xpf6g">2.巴基斯坦突发暴力冲突，已致120人死亡</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3735749#from=ios?ivk=1">3.车企供应商开始反抗,比亚迪要求供应商从2025年1月1日起供货产品降价10%</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/cg9dp2kvC3m2QyIXff43cQ">4.“人人网”已停止服务，曾有1.7亿用户</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.thepaper.cn/newsDetail_forward_29543514">5.琼瑶体面的选择了死亡</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/7YssK9-KucF5PbUf9Vv5Vg">6.OpenAI发布满血o1、无限使用，最强大模型来了</a></p>
-<p><a target="_blank" rel="noopener" href="https://finance.sina.com.cn/jjxw/2024-12-05/doc-incymitn9661158.shtml?cref=cj">7.美图靠卖加密货币赚了将近6个亿</a></p>
-<p><a target="_blank" rel="noopener" href="http://www.news.cn/20241205/19d91d08e07f46b190365600b429514b/c.html">8.比特币价格首次突破10万美元</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/833816099_100095661?scm=thor.521_14-200000.0.10006.&spm=smpc.home.it-news11.4.17334684030315oXoZw5_1467">9.8位数年薪！“最懂阿里大模型的人”带整个团队跳槽加入！字节跳动放大招？</a></p>
-<h2 id="简语"><a href="#简语" class="headerlink" title="简语"></a>简语</h2><p>1.所有书籍都宣传做好人，这是不正常，因为统一口径。</p>
-<p>2.说不后悔的人，好像知道可以后悔一般。</p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img loading="lazy" decoding="async" src="/images/2024/The_Bloody_Battle_of_Taierzhuang.jpg" alt="血战台儿庄"><br>&emsp;&emsp;《血战台儿庄》是一部中国大陆在1986年制作的电影，翟俊杰与杨光远合作执导，再现了台儿庄战役的历史。<br>&emsp;&emsp;这部电影是中国大陆方面首次使用电影艺术的方式肯定国民党在抗日战争正面战场的作用，因此在首映时给观众带来耳目一新的感受。<br>&emsp;&emsp;此电影与大陆其他电影风格截然不同，诸多细节迥异，甚至采用了国军的诸多习惯，如在军事地图中将日军绘成红色，国军为蓝色。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/29/week/2024/week11/" data-id="cmqx13hvd002kvi77ahy009d7" data-title="每周见闻 - 第11期" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2024/week10" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/11/22/week/2024/week10/" class="article-date">
-  <time class="dt-published" datetime="2024-11-22T08:17:03.000Z" itemprop="datePublished">2024-11-22</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/11/22/week/2024/week10/">每周见闻 - 第10期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img loading="lazy" decoding="async" src="/images/2024/20241121_mouse_driving.avif"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JYdchoenLMutaN7DliUNIw">1.全球最大的外包公司，去年还挣60亿，今年私有化</a></p>
-<p><a target="_blank" rel="noopener" href="https://techcrunch.com/2024/11/21/marissa-mayer-just-laid-out-a-possible-business-model-for-ad-supported-ai-chatbots/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-chrome">2.AI时代在线广告的未来</a><br>1.玛丽莎·梅耶尔是谷歌搜索业务的早期核心人物，还曾担任雅虎总裁；<br>2.她认为，AI改变了消费者对于信息的预期，未来的广告也需要跟上这一趋势，比如在用户与AI的互动中，让AI生成包含广告内容的回答；<br>3.为了实现这一改变，广告公司需要与AI公司更紧密地合作，提供更多信息；<br>4.目前，AI公司正积极寻求新的收入来源，广告合作可能成为重要方向。</p>
-<p><a target="_blank" rel="noopener" href="https://www.reuters.com/technology/bitcoin-breaks-95000-first-time-optimism-over-trump-crypto-plans-2024-11-21/?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-chrome">3.特朗普当选后比特币大涨</a><br>1.周四，比特币的价格逼近10万美金，因市场预测美国总统当选人特朗普将为加密货币创造友好的监管环境；<br>2.自特朗普当选以来的两周内，比特币价格上涨了约40%，今年以来已翻了一番；<br>3.特朗普在竞选期间支持数字资产，承诺将美国打造成“全球加密货币之都”，并计划积累国家级的比特币储备。</p>
-<p><a target="_blank" rel="noopener" href="https://www.odditycentral.com/news/robot-manufacturer-has-12-robots-kidnapped-from-showroom-by-another-robot.html?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=spacex">4.AI机器人说服同伴“离职跑路”</a><br>1.今年8月，上海某机器人展厅发生了一起机器人“跑路”事件，一台小型AI机器人与展厅内12台大型机器人对话，成功说服这些机器人跟它离开；<br>2.这是一次测试，小型AI机器人被要求说服其他机器人跟随它一起离开，结果它成功带领同伴“离职跑路”；<br>3.近日，这一事件的视频公开后，引发了人们对于AI安全性和控制机制的担忧。</p>
-<p><a target="_blank" rel="noopener" href="https://www.bloomberg.com/news/features/2024-11-24/amazon-plans-to-rival-nvidia-with-its-own-ai-chips?utm_source=www.threenhalf.com&utm_medium=referral&utm_campaign=ai-bluesky-threads">5.亚马逊自主研发AI芯片挑战英伟达</a><br>1.亚马逊正在积极研发AI芯片，以减少对英伟达的依赖，其工程师团队正在加紧开发第三代AI芯片Trainium2，希望在年底前能达到稳定运行的状态；<br>2.云服务提供商们，如亚马逊AWS、微软Azure和谷歌云平台，都在研发自己的AI芯片，其中亚马逊的投入最大，已经部署了多款自研芯片；<br>3.但是，短期内英伟达的市场地位依然难以撼动。</p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OJxE-ONj8gArS4SILB-qvQ">6.澳大利亚联邦参议院投票通过了对该国16岁以下人群实施社交媒体禁令的法案</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8erxFXRaH81">7.前实习生篡改代码攻击公司模型训练，字节跳动起诉索赔800万</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8esEoJpflJD">8.字节又出爆款，剑指优爱腾芒</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8erWM98HX7k">9.小马智行美国敲钟上市，成全球Robotaxi第一股</a></p>
-<p><a target="_blank" rel="noopener" href="https://wallstreetcn.com/articles/3735537#from=ios?ivk=1">10.卢布大贬值！一周暴跌超10%</a></p>
-<h2 id="简语"><a href="#简语" class="headerlink" title="简语"></a>简语</h2><p>1.俄罗斯侵占中国150万多平方土地，以前和未来，俄罗斯作为与中国交接的国家，都会是竞争关系。</p>
-<p>2.冠名堂皇之下，必有肮脏。</p>
-<p>3.大型游戏到小游戏，长视频到短视频，现在还有超短视频。</p>
-<p>4.止步不前的苹果，奋力前进的华为。</p>
-<h2 id="电影"><a href="#电影" class="headerlink" title="电影"></a>电影</h2><p><img loading="lazy" decoding="async" src="/images/2024/Bawangbieji.jpg" alt="霸王别姬"></p>
-<p>霸王别姬》（英语：Farewell My Concubine）改编自李碧华同名小说，由陈凯歌执导，张国荣、巩俐、张丰毅主演的电影。<br>叙述伶人程蝶衣对国粹艺术的执著，进而投影出历史与文化在大时代的演变下，造成的激荡与人生。影片蕴含深厚的文化内涵，气势恢宏，感情强烈，情节细腻深远。</p>
-<p>本片获得第46届法国戛纳电影节金棕榈奖，成为第一部也是迄今唯一获得此奖项的华语电影。亦被视为有史以来最伟大的华文电影之一。<br>此外，该片还荣获美国金球奖最佳外语片，以及第66届奥斯卡最佳外语片奖提名，并于2005年被美国《时代》周刊评为“百大不朽电影”之一。<br>2006年，《首映》杂志将巩俐饰演的“菊仙”列为“有史以来最伟大表演100位”第89名</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2024/11/22/week/2024/week10/" data-id="cmqx13hvc002hvi779df30j22" data-title="每周见闻 - 第10期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://baiyangzuoshu.github.io/2024/12/07/week/2024/week12/" data-id="cmqz68l33002ygr77b88nc69u" data-title="每周见闻 - 第12期" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -706,7 +832,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
     </div>
   </div>
 
@@ -716,7 +842,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 16px;">AI</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 10px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 14px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 14px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">编程</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 14px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 18px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+      <a href="/tags/AI/" style="font-size: 18px;">AI</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 10px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 14px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 14px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 14px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 18px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
     </div>
   </div>
 
@@ -738,6 +864,14 @@
       <ul>
         
           <li>
+            <a href="/2026/06/29/thoughts/%E6%98%94%E6%97%A5%E7%99%BE%E5%BA%A6%E9%9D%A0%E7%9D%80%E8%8A%AF%E7%89%87%E6%B4%BB%E4%B8%8B%E6%9D%A5/">昔日百度靠着芯片活下来</a>
+          </li>
+        
+          <li>
+            <a href="/2026/06/28/AI/MCP-skill-agent%E4%B8%89%E8%80%85%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">MCP、skill、agent：三者到底是什么</a>
+          </li>
+        
+          <li>
             <a href="/2026/06/28/week74/">每周见闻 - 第 74期</a>
           </li>
         
@@ -747,14 +881,6 @@
         
           <li>
             <a href="/2026/06/21/thoughts/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E%E6%94%AF%E6%9F%B1%E9%98%B6%E6%AE%B5%E7%9A%84%E5%8F%98%E5%8C%96/">中国经济支柱阶段的变化</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/20/AI/DeepSeek-Reasonix%E7%BB%88%E7%AB%AF%E7%89%88%E4%B8%8E%E6%A1%8C%E9%9D%A2%E7%89%88%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/">DeepSeek-Reasonix：终端版与桌面版安装指南</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/">cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案</a>
           </li>
         
       </ul>
