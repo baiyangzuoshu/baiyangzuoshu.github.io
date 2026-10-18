@@ -86,6 +86,220 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-AI/DeepSeek-TUI：在终端里使用DeepSeek写代码" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/" class="article-date">
+  <time class="dt-published" datetime="2026-05-14T02:00:00.000Z" itemprop="datePublished">2026-05-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/">DeepSeek-TUI：在终端里使用 DeepSeek 写代码</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>&emsp;&emsp;最近我在思考一个更省成本的 AI 编程工作流：让 Codex 负责架构设计、任务拆解和代码审查，让 DeepSeek 负责具体实现。沿着这个思路，我看到了一个项目：<a target="_blank" rel="noopener" href="https://github.com/Hmbown/DeepSeek-TUI">DeepSeek-TUI</a>。它的定位很直接：把 DeepSeek 变成一个运行在终端里的 coding agent。</p>
+<p>&emsp;&emsp;简单说，DeepSeek-TUI 不是网页聊天工具，而是一个面向本地代码库的终端助手。你可以在项目目录里启动它，让它读取上下文、解释代码、修改文件、运行命令，并通过终端界面和你交互。对习惯命令行开发的人来说，这种方式比来回复制代码更自然。</p>
+<h3 id="DeepSeek-TUI-是什么"><a href="#DeepSeek-TUI-是什么" class="headerlink" title="DeepSeek-TUI 是什么"></a>DeepSeek-TUI 是什么</h3><p>&emsp;&emsp;DeepSeek-TUI 的入口命令是 <code>deepseek</code>。根据官方 README，它由两个 Rust 二进制组成：一个是调度命令 <code>deepseek</code>，另一个是 TUI 运行时 <code>deepseek-tui</code>。npm 包本身更像安装器和包装器，会下载对应平台的预编译二进制，而不是用 Node.js 实现整个 agent。</p>
+<p>&emsp;&emsp;它比较适合几类场景：在终端里让 AI 阅读当前项目；让 AI 按要求修改代码；用一次性命令解释某个函数；在自动化脚本里调用 <code>deepseek exec</code>；或者在已有工作区里恢复历史会话。它也提供 Plan、Agent、YOLO 等模式，分别对应只读规划、默认交互和自动批准工具调用。</p>
+<h3 id="安装方式"><a href="#安装方式" class="headerlink" title="安装方式"></a>安装方式</h3><p>&emsp;&emsp;如果你已经安装了 Node.js，最简单的方式是 npm：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g deepseek-tui</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果在国内访问 npm 慢，可以使用镜像源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g deepseek-tui --registry=https://registry.npmmirror.com</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果你更喜欢 Rust 工具链，也可以用 Cargo 安装。注意官方说明里两个二进制都需要安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cargo install deepseek-tui-cli --locked</span><br><span class="line">cargo install deepseek-tui --locked</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;macOS 用户也可以走 Homebrew：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap Hmbown/deepseek-tui</span><br><span class="line">brew install deepseek-tui</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;Windows 用户可以通过 Scoop 安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scoop update</span><br><span class="line">scoop install deepseek-tui</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果不想依赖包管理器，可以直接到 GitHub Releases 下载预编译文件。官方提供 Linux x64、Linux ARM64、macOS x64、macOS ARM64、Windows x64 等平台构建。还有一种方式是 Docker，适合临时体验或隔离环境：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -it \</span><br><span class="line">  -e DEEPSEEK_API_KEY \</span><br><span class="line">  -v <span class="string">&quot;<span class="variable">$PWD</span>:/workspace&quot;</span> \</span><br><span class="line">  ghcr.io/hmbown/deepseek-tui:latest</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-API-Key"><a href="#配置-API-Key" class="headerlink" title="配置 API Key"></a>配置 API Key</h3><p>&emsp;&emsp;第一次启动 <code>deepseek</code> 时，它会提示你输入 DeepSeek API Key，并保存到 <code>~/.deepseek/config.toml</code>。也可以提前手动设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deepseek auth <span class="built_in">set</span> --provider deepseek</span><br><span class="line">deepseek auth status</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果你不想写入配置文件，也可以使用环境变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DEEPSEEK_API_KEY=<span class="string">&quot;YOUR_KEY&quot;</span></span><br><span class="line">deepseek</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;配置完成后，建议先跑一次诊断：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek doctor</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这个命令会检查配置和连通性。遇到 key 不生效时，也可以用 <code>deepseek auth status</code> 看当前凭据来自配置文件、系统 keyring，还是环境变量。</p>
+<h3 id="基本运行"><a href="#基本运行" class="headerlink" title="基本运行"></a>基本运行</h3><p>&emsp;&emsp;最常用的方式是在项目根目录启动交互界面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果希望它自动选择模型和思考强度，可以这样启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek --model auto</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;也可以直接执行一次性任务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepseek <span class="string">&quot;explain this function&quot;</span></span><br><span class="line">deepseek --model deepseek-v4-flash <span class="string">&quot;summarize this project&quot;</span></span><br><span class="line">deepseek --model auto <span class="string">&quot;fix this bug&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果想用于脚本或自动化流程，可以使用非交互模式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek <span class="built_in">exec</span> --auto --output-format stream-json <span class="string">&quot;fix this bug&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;已有会话可以继续恢复：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepseek sessions</span><br><span class="line">deepseek resume --last</span><br><span class="line">deepseek resume &lt;SESSION_ID&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用建议"><a href="#使用建议" class="headerlink" title="使用建议"></a>使用建议</h3><p>&emsp;&emsp;DeepSeek-TUI 真正有价值的地方，不只是“能在终端聊天”，而是它能贴近本地项目工作流。但正因为它能改文件、跑命令，使用时更应该给清楚边界。比如让它只修改某几个文件，只实现一个明确功能，先输出方案再动手，最后要求给出测试命令和变更说明。</p>
+<p>&emsp;&emsp;我比较推荐的方式是：让 Codex 或自己先做架构拆解，明确模块边界、文件范围和验收标准，然后把具体实现交给 DeepSeek-TUI。完成后再看 git diff，确认它有没有越界修改、重复实现或者破坏原有结构。</p>
+<p>&emsp;&emsp;AI 写代码的成本正在下降，但软件维护成本不会自动下降。DeepSeek-TUI 这类工具能提高实现速度，前提是人要把目标、约束和审查做好。把它当成一个终端里的执行工程师，而不是一个可以无限放权的架构负责人，使用体验会更稳定。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/" data-id="cmr7sez6m000dod772ksh58q4" data-title="DeepSeek-TUI：在终端里使用 DeepSeek 写代码" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2026/week68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/week/2026/week68/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T23:45:51.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2026/05/10/week/2026/week68/">每周见闻 - 第68 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img loading="lazy" decoding="async" src="/images/2026/hunan.webp"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ur6MAAt1ipV6fS4--GXoIw">1.浏阳烟花厂爆炸已致26死61伤</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tI9uSWoI89ftagztkFYhMg">2.豆包新增付费订阅，标准版每月68元、加强版200元、专业版500元</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TJs_LzkFaBxAD0rbrUXLxA">3.“DeepSeek版Claude Code”，Github 2.3k星</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/28N81q7JHWN5wiRpwHf4xQ">4.三星突然公告：停止在中国大陆市场销售所有家电产品，含电视、冰箱、显示器，手机仍正常销售</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G1vTAf9WM_caY_4nNydqsg?scene=1">5.月之暗面（Kimi）完成新一轮约20亿美元（约合人民币136.22亿元）融资</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szT8dH9G1X">6.新国标要来了，国产手机再也不能乱吹AI了</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szaxR8a35O">7.滴滴公布2026五一假期出行数据：异地订单上涨33%、文旅赛事热度攀升</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szLfILzJ45">8.最新中国合资品牌3年保值率排名来了 日系依然坚挺</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szITA3JXo9">9.甲骨文被曝裁员2-3万人，并拒绝向员工提供更高遣散费</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8sz156IQ2iX">10.“泰国孕妇坠崖案”王暖暖控诉无忧传媒：长期霸凌、PUA</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8swDy3FRsfc">11.抖音电商试水自营旗舰店，大厂新战事卷向深水区</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8syFVP5IJUJ">12.消息称英特尔将为部分苹果设备代工芯片，正式协议近期已敲定</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/GBaPrVWMGpV7Z6bVuEXhSA">1.详解 DeepSeek V4：Infra 巨鲸 “四连击”，百万上下文走进现实</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tmB55HT18ZZ1bUXnc7lSzw">2.游戏项目系统工程手册</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8sxNYj3WjjQ">1.OpenAI发布了三款音频模型：GPT-Realtime-2、GPT-Realtime-Translate和GPT-Realtime-Whisper</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8sx3t9trf7D">2.OpenAI为ChatGPT推出“可信联系人”，应对AI对话中的自残风险</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8st3INLxzpR">3.GPT-5.5 Instant发布</a></p>
+<h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G2h_WeTCSp5lQLnFcdGVIw">1.Redis 之父实测：DeepSeek V4 把 KV cache 压到不足 10GB！MacBook SSD 直接当推理缓存，”旧观念彻底过时了”</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BzkvS4OAod4xXqFDg_5BFA">2.OpenAI发布MRC超算协议，重塑10万GPU集群通信，AMD等合作推进</a></p>
+<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>叶湘伦（周杰伦 饰）是淡江艺术高中的一名插班生，父亲（黄秋生 饰）是该校的一名教师。这天同学晴依（曾恺玹 饰）带他参观学校，接着他独自来到了学校的旧琴房，本身弹得一首好曲的他被某处传来的一首钢琴曲吸引住了。他来到其中一间旧琴房，遇到了路小雨（桂纶镁 饰），纯纯的爱情故事由此发生了。一直以来，叶湘伦都觉得小雨充满了神秘，却无法进一步了解她。叶湘伦约小雨到琴房见面，叶湘伦以为晴依是小雨，跟晴依接吻时被小雨看到，自此之后叶湘伦就没有再看到小雨。叶湘伦到处寻找小雨，发现了那个小雨所说“不能说的秘密”的全部真相。<br><img loading="lazy" decoding="async" src="/images/2026/p2167453893.webp"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/05/10/week/2026/week68/" data-id="cmr7sez79008eod7789g2crox" data-title="每周见闻 - 第68 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-AI/AI写代码后更需要架构师能力" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/" class="article-date">
+  <time class="dt-published" datetime="2026-05-06T02:00:00.000Z" itemprop="datePublished">2026-05-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/">AI 写代码后，更需要架构师能力</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>&emsp;&emsp;这段时间使用 Codex、DeepSeek、Claude 这些 AI 工具写代码后，我越来越明显地感觉到：AI 并没有降低对程序员能力的要求，反而把要求往上提了一层。以前写代码，很多时间花在具体实现上；现在具体实现可以交给 AI，但你必须知道要让它做什么、做到哪里、不能碰哪里。</p>
+<p>&emsp;&emsp;换句话说，AI 写代码之后，更需要人具备架构师的能力。</p>
+<p>&emsp;&emsp;AI 很擅长执行。你让它写一个接口、补一个组件、改一段逻辑、生成一组测试，它往往能很快给出结果。尤其是在需求边界清楚、上下文完整、约束明确的时候，它的效率非常高。过去半天才能完成的重复性开发，现在可能十几分钟就能推进到可运行状态。</p>
+<p>&emsp;&emsp;但问题也在这里。AI 太擅长执行了。如果你没有给它清楚的目标，它也会继续执行；如果你没有告诉它边界，它就可能扩大修改范围；如果你没有说明项目里的分层、模块职责、数据流和异常处理方式，它就会按照自己“看起来合理”的方式实现功能。代码表面上跑通了，实际上却给系统埋下了维护成本。</p>
+<p>&emsp;&emsp;很多时候，AI 写出来的问题不是语法错，也不是功能完全不能用，而是架构上不干净。比如本来应该在 service 层处理的逻辑，被它塞进了 controller；本来应该复用已有组件，它重新写了一套类似实现；本来只是改一个小功能，它顺手改了公共工具函数；本来项目有统一错误处理，它又加了一套局部判断。这些问题短期看不明显，长期会让项目越来越乱。</p>
+<p>&emsp;&emsp;所以使用 AI 写代码，第一件事不是急着让它开写，而是先划定边界。你要告诉它：这次只改哪些文件，不改哪些文件；新增逻辑放在哪一层；是否允许改公共接口；是否需要兼容旧数据；错误应该如何返回；测试覆盖到什么程度。边界越清楚，AI 越像一个高效工程师；边界越模糊，AI 越像一个精力充沛但方向不稳定的实习生。</p>
+<p>&emsp;&emsp;第二件事，是把任务拆成可验证的小块。不要直接说“帮我实现一个完整系统”，而是先让它理解现有结构，再让它实现其中一部分。比如先补数据模型，再补服务逻辑，再补接口，再补测试。每一步都有输入、输出和验收标准。这样做不是为了限制 AI，而是为了让它始终在正确轨道上推进。</p>
+<p>&emsp;&emsp;第三件事，是人要做最终判断。AI 可以写代码，但不能替你承担架构责任。它不知道这个项目未来会不会扩展，不知道哪些模块是历史包袱，不知道哪些接口已经被外部依赖，也不知道团队的维护习惯。它只能根据当前上下文推断，而架构判断需要经验、取舍和长期视角。</p>
+<p>&emsp;&emsp;以前我们常说，程序员要从“写代码的人”变成“解决问题的人”。AI 出现后，这句话变得更具体了：程序员要从“亲自实现每一行代码的人”，变成“定义问题、拆解系统、设定边界、验收结果的人”。真正拉开差距的，不再只是手速，而是你能不能把一个模糊需求拆成清晰结构。</p>
+<p>&emsp;&emsp;AI 会让代码生成越来越便宜，但不会让架构变得便宜。相反，代码越容易生成，架构越重要。因为糟糕的代码过去写得慢，破坏速度有限；现在 AI 可以很快写出大量代码，如果没有人控制方向，系统变坏的速度也会变快。</p>
+<p>&emsp;&emsp;所以我现在使用 AI 写代码时，先想清楚目标，再描述边界，再让 AI 实现，最后审查它是否符合项目结构。AI 负责把砖搬得更快，人负责决定墙应该建在哪里。只有这样，AI 才是在提高生产力，而不是在制造新的技术债。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/" data-id="cmr7sez6l0008od77affsfqaw" data-title="AI 写代码后，更需要架构师能力" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2026/week67" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2026/05/01/week/2026/week67/" class="article-date">
@@ -610,199 +824,11 @@
 
 
   
-    <article id="post-week/2026/week63" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/04/04/week/2026/week63/" class="article-date">
-  <time class="dt-published" datetime="2026-04-04T12:58:39.000Z" itemprop="datePublished">2026-04-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/04/04/week/2026/week63/">每周见闻 - 第 63期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img loading="lazy" decoding="async" src="/images/2026/20260406b782b8f411244763b0261f00b46bf3cc_0b7f8d1e1f7c4d5b87d9750466b45c6e.jpg" alt="张雪的故事"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/5R_-5tX0YNQqNSGKVX-44A">1.那个曾被嘲笑的湖南少年，造出了世界第一的摩托车</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rz9mAPp03j">2.50多年来首次 NASA发射绕月火箭执行“阿尔忒弥斯二号”任务</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rw2robuHLk">3.中国无人车开进迪拜 萝卜快跑启动全无人商业化运营</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ruShGNjHm0">4.顶尖光学专家加盟华为，德国制度瓶颈加剧人才外流</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ruMWCmWQ7x">5.30分钟下线一台 中国人形机器人迈入万台量产时代</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ruMWCmWQ6m">6.重大事故！DeepSeek瘫痪超过8小时</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/QeUXwrmCHxCplKP5yAW4Ww">7.美团、淘宝闪购、京东要以6月1日为节点，尽快开展自查整改</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nyOlKEtvuKCtUiMEpgGqSw">8.谷歌正式发布了旗下最新开源大模型家族Gemma 4</a></p>
-<p><a target="_blank" rel="noopener" href="https://m.weibo.cn/status/5282775931815456?wm=3333_2001&from=10G3393010&sourcetype=weixin&rp_trans=OW5nMEs1c29BeTBTNGtxTThWdTU4aS81cmJYRHE0MVBWbWUrNUVPUC8wYnpZK3IwMEJidDV6MkF3eTMrMHRlR1pmTU5kUkdvYVpXTXFYUkJ5RUxocXZpVkNjMVlLM2JxZmxRUE40K3hVVWwxU1BFNU91ci9ZamwwZlpZR0pEcjRZSFJBYnZGdzJjTHdST0VRZzZONm1BPT0=&s_trans=3PzkHa0einhqweIHZNpsfw==_5282775931815456_s&s_channel=4&jumpfrom=weibocom">9.OpenAI已完成一轮1220亿美元的融资交易</a></p>
-<p><a target="_blank" rel="noopener" href="https://m.weibo.cn/status/5282834735694286?wm=3333_2001&from=10G3393010&sourcetype=weixin&rp_trans=OW5nMEs1c29BeTBTNGtxTThWdTU4aS81cmJYRHE0MVBWbWUrNUVPUC8wWlZzU2wzTzQrelpyL0hIaTY0bzBVMHV3SXFWdGtNUG9qWmRHWVBVSmJ4OEpTYkNQbFBDWk5YVHdvKzYrWGk4ZGgxU1BFNU91ci9ZamwwZlpZR0pEcjRXYXBLRGJ1dWVleVFzYXJBbkJIZG1RPT0=&s_trans=3PzkHa0einhqweIHZNpsfw==_5282834735694286_s&s_channel=4&jumpfrom=weibocom">10.#甲骨文凌晨6点突发裁员3万人#</a></p>
-<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://www.news.cn/20260402/e4c4cdac817c4d049c57e03840eac94b/c.html">1.张雪：动力，从未磨损</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rvyYp8mF7e">2.调查：超四分之三美国民众不信任人工智能</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rueCr3wuYk">3.美媒揭秘Sora关停内幕：日亏百万、用户数腰斩，遭遇对手抢人</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JKgBIQmKVx4AII785vXwoQ">4.一个农村青年的翻盘：成为最佳导演的他，拍透了基层女性的隐秘心事</a></p>
-<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8s2xHvTxDjk">1.发布仅1天 阿里千问3.6-Plus冲上OpenRouter榜首</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8s3Cd9ofCKM">2.阿里千问App上线万相2.7视频生成模型，几句话修视频</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ryK6Vs7qgj">3.国内最强生图模型阿里Wan2.7-Image来了！千人千面 告别AI标准脸</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/SXhpLQ985a8cok59Vq_YUg">4.美国大模型头部公司Anthropic因构建配置失误，意外泄露Claude Code源代码</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rwZfKAuemI">5.ChatGPT首次原创独立证明数学假设</a></p>
-<h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rwXqOfz5tL">1.雷军公布小米MiMo-V2-Pro大模型最新“战绩”</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rwrHLZYe3P">2.华为2025年营收8809亿，研发投入1923亿</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rv1DUpTbsT">3.赛力斯：2025年营业收入1648.88亿元，同比增长13.63%</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rw1C5nE7uX">4.字节吃饱，阅文跌倒</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hErUJNDVjE9GNlAIIxOGrA">5.Seedance2.0开放公测</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Z9txkmUo8f_oRYEoUyebeg">6.CLI复兴！命令行搞定一切，大厂纷纷下场</a></p>
-<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>《潜伏》是中国大陆2008年出品的关于谍战的电视剧。改编自龙一的同名短篇小说。本剧在全国热播后，口碑和收视双丰收，成为2009年中国大陆最热门的电视剧之一。余则成、王翠平等人气角色深入人心。<br><img loading="lazy" decoding="async" src="/images/2026/qianfu.jpg" alt="潜伏"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2026/04/04/week/2026/week63/" data-id="cmr7sez77007xod7789nnh6du" data-title="每周见闻 - 第 63期" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-AI/从手写UI到AI拼UI" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/" class="article-date">
-  <time class="dt-published" datetime="2026-03-31T02:00:00.000Z" itemprop="datePublished">2026-03-31</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/AI/">AI</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/">从手写 UI 到 AI 拼 UI：游戏界面开发方式的三次变化</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>&emsp;&emsp;这几年做游戏开发，一个很明显的变化，就是 UI 的生产方式一直在变。十年前我在使用 cocos2d-x，那时候做界面基本就是“手搓”。按钮放哪、背景图怎么对齐、列表怎么排版、不同分辨率怎么适配，都要开发自己写代码处理。UI 不是不能做，而是成本很高，很多时间其实花在了重复劳动上。一个登录界面、一个背包界面，真正复杂的业务逻辑还没开始，光把节点摆好、响应接好，就已经消耗了不少精力。</p>
-<p>&emsp;&emsp;到了 2020 年以后，开始更多使用 Cocos Creator，情况就不一样了。Creator 把 UI 搭建从“写代码”变成了“可视化拼接”。节点层级、组件挂载、资源拖拽、布局调整，很多事情都可以直接在编辑器里完成。对开发来说，效率提升是非常明显的。以前要反复改坐标、改锚点、重新编译才能看到效果，现在在编辑器里拖一拖、点一点，立刻就能看到结果。某种意义上，这一代工具把 UI 开发门槛拉低了，也把很多机械性的工作从程序员手里拿走了。</p>
-<p>&emsp;&emsp;而现在，AI 又把这件事往前推了一步。它开始尝试“自动拼 UI”。也就是说，开发者不一定非要手动摆节点，也不一定非要自己一个控件一个控件去拖。你只要把需求描述清楚，AI 就有机会先给出一个初版界面，甚至把部分组件结构、样式层级、交互流程一并生成出来。从趋势上看，UI 的生产方式已经从“程序员自己实现”，走到了“工具辅助搭建”，再走到了“AI 参与生成”。</p>
-<p>&emsp;&emsp;不过我觉得，这里面最关键的一点不是 AI 会不会画界面，而是你有没有把足够准确的语料喂给它。这里的语料，不只是几句自然语言提示词，更重要的是和项目相关的 API、组件规范、命名规则、交互约束、页面结构，甚至是现有工程里的资源组织方式。AI 不是凭空理解你的项目，它生成出来的 UI 好不好，很大程度取决于你给它的信息是否完整。如果没有这些上下文，AI 能做的往往只是“看起来像那么回事”的 demo，而不是能真正接进项目里的 UI。</p>
-<p>&emsp;&emsp;所以我更倾向于把现在这个阶段理解成：AI 不是代替人来做 UI，而是把开发者的工作重心往前移了。以前我们主要在“实现”上花时间，现在更多是在“描述”和“约束”上花时间。你要先把接口定义清楚，把页面状态想明白，把组件边界整理好，再把这些内容交给 AI。谁的工程规范更清晰，谁的 API 设计更稳定，谁就更容易把 AI 用起来。</p>
-<p>&emsp;&emsp;从 cocos2d-x 到 Cocos Creator，再到今天 AI 开始拼 UI，我看到的不是某一种工具替代另一种工具，而是 UI 开发正在不断抽象、不断提效。手写代码解决的是“能不能做”，可视化编辑解决的是“能不能更快做”，AI 现在尝试解决的，则是“能不能先帮你做出第一版”。至于最后效果怎么样，还是取决于开发者对业务、工具和工程上下文的理解。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2026/03/31/AI/%E4%BB%8E%E6%89%8B%E5%86%99UI%E5%88%B0AI%E6%8B%BCUI/" data-id="cmr7sez6n000qod779l969dwl" data-title="从手写 UI 到 AI 拼 UI：游戏界面开发方式的三次变化" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UI/" rel="tag">UI</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2026/week62" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/03/29/week/2026/week62/" class="article-date">
-  <time class="dt-published" datetime="2026-03-29T00:37:07.000Z" itemprop="datePublished">2026-03-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/03/29/week/2026/week62/">每周见闻 - 第62 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img loading="lazy" decoding="async" src="/images/2026/1.jpg"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/SsflGnWxHyC3G08rRs_jPg">1.人贩子“梅姨”落网</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/0fdGRJ8z5GJOcdcMMrCHIg">2.阿里云宣布全面开放JVSClaw，无需邀请码养虾</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rmoobTaqOb">3.拼多多发布2025年财报：营收4318亿元同比增长10% 继续重仓供应链</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rrPEqgOBUW">4.宾理汽车（BeyonCa），已在国内陷入停摆，数百名员工被拖欠薪资</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rmxKb9wo0j">5.AI“抢饭碗”，硅谷大裁员！一线工程师戳破真相：AI效率被严重高估</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rmftcBsENm">6.快手公布2025年财报：全年总收入1428亿元，可灵AI四季度营收3.4亿元</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rm7gSkphRY">7.华为巨鲸电池平台3.0发布：首创电池黑匣子与星闪技术融合</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zaobao.com/news/china/story20260325-8791501">8.张雪峰去世</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rkOuM5u4lZ">9.路透：美国车主眼馋中国电动车，心急却买不到</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rir2KxjeBC">10.千问正式上线打车能力：一句话完成选车、设途经点、预约</a></p>
-<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DdYhazwFpSw--2XPCJfUgg">1.DeepSeek-R1之后是智能体式思考：林俊旸离职后首发长文</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rmE96UE40P">2.中国新四大豪华势力出炉</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rhmegMewy2">3.陶哲轩：AI 辅助数学证明如同汽车冲击城市，需构建新型基础设施</a></p>
-<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FUmMwvEBiK4ao48Zy2AqZw">1.中国开源首超美国：Hugging Face发布全球AI开源现状报告</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/2U2JzqkW_Bf0a8z2xcn43Q">2.上下文工程又进化了：Harness实现AI完全自主化</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rrVGrbqn8d">3.期限12个月：软银急借400亿美元巨款，只为重仓押注OpenAI</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rmopSO51l3">4.LiteLLM的PyPI官方发布版本1.82.8已被注入恶意代码，并着重强调“DONOTUPDATE”</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rhheY3xqMO">5.OpenAI：将在美国ChatGPT免费版及Go版投放广告</a></p>
-<h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/-kXKs4YG5UiK7D7UYKdpOA">1.Sora将关停</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HApqfPSM1q6vktHEPgFMAA">2.Epic宣布裁员超1000人：能节约超5亿美元成本</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8rrV1XobZUb">3.华为盘古大模型负责人王云鹤离职，被曝Agent创业</a></p>
-<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>本书107卷，是一部上起传说中的盘古，下迄明末的编年体简史。该书将我国清代以前几千年的历史大事系统而又删繁就简地记载下来。本书的内容分别辑自《通鉴外纪》、《通鉴前编》、《通鉴纲目》、《明纪钞略》等史书。书的整理者以脱误较少的扫叶山房石印本为底本，并以其他一些刻本相互参校，同时对照其所据原书予以校正，书中凡干支纪年，均添注了公元纪年。<br><img loading="lazy" decoding="async" src="/images/2026/s7646920.jpg" alt="纲鉴易知录"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2026/03/29/week/2026/week62/" data-id="cmr7sez77007tod77ag1u7hsb" data-title="每周见闻 - 第62 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/">下一页 &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/4/">下一页 &raquo;</a>
   </nav>
 
 </section>
@@ -823,7 +849,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2-4-15/" rel="tag">2.4.15</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FrameWork/" rel="tag">FrameWork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/token/" rel="tag">token</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="tag">上下文</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag">启动流程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" rel="tag">项目迁移</a></li></ul>
     </div>
   </div>
 
@@ -833,7 +859,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 12px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 14px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 10px;">Skill</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 14px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 14px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 18px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+      <a href="/tags/2-4-15/" style="font-size: 10px;">2.4.15</a> <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18.33px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/Agent/" style="font-size: 10px;">Agent</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocos-Creator/" style="font-size: 11.67px;">Cocos Creator</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 11.67px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 13.33px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/FrameWork/" style="font-size: 10px;">FrameWork</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 11.67px;">Skill</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/token/" style="font-size: 10px;">token</a> <a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" style="font-size: 10px;">上下文</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 13.33px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">启动流程</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.67px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 13.33px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" style="font-size: 10px;">项目迁移</a>
     </div>
   </div>
 
@@ -842,7 +868,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/10/">十月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
     </div>
   </div>
 
@@ -855,23 +881,23 @@
       <ul>
         
           <li>
+            <a href="/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/">给 Agent 做一次上下文减重：从工具按需加载到历史压缩</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/">Cocos Creator 2.4.15 启动流程：从引擎装配到首帧</a>
+          </li>
+        
+          <li>
+            <a href="/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/">用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</a>
+          </li>
+        
+          <li>
             <a href="/2026/09/24/AI/%E4%BB%8EAGENTS-md%E5%88%B0Skill%E8%AE%A9AI%E6%8C%89%E8%A7%84%E8%8C%83%E5%81%9A%E4%BA%8B%E5%B9%B6%E9%AA%8C%E8%AF%81%E6%95%88%E6%9E%9C/">从 AGENTS.md 到 Skill：让 AI 按规范做事并验证效果</a>
           </li>
         
           <li>
             <a href="/2026/07/05/week/2026/week75/">每周见闻 - 第 75期</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/29/thoughts/%E6%98%94%E6%97%A5%E7%99%BE%E5%BA%A6%E9%9D%A0%E7%9D%80%E8%8A%AF%E7%89%87%E6%B4%BB%E4%B8%8B%E6%9D%A5/">昔日百度靠着芯片活下来</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/28/AI/MCP-skill-agent%E4%B8%89%E8%80%85%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">MCP、skill、agent：三者到底是什么</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/28/week/2026/week74/">每周见闻 - 第 74期</a>
           </li>
         
       </ul>

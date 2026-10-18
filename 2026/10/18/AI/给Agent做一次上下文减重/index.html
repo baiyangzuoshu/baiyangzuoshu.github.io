@@ -1,0 +1,309 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  
+  
+  <title>给 Agent 做一次上下文减重：从工具按需加载到历史压缩 | 白杨左书</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="从一次 Agent 工程改造出发，梳理工具 schem...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给 Agent 做一次上下文减重：从工具按需加载到历史压缩">
+<meta property="og:url" content="https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/index.html">
+<meta property="og:site_name" content="白杨左书">
+<meta property="og:description" content="从一次 Agent 工程改造出发，梳理工具 schem...">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://baiyangzuoshu.github.io/images/2026/agent-token-efficiency.png">
+<meta property="article:published_time" content="2026-10-18T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-18T02:00:00.000Z">
+<meta property="article:author" content="白杨左书">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="优化">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="token">
+<meta property="article:tag" content="上下文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="从一次 Agent 工程改造出发，梳理工具 schem...">
+<meta name="twitter:image" content="https://baiyangzuoshu.github.io/images/2026/agent-token-efficiency.png">
+  
+    <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/2024/favicon32.ico">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css">
+<script>
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "w2upclgnjh");
+</script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"给 Agent 做一次上下文减重：从工具按需加载到历史压缩","description":"从一次 Agent 工程改造出发，梳理工具 schem...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/","datePublished":"2026-10-18T02:00:00.000Z","dateModified":"2026-10-18T02:00:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2026/agent-token-efficiency.png"],"articleSection":["AI"],"keywords":"AI, 优化, Agent, token, 上下文"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"给 Agent 做一次上下文减重：从工具按需加载到历史压缩","item":"https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/"}]}]</script>
+  <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">白杨左书</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有品性的丰满，知识就是伪装</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-AI/给Agent做一次上下文减重：从工具按需加载到历史压缩" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/" class="article-date">
+  <time class="dt-published" datetime="2026-10-18T02:00:00.000Z" itemprop="datePublished">2026-10-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      给 Agent 做一次上下文减重：从工具按需加载到历史压缩
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>  做 Agent 时，模型 API 的 token 消耗很容易被理解成“用户说了多少话”。真正发给模型的请求通常还包括系统提示、工具定义、过去的对话、工具执行结果，有时还要加上摘要和重试。任务一旦进入多轮工具调用，重复发送这些内容，输入 token 就会逐轮累积。</p>
+<p>  这次改造的目标不是单纯把文本剪短，而是回答两个工程问题：每次请求的 token 花在哪里？在不丢掉当前任务所需信息的情况下，哪些内容可以不再重复发送？</p>
+<h3 id="模型为什么需要前文"><a href="#模型为什么需要前文" class="headerlink" title="模型为什么需要前文"></a>模型为什么需要前文</h3><p>  语言模型每次生成回答，都是根据当前输入计算接下来最合适的内容。它不会自动看到 Agent 程序里的文件、刚执行的搜索结果，或上一次 API 调用的完整对话。没有把这些信息提供给它，它就无法依据这些信息继续推理。</p>
+<p>  例如，用户只说“帮我查构建为什么失败”。模型可以先决定搜索日志，但真正的错误原因要等搜索工具返回。Agent 拿到 <code>Module not found: xxx</code> 后，再调用模型分析。如果第二次请求只写“请给出修复方案”，模型既不知道原任务，也没看到报错内容，无法判断应该修复什么。</p>
+<p>  所以 Agent 需要把对话中仍然有用的部分交给下一次模型调用。一个常见的工具调用过程是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">第 1 次请求：系统规则 + 工具定义 + 用户问题</span><br><span class="line">模型返回：调用 search("构建日志")</span><br><span class="line">Agent 执行 search，得到错误日志</span><br><span class="line"></span><br><span class="line">第 2 次请求：系统规则 + 工具定义 + 用户问题 + assistant 的工具调用 + 工具返回的错误日志</span><br><span class="line">模型返回：根据日志给出修复建议，或继续调用工具</span><br></pre></td></tr></tbody></table></figure>
+
+<p>  如果模型继续调用 <code>read_file</code>，Agent 就会把必要的前文和新的文件内容带入第三次请求。随着工具轮次增加，消息历史可能不断变长；如果旧日志仍然留在历史里，后续请求就可能继续带上它。这就是本文所说的“重复携带上下文”：<strong>Agent 为了让模型能接着当前任务推理，在后续 API 调用中重新提供所需的历史和工具结果。</strong></p>
+<p>  这不是模型拥有永久记忆，也不是每个 Provider 都要求客户端逐字重发所有历史。有些 API 提供服务端会话状态，客户端可以传会话标识；有些支持 prompt caching。它们会改变历史如何传递或如何计费，但模型生成时仍要能访问相关信息。对本项目来说，Agent 会在每次请求中显式组装并发送系统提示、当前可用工具定义和消息历史；缓存可能降低重复前缀的计算费用，却不会自动把旧日志从任务上下文中压缩掉。</p>
+<p><img loading="lazy" decoding="async" src="/images/2026/agent-token-efficiency.png" alt="Agent 请求上下文减重示意图"></p>
+<h3 id="先量清楚，再谈节省"><a href="#先量清楚，再谈节省" class="headerlink" title="先量清楚，再谈节省"></a>先量清楚，再谈节省</h3><p>  优化前需要知道请求由什么组成。现在每次 Provider 请求都会分别统计系统提示、工具 schema、历史消息和工具结果的字符数或估算 token，并在请求完成后记录 Provider 能返回的输入、输出和缓存 token。记录只保留数量、耗时和原因，不保存完整提示正文；摘要、重试和子 Agent 请求也归到同一次任务的消耗里。</p>
+<p>  这里必须区分两种数据。字符换算出来的是估算值，Provider 返回的 usage 才是这次请求的实际 token 数据；有些 Provider 不提供缓存或费用字段时，这些指标只能标成未知。没有真实 usage，就不能把估算结果写成账单节省。</p>
+<h3 id="第一笔开销：每轮都带着整套工具"><a href="#第一笔开销：每轮都带着整套工具" class="headerlink" title="第一笔开销：每轮都带着整套工具"></a>第一笔开销：每轮都带着整套工具</h3><p>  工具定义会随每个模型请求重复发送。工具数量多、参数 schema 长时，即使用户只问一个简单问题，输入里也可能有大量本轮用不到的定义。</p>
+<p>  改造后把能力分组：文件、搜索等基础工具保持可见；研究、图片、调度、团队等能力先通过短目录发现，确定需要后才加载完整说明。工具仍通过原来的注册表执行，权限检查和参数校验不会因为“未展示”而跳过。顺序保持稳定，减少请求前缀的无意义变化，也有利于 Provider 的提示缓存。</p>
+<p>  这解决的是固定开销。代价是模型可能需要先发现能力再加载工具，因此要观察新增的往返是否抵消了省下的 schema token。工具按需加载不是越激进越好，简单任务收益最大，复杂任务则应确保能力容易被发现。</p>
+<h3 id="第二笔开销：工具把大段结果塞回上下文"><a href="#第二笔开销：工具把大段结果塞回上下文" class="headerlink" title="第二笔开销：工具把大段结果塞回上下文"></a>第二笔开销：工具把大段结果塞回上下文</h3><p>  Shell 日志、搜索结果和大文件内容常常比用户原始问题长得多。若完整结果保存在对话里，后续每一轮都会继续携带它。硬截断虽然能控制长度，却可能把真正需要的那几行也截掉。</p>
+<p>  现在大结果先保存完整内容，模型上下文里放执行状态、大小、有限预览和可恢复引用；需要细节时，再通过分页读取工具按行或范围取回。文件读取也支持起始行与行数。这样大输出不会自动变成每轮的固定负担，同时模型仍然能查到被省略的部分。</p>
+<p>  这项设计还要防止另一种反效果：如果预览太少，模型会频繁补读，额外增加 API 往返。需要用长日志任务观察补读次数，并保留读取上限、存储容量限制和工作区隔离，避免把省下的上下文成本变成无界的磁盘和读取成本。</p>
+<h3 id="第三笔开销：历史对话越跑越长"><a href="#第三笔开销：历史对话越跑越长" class="headerlink" title="第三笔开销：历史对话越跑越长"></a>第三笔开销：历史对话越跑越长</h3><p>  多轮 Agent 运行会把用户请求、assistant 的工具调用和工具结果累积起来。简单按消息条数裁剪有两个问题：一条消息可能很大；如果只删掉工具调用或只删掉结果，对话结构就会不完整。</p>
+<p>  因此，请求前先按实际体积计算预算，预算中包括消息、系统提示和工具 schema，并为模型输出留出空间和安全余量。超出预算后，按层次压缩：保留新工具结果的预览；把模型已经读过的旧结果改成引用；按完整工具交互归档更早的消息块；仍然不够时才生成历史摘要。当前用户请求和必要的近期消息会独立保留。</p>
+<p>  摘要本身也会消耗 token，所以它是最后一道手段，而不是每轮都做。摘要固定保存当前目标、约束与决定、已完成工作、证据和待办；摘要调用有输入、输出和次数预算，并沿用取消信号。历史未变化时复用摘要检查点，避免重复总结同一段内容；历史或工作区变化后则使检查点失效。</p>
+<h3 id="控制边界和失败恢复"><a href="#控制边界和失败恢复" class="headerlink" title="控制边界和失败恢复"></a>控制边界和失败恢复</h3><p>  预算统一后，还需要明确区分请求次数、token 消耗和金额。原有按请求次数扣减的 <code>RunBudget.cost</code> 保持兼容，但不能再把请求次数误称为 token 或费用。不同模型使用各自的上下文窗口配置；未知模型采用明确标注的保守估算。</p>
+<p>  Provider 请求也增加可选输出上限，普通回答、摘要和提取任务采用不同额度。如果模型因上下文超限而拒绝请求，只做一次压缩恢复；取消和预算耗尽则直接终止。这样可以避免无休止地压缩和重试，也让任务边界更可预测。</p>
+<h3 id="怎样验证有没有真的变好"><a href="#怎样验证有没有真的变好" class="headerlink" title="怎样验证有没有真的变好"></a>怎样验证有没有真的变好</h3><p>  固定任务集应覆盖短问答、多文件检索、长构建日志、多轮修改、长对话续接，以及取消和超限恢复。每个任务同时记录输入与输出 token、API 和摘要次数、补充读取次数、完成情况、约束保留情况、耗时、缓存命中和费用。Provider 没提供的数据标成未知，而不是推测。</p>
+<p>  当前仓库已经用模拟 Provider 跑了这些流程，检查了工具调用与结果配对、长日志按页读取、取消不触发重试，以及摘要检查点复用等行为。这验证的是运行逻辑，不是真实模型的 token、费用或网络耗时。另有一组短请求对照估算：假设原请求携带全部 62 个工具定义和完整提示，约为 23,213 个估算输入 token；按需发送约 10 个工具和精简提示，约为 5,062 个，估算差约 78%。这只是特定假设下的 schema 与提示估算，不能当作真实 API 节省比例。</p>
+<p>  真正的收益需要在相同模型、相同任务和相同完成标准下做前后对比。若工具按需加载多走了一次模型请求，或大结果导致很多补读，最终总消耗未必下降。优化的目标不是让单次请求看起来更小，而是在任务完成率和约束保留不下降的前提下，减少整次运行的总输入、输出与额外调用。</p>
+<h3 id="这次改造解决了什么"><a href="#这次改造解决了什么" class="headerlink" title="这次改造解决了什么"></a>这次改造解决了什么</h3><p>  整体上，改造针对四类浪费：每轮重复发送所有工具定义；大工具结果持续占用后续上下文；长历史无预算地增长；摘要、重试和缓存等消耗缺乏分项观测。工具按需加载降低固定开销，结果引用减少长输出重复注入，分层压缩控制历史增长，任务级遥测则让优化结果可以核对。</p>
+<p>  Agent 的 token 优化最终是上下文管理问题。该保留的任务目标、最近决策和新证据要保留；不再需要重复出现的 schema、旧日志和远期消息，则应以目录、引用或摘要替代。只有把实际调用、质量和成本一起测量，才能知道这些替换究竟让整个任务变得更省，还是仅仅把消耗挪到了别处。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/" data-id="cmvdrc9t40000in77d73h5d4l" data-title="给 Agent 做一次上下文减重：从工具按需加载到历史压缩" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/token/" rel="tag">token</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="tag">上下文</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2026/06/28/AI/MCP-skill-agent三者到底是什么/">    <div class="article-related-meta"><time>2026-06-28</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">MCP、skill、agent：三者到底是什么</h3>    <p class="article-related-excerpt">用一篇短文讲清 MCP、skill 和 agent 的...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/06/20/AI/DeepSeek-Reasonix终端版与桌面版安装指南/">    <div class="article-related-meta"><time>2026-06-20</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">DeepSeek-Reasonix：终端版与桌面版安装指南</h3>    <p class="article-related-excerpt">根据 DeepSeek-Reasonix 中文 REA...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/06/14/AI/cc-switch用DeepSeek驱动Codex/">    <div class="article-related-meta"><time>2026-06-14</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案</h3>    <p class="article-related-excerpt">介绍 cc-switch 如何解决 Codex 与 D...</p>  </a></article>  </div></section><nav id="article-nav">
+  
+  
+    <a href="/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Cocos Creator 2.4.15 启动流程：从引擎装配到首帧</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments" class="comments-panel">
+  <div class="comments-panel-head">
+    <p class="comments-panel-kicker">GitHub Discussions</p>
+    <h2>评论</h2>
+    <p class="comments-panel-note">欢迎继续交流，也可以直接在 GitHub Discussions 中参与讨论。</p>
+  </div>
+  <div class="giscus"></div>
+  <noscript>请启用 JavaScript 查看评论内容。</noscript>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
+</section>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cocoscreator/">Cocoscreator</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%80%9D%E8%80%83/">思考</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%97%8F%E4%B9%A6/">藏书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2-4-15/" rel="tag">2.4.15</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FrameWork/" rel="tag">FrameWork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/token/" rel="tag">token</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="tag">上下文</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag">启动流程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" rel="tag">项目迁移</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/2-4-15/" style="font-size: 10px;">2.4.15</a> <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18.33px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/Agent/" style="font-size: 10px;">Agent</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocos-Creator/" style="font-size: 11.67px;">Cocos Creator</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 11.67px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 13.33px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/FrameWork/" style="font-size: 10px;">FrameWork</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 11.67px;">Skill</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/token/" style="font-size: 10px;">token</a> <a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" style="font-size: 10px;">上下文</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 13.33px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">启动流程</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.67px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 13.33px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" style="font-size: 10px;">项目迁移</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/10/">十月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/">给 Agent 做一次上下文减重：从工具按需加载到历史压缩</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/">Cocos Creator 2.4.15 启动流程：从引擎装配到首帧</a>
+          </li>
+        
+          <li>
+            <a href="/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/">用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</a>
+          </li>
+        
+          <li>
+            <a href="/2026/09/24/AI/%E4%BB%8EAGENTS-md%E5%88%B0Skill%E8%AE%A9AI%E6%8C%89%E8%A7%84%E8%8C%83%E5%81%9A%E4%BA%8B%E5%B9%B6%E9%AA%8C%E8%AF%81%E6%95%88%E6%9E%9C/">从 AGENTS.md 到 Skill：让 AI 按规范做事并验证效果</a>
+          </li>
+        
+          <li>
+            <a href="/2026/07/05/week/2026/week75/">每周见闻 - 第 75期</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      © 2026 白杨左书<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>

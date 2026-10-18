@@ -1,0 +1,371 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  
+  
+  <title>Cocos Creator 2.4.15 启动流程：从引擎装配到首帧 | 白杨左书</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="从 Creator 2.4.15 浏览器预览源码与运行...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocos Creator 2.4.15 启动流程：从引擎装配到首帧">
+<meta property="og:url" content="https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/index.html">
+<meta property="og:site_name" content="白杨左书">
+<meta property="og:description" content="从 Creator 2.4.15 浏览器预览源码与运行...">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://baiyangzuoshu.github.io/images/2026/cocos/creator-2.4.15-startup-frame.png">
+<meta property="article:published_time" content="2026-10-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-16T16:00:00.000Z">
+<meta property="article:author" content="白杨左书">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="Cocos Creator">
+<meta property="article:tag" content="2.4.15">
+<meta property="article:tag" content="启动流程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="从 Creator 2.4.15 浏览器预览源码与运行...">
+<meta name="twitter:image" content="https://baiyangzuoshu.github.io/images/2026/cocos/creator-2.4.15-startup-frame.png">
+  
+    <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/2024/favicon32.ico">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css">
+<script>
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "w2upclgnjh");
+</script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Cocos Creator 2.4.15 启动流程：从引擎装配到首帧","description":"从 Creator 2.4.15 浏览器预览源码与运行...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/","datePublished":"2026-10-16T16:00:00.000Z","dateModified":"2026-10-16T16:00:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2026/cocos/creator-2.4.15-startup-frame.png"],"articleSection":["Cocoscreator"],"keywords":"源码, Cocos Creator, 2.4.15, 启动流程"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"Cocoscreator","item":"https://baiyangzuoshu.github.io/categories/Cocoscreator/"},{"@type":"ListItem","position":3,"name":"Cocos Creator 2.4.15 启动流程：从引擎装配到首帧","item":"https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/"}]}]</script>
+  <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">白杨左书</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有品性的丰满，知识就是伪装</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-cocos/CocosCreator-2.4.15启动与首帧" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/" class="article-date">
+  <time class="dt-published" datetime="2026-10-16T16:00:00.000Z" itemprop="datePublished">2026-10-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Cocoscreator/">Cocoscreator</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Cocos Creator 2.4.15 启动流程：从引擎装配到首帧
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Cocos Creator 项目从打开预览到画出第一帧，中间并不是一次简单的 <code>game.run()</code>。引擎模块要先装配，预览宿主要准备脚本和资源，游戏运行时再初始化渲染与系统、加载当前场景，最后才进入更新和绘制。</p>
+<p>本文沿着 <strong>Cocos Creator 2.4.15 编辑器的 Chrome 浏览器预览</strong>，把这条路径拆开来看。先说明边界：这里的事件顺序来自本地引擎源码和一次真实预览探针，不是对 Web 构建包、原生平台或所有项目都成立的时序承诺。</p>
+<h2 id="启动到首帧：先看全流程"><a href="#启动到首帧：先看全流程" class="headerlink" title="启动到首帧：先看全流程"></a>启动到首帧：先看全流程</h2><p><img loading="lazy" decoding="async" src="/images/2026/cocos/creator-2.4.15-startup-frame.png" alt="Cocos Creator 2.4.15 从预览入口到首帧的流程图"></p>
+<p>图中分为五段：模块装配、预览宿主、引擎初始化、首场景入场和首个已观测场景帧。最容易混淆的地方，是把“引擎准备好了”“场景开始运行”和“已经绘制出画面”当成同一个时刻。</p>
+<h2 id="一、模块装配：全局-cc-就绪，不等于游戏已启动"><a href="#一、模块装配：全局-cc-就绪，不等于游戏已启动" class="headerlink" title="一、模块装配：全局 cc 就绪，不等于游戏已启动"></a>一、模块装配：全局 <code>cc</code> 就绪，不等于游戏已启动</h2><p>Creator 2.4.15 的引擎入口 <code>index.js</code> 先创建全局 <code>cc</code>，加载环境宏和 polyfill，再引入 <code>predefine</code>、<code>cocos2d</code> 与 <code>extends</code> 等模块。随后，<code>cc.game</code> 和 <code>cc.director</code> 等对象被挂到 <code>cc</code> 命名空间上。</p>
+<p>这一步建立的是 API 和模块关系。它说明 <code>cc.director</code> 对象已经存在，却不代表 Director 已完成运行时初始化，更不代表场景已经加载。</p>
+<h2 id="二、预览宿主：当前场景由-Creator-预览页接入"><a href="#二、预览宿主：当前场景由-Creator-预览页接入" class="headerlink" title="二、预览宿主：当前场景由 Creator 预览页接入"></a>二、预览宿主：当前场景由 Creator 预览页接入</h2><p>浏览器预览除了引擎代码，还包含 Creator 编辑器提供的宿主脚本。<code>settings.js</code> 保存启动场景等工程设置；预览 <code>boot.js</code> 在插件脚本和内建资源包准备完成后调用：</p>
+<figure class="highlight js"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cc.<span class="property">game</span>.<span class="title function_">run</span>(option, onStart);</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里的 <code>onStart</code> 是本次预览宿主的后续接线。它暂停游戏、加载预览页提供的 <code>preview-scene.json</code>，再从 <code>SceneAsset</code> 取出场景对象并传给 <code>director.runSceneImmediate()</code>。</p>
+<p>因此，本次预览实际加载场景的路径，不是游戏脚本调用 <code>cc.director.loadScene(name)</code>。后者仍是项目代码里按名称切换场景的公开 API；编辑器预览为了运行当前打开的场景，使用了自己的宿主流程。</p>
+<h2 id="三、game-run-：初始化引擎并安排主循环"><a href="#三、game-run-：初始化引擎并安排主循环" class="headerlink" title="三、game.run()：初始化引擎并安排主循环"></a>三、<code>game.run()</code>：初始化引擎并安排主循环</h2><p>进入 <code>CCGame.run()</code> 后，大致经历以下过程：</p>
+<ol>
+<li>读取运行配置，执行 <code>prepare()</code> 和预览脚本加载。</li>
+<li><code>_initEngine()</code> 初始化画布、渲染器和系统事件。</li>
+<li>发出 <code>EVENT_ENGINE_INITED</code>。Director 预先注册的监听器在此时调用 <code>director.init()</code>，建立调度器、节点激活器和引擎系统。</li>
+<li>选择帧请求方式，初始化内建资源。</li>
+<li><code>_runMainLoop()</code> 安排帧请求，随后发出 <code>EVENT_GAME_INITED</code> 并调用 <code>onStart</code>。</li>
+</ol>
+<p>一个关键细节：Director 对象在模块装配时就创建了；<code>director.init()</code> 则是在 <code>EVENT_ENGINE_INITED</code> 触发时调用。不要把 <code>EVENT_GAME_INITED</code> 理解成 Director 对象刚刚出现的时刻。</p>
+<p>另一个容易误读的细节是 <code>_runMainLoop()</code> 会提前安排帧回调。安排回调不等于当时已经绘制了带有活动场景的画面；预览宿主还要完成场景加载和入场。</p>
+<h2 id="四、场景入场和第一次更新绘制"><a href="#四、场景入场和第一次更新绘制" class="headerlink" title="四、场景入场和第一次更新绘制"></a>四、场景入场和第一次更新绘制</h2><p>在这次 Chrome 预览中，<code>onStart</code> 暂停游戏，加载 <code>preview-scene.json</code>，然后将场景交给 <code>runSceneImmediate()</code>。它的第二个参数名为 <code>onBeforeLoadScene</code>，宿主在这个回调里恢复游戏。之后依次发生场景启动事件和场景激活。</p>
+<p>首个已观测场景帧进入 <code>CCDirector.mainLoop()</code>，过程可以概括为：</p>
+<ol>
+<li>计算本帧 <code>dt</code>。</li>
+<li>未暂停时执行更新阶段：更新前事件、组件 <code>start</code> 和 <code>update</code>、<code>Scheduler</code>、组件 <code>lateUpdate</code>、更新后事件。</li>
+<li>处理延迟销毁对象。</li>
+<li>触发绘制前事件，调用 <code>renderer.render(scene, dt)</code>，再触发绘制后事件。</li>
+</ol>
+<p>渲染器后续如何把场景展开成具体绘制命令，属于渲染专题；这里的源码追踪只到 <code>renderer.render()</code> 入口。</p>
+<h2 id="一次预览的事件记录"><a href="#一次预览的事件记录" class="headerlink" title="一次预览的事件记录"></a>一次预览的事件记录</h2><p>探针使用 <code>performance.now()</code> 记录了这次预览的事件顺序。表中数字是导航开始后的毫秒数，只用来说明本次调用的先后，不代表固定耗时。</p>
+<table>
+<thead>
+<tr>
+<th align="right">记录时间</th>
+<th>事件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">229.2 / 229.8</td>
+<td>调用 <code>game.run()</code> / <code>game.run()</code> 返回，准备工作继续异步执行</td>
+</tr>
+<tr>
+<td align="right">253.8 / 295.5</td>
+<td><code>EVENT_ENGINE_INITED</code> / <code>EVENT_GAME_INITED</code></td>
+</tr>
+<tr>
+<td align="right">295.6 / 305.6</td>
+<td>进入 <code>onStart</code> / 预览场景资源加载完成</td>
+</tr>
+<tr>
+<td align="right">305.7 / 313.3</td>
+<td>调用 <code>runSceneImmediate()</code> / <code>AFTER_SCENE_LAUNCH</code></td>
+</tr>
+<tr>
+<td align="right">313.8</td>
+<td>首次 <code>director.mainLoop()</code></td>
+</tr>
+<tr>
+<td align="right">314.0 / 315.0</td>
+<td>首次更新前 / 更新后事件</td>
+</tr>
+<tr>
+<td align="right">315.1 / 317.3</td>
+<td>首次绘制前 / 绘制后事件</td>
+</tr>
+</tbody></table>
+<p>本次记录中，首次 <code>director.mainLoop()</code> 出现在场景启动之后。它验证的是当前示例与这一次预览运行，不足以推导所有资源加载速度、设备或宿主下都保持同样顺序。</p>
+<h2 id="排查“预览没有首帧”时，可以按阶段定位"><a href="#排查“预览没有首帧”时，可以按阶段定位" class="headerlink" title="排查“预览没有首帧”时，可以按阶段定位"></a>排查“预览没有首帧”时，可以按阶段定位</h2><ul>
+<li><strong><code>cc</code> 或 API 不存在</strong>：检查引擎入口、模块装配和预览 bundle 加载。</li>
+<li><strong>引擎初始化事件没有到达</strong>：检查 <code>game.run()</code>、配置准备、渲染器初始化及系统初始化路径。</li>
+<li><strong>游戏已初始化但场景未显示</strong>：检查预览宿主返回的场景资源、场景身份和 <code>runSceneImmediate()</code> 入场过程。</li>
+<li><strong>场景已启动但没有绘制事件</strong>：检查主循环是否继续调度、游戏是否暂停，以及渲染入口是否收到活动场景。</li>
+</ul>
+<p>暂停也要区分 API：<code>game.pause()</code> 会停止帧请求；<code>director.pause()</code> 影响逻辑更新，但 Director 主循环中的绘制路径仍可继续。排查时先确认调用的是哪一种暂停。</p>
+<h2 id="研究范围与参考资料"><a href="#研究范围与参考资料" class="headerlink" title="研究范围与参考资料"></a>研究范围与参考资料</h2><p>本次观察基于 Creator 2.4.15 的编辑器 Chrome 预览：读取了预览页、<code>settings.js</code> 和 Creator 安装包中的 <code>boot.js</code>，并用临时本机代理记录事件；没有修改引擎或游戏工程源码。工作区引擎文件 <code>index.js</code>、<code>CCGame.js</code>、<code>CCDirector.js</code> 的哈希也与已安装 Creator 对应文件核对一致。</p>
+<p>本文没有把预览内部接线扩写成构建版或原生平台结论。Web 构建、原生宿主和小游戏平台应分别沿各自入口验证。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.cocos.com/creator/2.4/manual/zh/getting-started/project-structure.html">Creator 2.4 项目结构手册</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.cocos.com/creator/2.4/manual/zh/getting-started/basics/preview-build.html">Creator 2.4 预览与构建手册</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.cocos.com/creator/2.4/manual/zh/scripting/scene-managing.html">Creator 2.4 场景加载手册</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/" data-id="cmvcc11ui00090o773tovfum7" data-title="Cocos Creator 2.4.15 启动流程：从引擎装配到首帧" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/2-4-15/" rel="tag">2.4.15</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag">启动流程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div><a class="article-related-link" href="/topics/game-development/">进入游戏开发专题</a>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2026/09/27/cocos/飞机大战接入FrameWork迁移复盘/">    <div class="article-related-meta"><time>2026-09-27</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</h3>    <p class="article-related-excerpt">以飞机大战接入 FrameWork 为案例，记录迁移 ...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2024/09/26/cocos/Cocoscreator流程/">    <div class="article-related-meta"><time>2024-09-26</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocos Creator Web 启动流程：从 index.html 到引擎启动</h3>    <p class="article-related-excerpt">从构建后的 web-mobile 目录出发，梳理 Co...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2025/03/22/cocos/Cocoscreator中实现纹理合批/">    <div class="article-related-meta"><time>2025-03-22</time><span class="topic-pill topic-pill--static">Cocoscreator</span></div>    <h3 class="article-related-title">Cocos Creator 纹理合批实战：减少 DC 的关键做法</h3>    <p class="article-related-excerpt">围绕停车场小游戏优化，说明 Cocos Creator...</p>  </a></article>  </div></section><nav id="article-nav">
+  
+    <a href="/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          给 Agent 做一次上下文减重：从工具按需加载到历史压缩
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments" class="comments-panel">
+  <div class="comments-panel-head">
+    <p class="comments-panel-kicker">GitHub Discussions</p>
+    <h2>评论</h2>
+    <p class="comments-panel-note">欢迎继续交流，也可以直接在 GitHub Discussions 中参与讨论。</p>
+  </div>
+  <div class="giscus"></div>
+  <noscript>请启用 JavaScript 查看评论内容。</noscript>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
+</section>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cocoscreator/">Cocoscreator</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%80%9D%E8%80%83/">思考</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%97%8F%E4%B9%A6/">藏书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2-4-15/" rel="tag">2.4.15</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FrameWork/" rel="tag">FrameWork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/token/" rel="tag">token</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="tag">上下文</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag">启动流程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" rel="tag">项目迁移</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/2-4-15/" style="font-size: 10px;">2.4.15</a> <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18.33px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/Agent/" style="font-size: 10px;">Agent</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocos-Creator/" style="font-size: 11.67px;">Cocos Creator</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 11.67px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 13.33px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/FrameWork/" style="font-size: 10px;">FrameWork</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 11.67px;">Skill</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/token/" style="font-size: 10px;">token</a> <a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" style="font-size: 10px;">上下文</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 13.33px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">启动流程</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.67px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 13.33px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" style="font-size: 10px;">项目迁移</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/10/">十月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/">给 Agent 做一次上下文减重：从工具按需加载到历史压缩</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/">Cocos Creator 2.4.15 启动流程：从引擎装配到首帧</a>
+          </li>
+        
+          <li>
+            <a href="/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/">用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</a>
+          </li>
+        
+          <li>
+            <a href="/2026/09/24/AI/%E4%BB%8EAGENTS-md%E5%88%B0Skill%E8%AE%A9AI%E6%8C%89%E8%A7%84%E8%8C%83%E5%81%9A%E4%BA%8B%E5%B9%B6%E9%AA%8C%E8%AF%81%E6%95%88%E6%9E%9C/">从 AGENTS.md 到 Skill：让 AI 按规范做事并验证效果</a>
+          </li>
+        
+          <li>
+            <a href="/2026/07/05/week/2026/week75/">每周见闻 - 第 75期</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      © 2026 白杨左书<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>

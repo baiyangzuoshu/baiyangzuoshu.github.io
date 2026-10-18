@@ -6,7 +6,7 @@
   <link href="https://baiyangzuoshu.github.io/atom.xml" rel="self"/>
   
   <link href="https://baiyangzuoshu.github.io/"/>
-  <updated>2026-09-24T02:00:00.000Z</updated>
+  <updated>2026-10-18T02:00:00.000Z</updated>
   <id>https://baiyangzuoshu.github.io/</id>
   
   <author>
@@ -15,6 +15,89 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>给 Agent 做一次上下文减重：从工具按需加载到历史压缩</title>
+    <link href="https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/"/>
+    <id>https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/</id>
+    <published>2026-10-18T02:00:00.000Z</published>
+    <updated>2026-10-18T02:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;做 Agent 时，模型 API 的 token 消耗很容易被理解成“用户说了多少话”。真正发给模型的请求通常还包括系统提示、工具定义、过去的对话、工具执行结果，有时还要加上摘要和重试。任务一旦进入多轮工具调用，重复发送这些内容，输入 token 就会逐轮累积。</p><p>&emsp;&emsp;这次改造的目标不是单纯把文本剪短，而是回答两个工程问题：每次请求的 token 花在哪里？在不丢掉当前任务所需信息的情况下，哪些内容可以不再重复发送？</p><h3 id="模型为什么需要前文"><a href="#模型为什么需要前文" class="headerlink" title="模型为什么需要前文"></a>模型为什么需要前文</h3><p>&emsp;&emsp;语言模型每次生成回答，都是根据当前输入计算接下来最合适的内容。它不会自动看到 Agent 程序里的文件、刚执行的搜索结果，或上一次 API 调用的完整对话。没有把这些信息提供给它，它就无法依据这些信息继续推理。</p><p>&emsp;&emsp;例如，用户只说“帮我查构建为什么失败”。模型可以先决定搜索日志，但真正的错误原因要等搜索工具返回。Agent 拿到 <code>Module not found: xxx</code> 后，再调用模型分析。如果第二次请求只写“请给出修复方案”，模型既不知道原任务，也没看到报错内容，无法判断应该修复什么。</p><p>&emsp;&emsp;所以 Agent 需要把对话中仍然有用的部分交给下一次模型调用。一个常见的工具调用过程是：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">第 1 次请求：系统规则 + 工具定义 + 用户问题</span><br><span class="line">模型返回：调用 search(&quot;构建日志&quot;)</span><br><span class="line">Agent 执行 search，得到错误日志</span><br><span class="line"></span><br><span class="line">第 2 次请求：系统规则 + 工具定义 + 用户问题 + assistant 的工具调用 + 工具返回的错误日志</span><br><span class="line">模型返回：根据日志给出修复建议，或继续调用工具</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果模型继续调用 <code>read_file</code>，Agent 就会把必要的前文和新的文件内容带入第三次请求。随着工具轮次增加，消息历史可能不断变长；如果旧日志仍然留在历史里，后续请求就可能继续带上它。这就是本文所说的“重复携带上下文”：<strong>Agent 为了让模型能接着当前任务推理，在后续 API 调用中重新提供所需的历史和工具结果。</strong></p><p>&emsp;&emsp;这不是模型拥有永久记忆，也不是每个 Provider 都要求客户端逐字重发所有历史。有些 API 提供服务端会话状态，客户端可以传会话标识；有些支持 prompt caching。它们会改变历史如何传递或如何计费，但模型生成时仍要能访问相关信息。对本项目来说，Agent 会在每次请求中显式组装并发送系统提示、当前可用工具定义和消息历史；缓存可能降低重复前缀的计算费用，却不会自动把旧日志从任务上下文中压缩掉。</p><p><img src="/images/2026/agent-token-efficiency.png" alt="Agent 请求上下文减重示意图"></p><h3 id="先量清楚，再谈节省"><a href="#先量清楚，再谈节省" class="headerlink" title="先量清楚，再谈节省"></a>先量清楚，再谈节省</h3><p>&emsp;&emsp;优化前需要知道请求由什么组成。现在每次 Provider 请求都会分别统计系统提示、工具 schema、历史消息和工具结果的字符数或估算 token，并在请求完成后记录 Provider 能返回的输入、输出和缓存 token。记录只保留数量、耗时和原因，不保存完整提示正文；摘要、重试和子 Agent 请求也归到同一次任务的消耗里。</p><p>&emsp;&emsp;这里必须区分两种数据。字符换算出来的是估算值，Provider 返回的 usage 才是这次请求的实际 token 数据；有些 Provider 不提供缓存或费用字段时，这些指标只能标成未知。没有真实 usage，就不能把估算结果写成账单节省。</p><h3 id="第一笔开销：每轮都带着整套工具"><a href="#第一笔开销：每轮都带着整套工具" class="headerlink" title="第一笔开销：每轮都带着整套工具"></a>第一笔开销：每轮都带着整套工具</h3><p>&emsp;&emsp;工具定义会随每个模型请求重复发送。工具数量多、参数 schema 长时，即使用户只问一个简单问题，输入里也可能有大量本轮用不到的定义。</p><p>&emsp;&emsp;改造后把能力分组：文件、搜索等基础工具保持可见；研究、图片、调度、团队等能力先通过短目录发现，确定需要后才加载完整说明。工具仍通过原来的注册表执行，权限检查和参数校验不会因为“未展示”而跳过。顺序保持稳定，减少请求前缀的无意义变化，也有利于 Provider 的提示缓存。</p><p>&emsp;&emsp;这解决的是固定开销。代价是模型可能需要先发现能力再加载工具，因此要观察新增的往返是否抵消了省下的 schema token。工具按需加载不是越激进越好，简单任务收益最大，复杂任务则应确保能力容易被发现。</p><h3 id="第二笔开销：工具把大段结果塞回上下文"><a href="#第二笔开销：工具把大段结果塞回上下文" class="headerlink" title="第二笔开销：工具把大段结果塞回上下文"></a>第二笔开销：工具把大段结果塞回上下文</h3><p>&emsp;&emsp;Shell 日志、搜索结果和大文件内容常常比用户原始问题长得多。若完整结果保存在对话里，后续每一轮都会继续携带它。硬截断虽然能控制长度，却可能把真正需要的那几行也截掉。</p><p>&emsp;&emsp;现在大结果先保存完整内容，模型上下文里放执行状态、大小、有限预览和可恢复引用；需要细节时，再通过分页读取工具按行或范围取回。文件读取也支持起始行与行数。这样大输出不会自动变成每轮的固定负担，同时模型仍然能查到被省略的部分。</p><p>&emsp;&emsp;这项设计还要防止另一种反效果：如果预览太少，模型会频繁补读，额外增加 API 往返。需要用长日志任务观察补读次数，并保留读取上限、存储容量限制和工作区隔离，避免把省下的上下文成本变成无界的磁盘和读取成本。</p><h3 id="第三笔开销：历史对话越跑越长"><a href="#第三笔开销：历史对话越跑越长" class="headerlink" title="第三笔开销：历史对话越跑越长"></a>第三笔开销：历史对话越跑越长</h3><p>&emsp;&emsp;多轮 Agent 运行会把用户请求、assistant 的工具调用和工具结果累积起来。简单按消息条数裁剪有两个问题：一条消息可能很大；如果只删掉工具调用或只删掉结果，对话结构就会不完整。</p><p>&emsp;&emsp;因此，请求前先按实际体积计算预算，预算中包括消息、系统提示和工具 schema，并为模型输出留出空间和安全余量。超出预算后，按层次压缩：保留新工具结果的预览；把模型已经读过的旧结果改成引用；按完整工具交互归档更早的消息块；仍然不够时才生成历史摘要。当前用户请求和必要的近期消息会独立保留。</p><p>&emsp;&emsp;摘要本身也会消耗 token，所以它是最后一道手段，而不是每轮都做。摘要固定保存当前目标、约束与决定、已完成工作、证据和待办；摘要调用有输入、输出和次数预算，并沿用取消信号。历史未变化时复用摘要检查点，避免重复总结同一段内容；历史或工作区变化后则使检查点失效。</p><h3 id="控制边界和失败恢复"><a href="#控制边界和失败恢复" class="headerlink" title="控制边界和失败恢复"></a>控制边界和失败恢复</h3><p>&emsp;&emsp;预算统一后，还需要明确区分请求次数、token 消耗和金额。原有按请求次数扣减的 <code>RunBudget.cost</code> 保持兼容，但不能再把请求次数误称为 token 或费用。不同模型使用各自的上下文窗口配置；未知模型采用明确标注的保守估算。</p><p>&emsp;&emsp;Provider 请求也增加可选输出上限，普通回答、摘要和提取任务采用不同额度。如果模型因上下文超限而拒绝请求，只做一次压缩恢复；取消和预算耗尽则直接终止。这样可以避免无休止地压缩和重试，也让任务边界更可预测。</p><h3 id="怎样验证有没有真的变好"><a href="#怎样验证有没有真的变好" class="headerlink" title="怎样验证有没有真的变好"></a>怎样验证有没有真的变好</h3><p>&emsp;&emsp;固定任务集应覆盖短问答、多文件检索、长构建日志、多轮修改、长对话续接，以及取消和超限恢复。每个任务同时记录输入与输出 token、API 和摘要次数、补充读取次数、完成情况、约束保留情况、耗时、缓存命中和费用。Provider 没提供的数据标成未知，而不是推测。</p><p>&emsp;&emsp;当前仓库已经用模拟 Provider 跑了这些流程，检查了工具调用与结果配对、长日志按页读取、取消不触发重试，以及摘要检查点复用等行为。这验证的是运行逻辑，不是真实模型的 token、费用或网络耗时。另有一组短请求对照估算：假设原请求携带全部 62 个工具定义和完整提示，约为 23,213 个估算输入 token；按需发送约 10 个工具和精简提示，约为 5,062 个，估算差约 78%。这只是特定假设下的 schema 与提示估算，不能当作真实 API 节省比例。</p><p>&emsp;&emsp;真正的收益需要在相同模型、相同任务和相同完成标准下做前后对比。若工具按需加载多走了一次模型请求，或大结果导致很多补读，最终总消耗未必下降。优化的目标不是让单次请求看起来更小，而是在任务完成率和约束保留不下降的前提下，减少整次运行的总输入、输出与额外调用。</p><h3 id="这次改造解决了什么"><a href="#这次改造解决了什么" class="headerlink" title="这次改造解决了什么"></a>这次改造解决了什么</h3><p>&emsp;&emsp;整体上，改造针对四类浪费：每轮重复发送所有工具定义；大工具结果持续占用后续上下文；长历史无预算地增长；摘要、重试和缓存等消耗缺乏分项观测。工具按需加载降低固定开销，结果引用减少长输出重复注入，分层压缩控制历史增长，任务级遥测则让优化结果可以核对。</p><p>&emsp;&emsp;Agent 的 token 优化最终是上下文管理问题。该保留的任务目标、最近决策和新证据要保留；不再需要重复出现的 schema、旧日志和远期消息，则应以目录、引用或摘要替代。只有把实际调用、质量和成本一起测量，才能知道这些替换究竟让整个任务变得更省，还是仅仅把消耗挪到了别处。</p>]]></content>
+    
+    
+    <summary type="html">从一次 Agent 工程改造出发，梳理工具 schem...</summary>
+    
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
+    
+    
+    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
+    
+    <category term="优化" scheme="https://baiyangzuoshu.github.io/tags/%E4%BC%98%E5%8C%96/"/>
+    
+    <category term="Agent" scheme="https://baiyangzuoshu.github.io/tags/Agent/"/>
+    
+    <category term="token" scheme="https://baiyangzuoshu.github.io/tags/token/"/>
+    
+    <category term="上下文" scheme="https://baiyangzuoshu.github.io/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Cocos Creator 2.4.15 启动流程：从引擎装配到首帧</title>
+    <link href="https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/"/>
+    <id>https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/</id>
+    <published>2026-10-16T16:00:00.000Z</published>
+    <updated>2026-10-16T16:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Cocos Creator 项目从打开预览到画出第一帧，中间并不是一次简单的 <code>game.run()</code>。引擎模块要先装配，预览宿主要准备脚本和资源，游戏运行时再初始化渲染与系统、加载当前场景，最后才进入更新和绘制。</p><p>本文沿着 <strong>Cocos Creator 2.4.15 编辑器的 Chrome 浏览器预览</strong>，把这条路径拆开来看。先说明边界：这里的事件顺序来自本地引擎源码和一次真实预览探针，不是对 Web 构建包、原生平台或所有项目都成立的时序承诺。</p><h2 id="启动到首帧：先看全流程"><a href="#启动到首帧：先看全流程" class="headerlink" title="启动到首帧：先看全流程"></a>启动到首帧：先看全流程</h2><p><img src="/images/2026/cocos/creator-2.4.15-startup-frame.png" alt="Cocos Creator 2.4.15 从预览入口到首帧的流程图"></p><p>图中分为五段：模块装配、预览宿主、引擎初始化、首场景入场和首个已观测场景帧。最容易混淆的地方，是把“引擎准备好了”“场景开始运行”和“已经绘制出画面”当成同一个时刻。</p><h2 id="一、模块装配：全局-cc-就绪，不等于游戏已启动"><a href="#一、模块装配：全局-cc-就绪，不等于游戏已启动" class="headerlink" title="一、模块装配：全局 cc 就绪，不等于游戏已启动"></a>一、模块装配：全局 <code>cc</code> 就绪，不等于游戏已启动</h2><p>Creator 2.4.15 的引擎入口 <code>index.js</code> 先创建全局 <code>cc</code>，加载环境宏和 polyfill，再引入 <code>predefine</code>、<code>cocos2d</code> 与 <code>extends</code> 等模块。随后，<code>cc.game</code> 和 <code>cc.director</code> 等对象被挂到 <code>cc</code> 命名空间上。</p><p>这一步建立的是 API 和模块关系。它说明 <code>cc.director</code> 对象已经存在，却不代表 Director 已完成运行时初始化，更不代表场景已经加载。</p><h2 id="二、预览宿主：当前场景由-Creator-预览页接入"><a href="#二、预览宿主：当前场景由-Creator-预览页接入" class="headerlink" title="二、预览宿主：当前场景由 Creator 预览页接入"></a>二、预览宿主：当前场景由 Creator 预览页接入</h2><p>浏览器预览除了引擎代码，还包含 Creator 编辑器提供的宿主脚本。<code>settings.js</code> 保存启动场景等工程设置；预览 <code>boot.js</code> 在插件脚本和内建资源包准备完成后调用：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cc.<span class="property">game</span>.<span class="title function_">run</span>(option, onStart);</span><br></pre></td></tr></table></figure><p>这里的 <code>onStart</code> 是本次预览宿主的后续接线。它暂停游戏、加载预览页提供的 <code>preview-scene.json</code>，再从 <code>SceneAsset</code> 取出场景对象并传给 <code>director.runSceneImmediate()</code>。</p><p>因此，本次预览实际加载场景的路径，不是游戏脚本调用 <code>cc.director.loadScene(name)</code>。后者仍是项目代码里按名称切换场景的公开 API；编辑器预览为了运行当前打开的场景，使用了自己的宿主流程。</p><h2 id="三、game-run-：初始化引擎并安排主循环"><a href="#三、game-run-：初始化引擎并安排主循环" class="headerlink" title="三、game.run()：初始化引擎并安排主循环"></a>三、<code>game.run()</code>：初始化引擎并安排主循环</h2><p>进入 <code>CCGame.run()</code> 后，大致经历以下过程：</p><ol><li>读取运行配置，执行 <code>prepare()</code> 和预览脚本加载。</li><li><code>_initEngine()</code> 初始化画布、渲染器和系统事件。</li><li>发出 <code>EVENT_ENGINE_INITED</code>。Director 预先注册的监听器在此时调用 <code>director.init()</code>，建立调度器、节点激活器和引擎系统。</li><li>选择帧请求方式，初始化内建资源。</li><li><code>_runMainLoop()</code> 安排帧请求，随后发出 <code>EVENT_GAME_INITED</code> 并调用 <code>onStart</code>。</li></ol><p>一个关键细节：Director 对象在模块装配时就创建了；<code>director.init()</code> 则是在 <code>EVENT_ENGINE_INITED</code> 触发时调用。不要把 <code>EVENT_GAME_INITED</code> 理解成 Director 对象刚刚出现的时刻。</p><p>另一个容易误读的细节是 <code>_runMainLoop()</code> 会提前安排帧回调。安排回调不等于当时已经绘制了带有活动场景的画面；预览宿主还要完成场景加载和入场。</p><h2 id="四、场景入场和第一次更新绘制"><a href="#四、场景入场和第一次更新绘制" class="headerlink" title="四、场景入场和第一次更新绘制"></a>四、场景入场和第一次更新绘制</h2><p>在这次 Chrome 预览中，<code>onStart</code> 暂停游戏，加载 <code>preview-scene.json</code>，然后将场景交给 <code>runSceneImmediate()</code>。它的第二个参数名为 <code>onBeforeLoadScene</code>，宿主在这个回调里恢复游戏。之后依次发生场景启动事件和场景激活。</p><p>首个已观测场景帧进入 <code>CCDirector.mainLoop()</code>，过程可以概括为：</p><ol><li>计算本帧 <code>dt</code>。</li><li>未暂停时执行更新阶段：更新前事件、组件 <code>start</code> 和 <code>update</code>、<code>Scheduler</code>、组件 <code>lateUpdate</code>、更新后事件。</li><li>处理延迟销毁对象。</li><li>触发绘制前事件，调用 <code>renderer.render(scene, dt)</code>，再触发绘制后事件。</li></ol><p>渲染器后续如何把场景展开成具体绘制命令，属于渲染专题；这里的源码追踪只到 <code>renderer.render()</code> 入口。</p><h2 id="一次预览的事件记录"><a href="#一次预览的事件记录" class="headerlink" title="一次预览的事件记录"></a>一次预览的事件记录</h2><p>探针使用 <code>performance.now()</code> 记录了这次预览的事件顺序。表中数字是导航开始后的毫秒数，只用来说明本次调用的先后，不代表固定耗时。</p><table><thead><tr><th align="right">记录时间</th><th>事件</th></tr></thead><tbody><tr><td align="right">229.2 &#x2F; 229.8</td><td>调用 <code>game.run()</code> &#x2F; <code>game.run()</code> 返回，准备工作继续异步执行</td></tr><tr><td align="right">253.8 &#x2F; 295.5</td><td><code>EVENT_ENGINE_INITED</code> &#x2F; <code>EVENT_GAME_INITED</code></td></tr><tr><td align="right">295.6 &#x2F; 305.6</td><td>进入 <code>onStart</code> &#x2F; 预览场景资源加载完成</td></tr><tr><td align="right">305.7 &#x2F; 313.3</td><td>调用 <code>runSceneImmediate()</code> &#x2F; <code>AFTER_SCENE_LAUNCH</code></td></tr><tr><td align="right">313.8</td><td>首次 <code>director.mainLoop()</code></td></tr><tr><td align="right">314.0 &#x2F; 315.0</td><td>首次更新前 &#x2F; 更新后事件</td></tr><tr><td align="right">315.1 &#x2F; 317.3</td><td>首次绘制前 &#x2F; 绘制后事件</td></tr></tbody></table><p>本次记录中，首次 <code>director.mainLoop()</code> 出现在场景启动之后。它验证的是当前示例与这一次预览运行，不足以推导所有资源加载速度、设备或宿主下都保持同样顺序。</p><h2 id="排查“预览没有首帧”时，可以按阶段定位"><a href="#排查“预览没有首帧”时，可以按阶段定位" class="headerlink" title="排查“预览没有首帧”时，可以按阶段定位"></a>排查“预览没有首帧”时，可以按阶段定位</h2><ul><li><strong><code>cc</code> 或 API 不存在</strong>：检查引擎入口、模块装配和预览 bundle 加载。</li><li><strong>引擎初始化事件没有到达</strong>：检查 <code>game.run()</code>、配置准备、渲染器初始化及系统初始化路径。</li><li><strong>游戏已初始化但场景未显示</strong>：检查预览宿主返回的场景资源、场景身份和 <code>runSceneImmediate()</code> 入场过程。</li><li><strong>场景已启动但没有绘制事件</strong>：检查主循环是否继续调度、游戏是否暂停，以及渲染入口是否收到活动场景。</li></ul><p>暂停也要区分 API：<code>game.pause()</code> 会停止帧请求；<code>director.pause()</code> 影响逻辑更新，但 Director 主循环中的绘制路径仍可继续。排查时先确认调用的是哪一种暂停。</p><h2 id="研究范围与参考资料"><a href="#研究范围与参考资料" class="headerlink" title="研究范围与参考资料"></a>研究范围与参考资料</h2><p>本次观察基于 Creator 2.4.15 的编辑器 Chrome 预览：读取了预览页、<code>settings.js</code> 和 Creator 安装包中的 <code>boot.js</code>，并用临时本机代理记录事件；没有修改引擎或游戏工程源码。工作区引擎文件 <code>index.js</code>、<code>CCGame.js</code>、<code>CCDirector.js</code> 的哈希也与已安装 Creator 对应文件核对一致。</p><p>本文没有把预览内部接线扩写成构建版或原生平台结论。Web 构建、原生宿主和小游戏平台应分别沿各自入口验证。</p><ul><li><a href="https://docs.cocos.com/creator/2.4/manual/zh/getting-started/project-structure.html">Creator 2.4 项目结构手册</a></li><li><a href="https://docs.cocos.com/creator/2.4/manual/zh/getting-started/basics/preview-build.html">Creator 2.4 预览与构建手册</a></li><li><a href="https://docs.cocos.com/creator/2.4/manual/zh/scripting/scene-managing.html">Creator 2.4 场景加载手册</a></li></ul>]]></content>
+    
+    
+    <summary type="html">从 Creator 2.4.15 浏览器预览源码与运行...</summary>
+    
+    
+    
+    <category term="Cocoscreator" scheme="https://baiyangzuoshu.github.io/categories/Cocoscreator/"/>
+    
+    
+    <category term="源码" scheme="https://baiyangzuoshu.github.io/tags/%E6%BA%90%E7%A0%81/"/>
+    
+    <category term="Cocos Creator" scheme="https://baiyangzuoshu.github.io/tags/Cocos-Creator/"/>
+    
+    <category term="2.4.15" scheme="https://baiyangzuoshu.github.io/tags/2-4-15/"/>
+    
+    <category term="启动流程" scheme="https://baiyangzuoshu.github.io/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</title>
+    <link href="https://baiyangzuoshu.github.io/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/"/>
+    <id>https://baiyangzuoshu.github.io/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/</id>
+    <published>2026-09-27T12:00:00.000Z</published>
+    <updated>2026-09-27T12:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;最近，我把一款 Cocos Creator 2.4.15 飞机大战小游戏逐步接入自己的 FrameWork。迁移本身分成 00 到 09 共十个模块，最终都完成了验收。但这篇文章想重点记录的不是飞机大战怎么改，而是另一个更值得复用的问题：如何用 Skill 把一次迁移的经验，变成下一次可以直接调用、持续改进并能检查质量的工作流。</p><p>&emsp;&emsp;对我来说，Skill 不是项目结束后补写的说明书，而是迁移工作的主入口。它告诉协作者先看什么、按什么原则推进、哪些事情不能做、怎样验证结果；项目文档记录当前迁移计划和验收状态；评测案例则用来检查 Skill 有没有遗漏重要边界。飞机大战只是这套方法的第一个实战样本。</p><h2 id="为什么迁移工作需要-Skill"><a href="#为什么迁移工作需要-Skill" class="headerlink" title="为什么迁移工作需要 Skill"></a>为什么迁移工作需要 Skill</h2><p>&emsp;&emsp;迁移一个旧游戏，往往不是单纯改代码。需要理解 Creator 版本、旧项目入口、资源和 UUID、场景与 prefab 绑定、目标框架边界、运行时流程以及人工验收方式。若这些知识只留在聊天记录或个人记忆里，下一个项目就会重复踩坑；若全部写进一份巨大的迁移文档，又很难区分通用原则和某个项目的特殊事实。</p><p>&emsp;&emsp;Skill 的价值是把可重复的方法做成明确入口，并在真实项目里持续检验。它不是要预先规定每个项目长什么样，而是指导协作者先调查事实，再创建适合当前项目的计划与约束。</p><h2 id="Skill-如何分层"><a href="#Skill-如何分层" class="headerlink" title="Skill 如何分层"></a>Skill 如何分层</h2><p>&emsp;&emsp;这次实践里，迁移知识分成几层，各自回答不同问题：</p><table><thead><tr><th>层次</th><th>回答的问题</th><th>在迁移工作中的职责</th></tr></thead><tbody><tr><td>通用迁移 Skill</td><td>“迁移项目时，通用上应该怎么做？”</td><td>提供跨项目的调查顺序、迁移原则、执行节奏与验证方法</td></tr><tr><td>项目 Skill</td><td>“这个游戏有哪些已经确认的事实和特殊约束？”</td><td>保存项目专属入口、资源、命名、模块边界和生命周期信息</td></tr><tr><td><code>AGENTS.md</code></td><td>“在这个仓库里，协作者先读什么、遵守哪些全局规则？”</td><td>做精简路由与仓库级约束，不重复整本手册</td></tr><tr><td><code>docs/migration/</code></td><td>“当前项目要迁哪些模块，做到哪一步，如何验收？”</td><td>保存总计划、模块步骤、依赖、状态及实际验收记录</td></tr><tr><td><code>.codex/skill-evals/</code></td><td>“Skill 在不同情形下能否给出符合规则的指导？”</td><td>用正例、反例和边界案例检查 Skill 的覆盖与一致性</td></tr></tbody></table><p>&emsp;&emsp;这几层不能混为一谈。通用 Skill 不应写死飞机大战的 prefab 名称；项目 Skill 不应复制通用迁移流程；<code>AGENTS.md</code> 不应膨胀成所有业务细节的仓库百科；迁移文档里的“计划完成”也不能替代用户验收；Skill eval 更不能冒充游戏运行测试。</p><h2 id="从调用通用-Skill-到建立项目-Skill"><a href="#从调用通用-Skill-到建立项目-Skill" class="headerlink" title="从调用通用 Skill 到建立项目 Skill"></a>从调用通用 Skill 到建立项目 Skill</h2><p>&emsp;&emsp;新项目开始时，先调用通用迁移 Skill，让工作从调查而不是猜测开始。通用 Skill 负责提醒协作者确认 Creator 版本、工程入口、旧项目语言、资源加载方式和框架边界；这些事实确认之后，再为目标游戏创建项目 Skill 和迁移文档。</p><p>&emsp;&emsp;飞机大战的源项目使用 Cocos Creator 2.4.15 和 JavaScript <code>cc.Class</code>，目标工程使用同一版本的 TypeScript 与 FrameWork。调查确认后，项目自己的约束包括：保留 <code>assets/old/</code> 作为可运行基线；把目标资源按 <code>BundleMain</code>、<code>Res</code>、<code>Scripts</code> 分工；采用单场景，由 <code>UIRoot → UIMain → UIGame</code> 组织界面；UI 优先走框架基类和 UIManager；迁移资源时维护新的 UUID 与映射关系。</p><p>&emsp;&emsp;这些结论分别落在适合的位置：通用迁移规则进入通用 Skill，飞机项目的资源和界面事实写入项目 Skill，仓库入口写入 <code>AGENTS.md</code>，模块步骤与验收证据写入 <code>docs/migration/</code>。因此第二个项目并非复制飞机项目的目录和 prefab，而是复用“先调查、再分层记录、最后分模块实施”的方法。</p><h2 id="Skill-如何随着项目迭代"><a href="#Skill-如何随着项目迭代" class="headerlink" title="Skill 如何随着项目迭代"></a>Skill 如何随着项目迭代</h2><p>&emsp;&emsp;好的 Skill 不靠一次性写得很长，而是随着真实执行不断修正。遇到问题时先判断它属于哪一层：如果是所有迁移项目都可能遇到的原则，就更新通用迁移 Skill；如果是当前游戏的结构或事实，就更新项目 Skill；如果是本次模块的具体路径和结果，就更新模块文档。</p><p>&emsp;&emsp;飞机大战迁移中，几次具体问题推动了规则迭代：</p><ol><li><strong>旧项目必须继续可运行。</strong> 迁移采取复制而非移动或删除，确保旧项目仍是对照基线；新项目只逐步接管已经验收的功能。</li><li><strong>目标 UI 要优先使用框架。</strong> 页面使用框架 UI 基类和 UIManager，不另建平行的场景路由；单场景结构下，由 GUI prefab 承载界面流程。</li><li><strong>命名冲突不只看导出的类名。</strong> Creator 2.4 quick compile 还可能受脚本文件 basename 影响，因此目标脚本需要独立文件名，并检查类名、<code>.meta</code> UUID 与 prefab 绑定。</li><li><strong>验收日志要能说明状态变化。</strong> 例如界面打开、资源加载、对象回收、动画结束和退出清理要有可判断的证据；但日志仍需与静态引用检查及 Creator 预览配合，不能单靠日志证明画面正确。</li><li><strong>按切片验收，不提前宣称后续功能已接入。</strong> 当前只迁移登录时，登录后尚无首页属于合理中间状态，不应为了“看起来完整”而接入未迁移的旧流程。</li></ol><p>&emsp;&emsp;每次更新还要避免把一次性的故障排查步骤过拟合进通用 Skill。例如，飞机的三个 Hero prefab、五类敌机和具体 GUI 路径是项目事实；下一款游戏可能完全不同。通用 Skill 应记录如何调查与验证这些事实，项目 Skill 才记录实际结果。</p><h2 id="Skill-eval：检查指导质量，而不是替游戏验收"><a href="#Skill-eval：检查指导质量，而不是替游戏验收" class="headerlink" title="Skill eval：检查指导质量，而不是替游戏验收"></a>Skill eval：检查指导质量，而不是替游戏验收</h2><p>&emsp;&emsp;Skill 写完或改完后，还需要问：它能否处理正常情况、明确拒绝违反原则的方案，也能否识别容易混淆的边界？因此评测案例不应只有正向范例，还应该包含反例和边界案例。</p><p>&emsp;&emsp;例如，评测可以检查协作者是否会建议删除 <code>old/</code>、把普通多页面项目拆成多个场景、绕过框架 UIManager、照搬上个游戏的资源路径，或把一条“加载成功”日志当作整个模块验收通过。若 Skill 对这些情况回答不稳定，就要补充或澄清规则，再用相应案例回归。</p><p>&emsp;&emsp;评测的对象是 Skill 的指导能力，不是 Cocos 项目的运行状态。它不能证明 prefab 绑定正确、按钮可点击、敌机确实生成，也不能替代 Creator 运行和用户验收。完整验证仍然分工明确：静态检查审资源与引用，运行日志证关键状态，Creator 预览检查视觉和交互，用户确认模块验收结果。</p><h2 id="飞机大战：作为工作流的实战样本"><a href="#飞机大战：作为工作流的实战样本" class="headerlink" title="飞机大战：作为工作流的实战样本"></a>飞机大战：作为工作流的实战样本</h2><p>&emsp;&emsp;在上述 Skill 工作流指导下，飞机大战迁移拆成 00—09 十个模块：先复制和验证 FrameWork，再建立目标入口、迁移资源、接菜单与选机，然后接局内玩家、敌机、暂停结算音频，最后审计旧脚本和资源引用。每个模块单独记录目标、依赖、测试方式和验收状态，当前模块通过后才继续下一模块。</p><p>&emsp;&emsp;这套节奏曾避免一个容易误判的问题：早期点击菜单后已经能玩，但实际进入的是 <code>assets/old/</code> 中的旧场景。表面上功能可用，迁移边界却没有建立。之后通过检查目标入口、GUI 路由和运行日志，才确认目标流程真正由新框架接管。</p><p>&emsp;&emsp;另一个例子是资源引用。资源复制到 <code>BundleMain</code> 或 <code>Res</code> 后，还需要为目标副本维护 UUID 映射，并检查 prefab 对 SpriteFrame 等依赖的引用。最后的静态审计确实发现了缺失引用。这个结果回馈给工作流的经验是：模块验收之外还需要收尾审计，且 Creator 视觉预览不能被静态检查取代。</p><p>&emsp;&emsp;到目前为止，飞机大战 00—09 模块均已验收，最近一次收尾修复提交为 <code>b8ab05d8</code>。这不是说下一个项目可以照抄同一份迁移步骤，而是说明通用 Skill、项目 Skill、迁移文档和评测各自承担的角色，在一个完整案例里得到了验证。</p><h2 id="第二个项目如何复用这套-Skill"><a href="#第二个项目如何复用这套-Skill" class="headerlink" title="第二个项目如何复用这套 Skill"></a>第二个项目如何复用这套 Skill</h2><p>&emsp;&emsp;下次迁移时，我希望按下面的循环开展工作：</p><ol><li>先读取通用迁移 Skill，扫描源项目与目标框架，记录版本、入口、资源和运行现状。</li><li>根据扫描结果建立项目 Skill、<code>AGENTS.md</code>、迁移总计划与逐模块文档，不预设新游戏与飞机大战相同。</li><li>为项目 Skill 的关键约束准备正例、反例和边界 eval，检查指导是否清晰且没有把项目特例误当通用规则。</li><li>先搭好框架入口，再按垂直切片迁移；每个切片提供可观察的验证证据并等用户验收。</li><li>把执行中的新发现归还到正确层次：通用方法回通用 Skill，项目事实回项目 Skill，执行状态回迁移文档，指导缺口回 eval。</li></ol><p>&emsp;&emsp;这样，Skill 才不只是“写过一次的文档”，而是贯穿项目调查、实施、验证和复盘的主线。飞机大战迁移的意义，在于为这套 Skill 工作流提供了第一组真实约束、失败案例和验收结果；第二个项目则会继续检验它，并推动它变得更可靠。</p>]]></content>
+    
+    
+    <summary type="html">以飞机大战接入 FrameWork 为案例，记录迁移 ...</summary>
+    
+    
+    
+    <category term="Cocoscreator" scheme="https://baiyangzuoshu.github.io/categories/Cocoscreator/"/>
+    
+    
+    <category term="Skill" scheme="https://baiyangzuoshu.github.io/tags/Skill/"/>
+    
+    <category term="Cocos Creator" scheme="https://baiyangzuoshu.github.io/tags/Cocos-Creator/"/>
+    
+    <category term="FrameWork" scheme="https://baiyangzuoshu.github.io/tags/FrameWork/"/>
+    
+    <category term="项目迁移" scheme="https://baiyangzuoshu.github.io/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/"/>
+    
+  </entry>
   
   <entry>
     <title>从 AGENTS.md 到 Skill：让 AI 按规范做事并验证效果</title>
@@ -426,77 +509,6 @@
     
     
     <category term="见闻" scheme="https://baiyangzuoshu.github.io/tags/%E8%A7%81%E9%97%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>DeepSeek-TUI：在终端里使用 DeepSeek 写代码</title>
-    <link href="https://baiyangzuoshu.github.io/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/"/>
-    <id>https://baiyangzuoshu.github.io/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/</id>
-    <published>2026-05-14T02:00:00.000Z</published>
-    <updated>2026-05-14T02:00:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>&emsp;&emsp;最近我在思考一个更省成本的 AI 编程工作流：让 Codex 负责架构设计、任务拆解和代码审查，让 DeepSeek 负责具体实现。沿着这个思路，我看到了一个项目：<a href="https://github.com/Hmbown/DeepSeek-TUI">DeepSeek-TUI</a>。它的定位很直接：把 DeepSeek 变成一个运行在终端里的 coding agent。</p><p>&emsp;&emsp;简单说，DeepSeek-TUI 不是网页聊天工具，而是一个面向本地代码库的终端助手。你可以在项目目录里启动它，让它读取上下文、解释代码、修改文件、运行命令，并通过终端界面和你交互。对习惯命令行开发的人来说，这种方式比来回复制代码更自然。</p><h3 id="DeepSeek-TUI-是什么"><a href="#DeepSeek-TUI-是什么" class="headerlink" title="DeepSeek-TUI 是什么"></a>DeepSeek-TUI 是什么</h3><p>&emsp;&emsp;DeepSeek-TUI 的入口命令是 <code>deepseek</code>。根据官方 README，它由两个 Rust 二进制组成：一个是调度命令 <code>deepseek</code>，另一个是 TUI 运行时 <code>deepseek-tui</code>。npm 包本身更像安装器和包装器，会下载对应平台的预编译二进制，而不是用 Node.js 实现整个 agent。</p><p>&emsp;&emsp;它比较适合几类场景：在终端里让 AI 阅读当前项目；让 AI 按要求修改代码；用一次性命令解释某个函数；在自动化脚本里调用 <code>deepseek exec</code>；或者在已有工作区里恢复历史会话。它也提供 Plan、Agent、YOLO 等模式，分别对应只读规划、默认交互和自动批准工具调用。</p><h3 id="安装方式"><a href="#安装方式" class="headerlink" title="安装方式"></a>安装方式</h3><p>&emsp;&emsp;如果你已经安装了 Node.js，最简单的方式是 npm：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g deepseek-tui</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果在国内访问 npm 慢，可以使用镜像源：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g deepseek-tui --registry=https://registry.npmmirror.com</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果你更喜欢 Rust 工具链，也可以用 Cargo 安装。注意官方说明里两个二进制都需要安装：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cargo install deepseek-tui-cli --locked</span><br><span class="line">cargo install deepseek-tui --locked</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;macOS 用户也可以走 Homebrew：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap Hmbown/deepseek-tui</span><br><span class="line">brew install deepseek-tui</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;Windows 用户可以通过 Scoop 安装：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scoop update</span><br><span class="line">scoop install deepseek-tui</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果不想依赖包管理器，可以直接到 GitHub Releases 下载预编译文件。官方提供 Linux x64、Linux ARM64、macOS x64、macOS ARM64、Windows x64 等平台构建。还有一种方式是 Docker，适合临时体验或隔离环境：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -it \</span><br><span class="line">  -e DEEPSEEK_API_KEY \</span><br><span class="line">  -v <span class="string">&quot;<span class="variable">$PWD</span>:/workspace&quot;</span> \</span><br><span class="line">  ghcr.io/hmbown/deepseek-tui:latest</span><br></pre></td></tr></table></figure><h3 id="配置-API-Key"><a href="#配置-API-Key" class="headerlink" title="配置 API Key"></a>配置 API Key</h3><p>&emsp;&emsp;第一次启动 <code>deepseek</code> 时，它会提示你输入 DeepSeek API Key，并保存到 <code>~/.deepseek/config.toml</code>。也可以提前手动设置：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deepseek auth <span class="built_in">set</span> --provider deepseek</span><br><span class="line">deepseek auth status</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果你不想写入配置文件，也可以使用环境变量：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DEEPSEEK_API_KEY=<span class="string">&quot;YOUR_KEY&quot;</span></span><br><span class="line">deepseek</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;配置完成后，建议先跑一次诊断：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek doctor</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;这个命令会检查配置和连通性。遇到 key 不生效时，也可以用 <code>deepseek auth status</code> 看当前凭据来自配置文件、系统 keyring，还是环境变量。</p><h3 id="基本运行"><a href="#基本运行" class="headerlink" title="基本运行"></a>基本运行</h3><p>&emsp;&emsp;最常用的方式是在项目根目录启动交互界面：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果希望它自动选择模型和思考强度，可以这样启动：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek --model auto</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;也可以直接执行一次性任务：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepseek <span class="string">&quot;explain this function&quot;</span></span><br><span class="line">deepseek --model deepseek-v4-flash <span class="string">&quot;summarize this project&quot;</span></span><br><span class="line">deepseek --model auto <span class="string">&quot;fix this bug&quot;</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;如果想用于脚本或自动化流程，可以使用非交互模式：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek <span class="built_in">exec</span> --auto --output-format stream-json <span class="string">&quot;fix this bug&quot;</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;已有会话可以继续恢复：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepseek sessions</span><br><span class="line">deepseek resume --last</span><br><span class="line">deepseek resume &lt;SESSION_ID&gt;</span><br></pre></td></tr></table></figure><h3 id="使用建议"><a href="#使用建议" class="headerlink" title="使用建议"></a>使用建议</h3><p>&emsp;&emsp;DeepSeek-TUI 真正有价值的地方，不只是“能在终端聊天”，而是它能贴近本地项目工作流。但正因为它能改文件、跑命令，使用时更应该给清楚边界。比如让它只修改某几个文件，只实现一个明确功能，先输出方案再动手，最后要求给出测试命令和变更说明。</p><p>&emsp;&emsp;我比较推荐的方式是：让 Codex 或自己先做架构拆解，明确模块边界、文件范围和验收标准，然后把具体实现交给 DeepSeek-TUI。完成后再看 git diff，确认它有没有越界修改、重复实现或者破坏原有结构。</p><p>&emsp;&emsp;AI 写代码的成本正在下降，但软件维护成本不会自动下降。DeepSeek-TUI 这类工具能提高实现速度，前提是人要把目标、约束和审查做好。把它当成一个终端里的执行工程师，而不是一个可以无限放权的架构负责人，使用体验会更稳定。</p>]]></content>
-    
-    
-    <summary type="html">介绍 DeepSeek-TUI 是什么，以及如何安装、...</summary>
-    
-    
-    
-    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
-    
-    
-    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
-    
-    <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="DeepSeek" scheme="https://baiyangzuoshu.github.io/tags/DeepSeek/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>每周见闻 - 第68 期</title>
-    <link href="https://baiyangzuoshu.github.io/2026/05/10/week/2026/week68/"/>
-    <id>https://baiyangzuoshu.github.io/2026/05/10/week/2026/week68/</id>
-    <published>2026-05-09T23:45:51.000Z</published>
-    <updated>2026-05-09T23:45:51.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/2026/hunan.webp"></p><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a href="https://mp.weixin.qq.com/s/ur6MAAt1ipV6fS4--GXoIw">1.浏阳烟花厂爆炸已致26死61伤</a></p><p><a href="https://mp.weixin.qq.com/s/tI9uSWoI89ftagztkFYhMg">2.豆包新增付费订阅，标准版每月68元、加强版200元、专业版500元</a></p><p><a href="https://mp.weixin.qq.com/s/TJs_LzkFaBxAD0rbrUXLxA">3.“DeepSeek版Claude Code”，Github 2.3k星</a></p><p><a href="https://mp.weixin.qq.com/s/28N81q7JHWN5wiRpwHf4xQ">4.三星突然公告：停止在中国大陆市场销售所有家电产品，含电视、冰箱、显示器，手机仍正常销售</a></p><p><a href="https://mp.weixin.qq.com/s/G1vTAf9WM_caY_4nNydqsg?scene=1">5.月之暗面（Kimi）完成新一轮约20亿美元（约合人民币136.22亿元）融资</a></p><p><a href="https://tech.ifeng.com/c/8szT8dH9G1X">6.新国标要来了，国产手机再也不能乱吹AI了</a></p><p><a href="https://tech.ifeng.com/c/8szaxR8a35O">7.滴滴公布2026五一假期出行数据：异地订单上涨33%、文旅赛事热度攀升</a></p><p><a href="https://tech.ifeng.com/c/8szLfILzJ45">8.最新中国合资品牌3年保值率排名来了 日系依然坚挺</a></p><p><a href="https://tech.ifeng.com/c/8szITA3JXo9">9.甲骨文被曝裁员2-3万人，并拒绝向员工提供更高遣散费</a></p><p><a href="https://tech.ifeng.com/c/8sz156IQ2iX">10.“泰国孕妇坠崖案”王暖暖控诉无忧传媒：长期霸凌、PUA</a></p><p><a href="https://tech.ifeng.com/c/8swDy3FRsfc">11.抖音电商试水自营旗舰店，大厂新战事卷向深水区</a></p><p><a href="https://tech.ifeng.com/c/8syFVP5IJUJ">12.消息称英特尔将为部分苹果设备代工芯片，正式协议近期已敲定</a></p><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="https://mp.weixin.qq.com/s/GBaPrVWMGpV7Z6bVuEXhSA">1.详解 DeepSeek V4：Infra 巨鲸 “四连击”，百万上下文走进现实</a></p><p><a href="https://mp.weixin.qq.com/s/tmB55HT18ZZ1bUXnc7lSzw">2.游戏项目系统工程手册</a></p><h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a href="https://tech.ifeng.com/c/8sxNYj3WjjQ">1.OpenAI发布了三款音频模型：GPT-Realtime-2、GPT-Realtime-Translate和GPT-Realtime-Whisper</a></p><p><a href="https://tech.ifeng.com/c/8sx3t9trf7D">2.OpenAI为ChatGPT推出“可信联系人”，应对AI对话中的自残风险</a></p><p><a href="https://tech.ifeng.com/c/8st3INLxzpR">3.GPT-5.5 Instant发布</a></p><h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a href="https://mp.weixin.qq.com/s/G2h_WeTCSp5lQLnFcdGVIw">1.Redis 之父实测：DeepSeek V4 把 KV cache 压到不足 10GB！MacBook SSD 直接当推理缓存，”旧观念彻底过时了”</a></p><p><a href="https://mp.weixin.qq.com/s/BzkvS4OAod4xXqFDg_5BFA">2.OpenAI发布MRC超算协议，重塑10万GPU集群通信，AMD等合作推进</a></p><h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>叶湘伦（周杰伦 饰）是淡江艺术高中的一名插班生，父亲（黄秋生 饰）是该校的一名教师。这天同学晴依（曾恺玹 饰）带他参观学校，接着他独自来到了学校的旧琴房，本身弹得一首好曲的他被某处传来的一首钢琴曲吸引住了。他来到其中一间旧琴房，遇到了路小雨（桂纶镁 饰），纯纯的爱情故事由此发生了。一直以来，叶湘伦都觉得小雨充满了神秘，却无法进一步了解她。叶湘伦约小雨到琴房见面，叶湘伦以为晴依是小雨，跟晴依接吻时被小雨看到，自此之后叶湘伦就没有再看到小雨。叶湘伦到处寻找小雨，发现了那个小雨所说“不能说的秘密”的全部真相。<br><img src="/images/2026/p2167453893.webp"></p>]]></content>
-    
-    
-    <summary type="html">新闻1.浏阳烟花厂爆炸已致26死61伤 2.豆包新增付...</summary>
-    
-    
-    
-    <category term="周刊" scheme="https://baiyangzuoshu.github.io/categories/%E5%91%A8%E5%88%8A/"/>
-    
-    
-    <category term="见闻" scheme="https://baiyangzuoshu.github.io/tags/%E8%A7%81%E9%97%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>AI 写代码后，更需要架构师能力</title>
-    <link href="https://baiyangzuoshu.github.io/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/"/>
-    <id>https://baiyangzuoshu.github.io/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/</id>
-    <published>2026-05-06T02:00:00.000Z</published>
-    <updated>2026-05-06T02:00:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>&emsp;&emsp;这段时间使用 Codex、DeepSeek、Claude 这些 AI 工具写代码后，我越来越明显地感觉到：AI 并没有降低对程序员能力的要求，反而把要求往上提了一层。以前写代码，很多时间花在具体实现上；现在具体实现可以交给 AI，但你必须知道要让它做什么、做到哪里、不能碰哪里。</p><p>&emsp;&emsp;换句话说，AI 写代码之后，更需要人具备架构师的能力。</p><p>&emsp;&emsp;AI 很擅长执行。你让它写一个接口、补一个组件、改一段逻辑、生成一组测试，它往往能很快给出结果。尤其是在需求边界清楚、上下文完整、约束明确的时候，它的效率非常高。过去半天才能完成的重复性开发，现在可能十几分钟就能推进到可运行状态。</p><p>&emsp;&emsp;但问题也在这里。AI 太擅长执行了。如果你没有给它清楚的目标，它也会继续执行；如果你没有告诉它边界，它就可能扩大修改范围；如果你没有说明项目里的分层、模块职责、数据流和异常处理方式，它就会按照自己“看起来合理”的方式实现功能。代码表面上跑通了，实际上却给系统埋下了维护成本。</p><p>&emsp;&emsp;很多时候，AI 写出来的问题不是语法错，也不是功能完全不能用，而是架构上不干净。比如本来应该在 service 层处理的逻辑，被它塞进了 controller；本来应该复用已有组件，它重新写了一套类似实现；本来只是改一个小功能，它顺手改了公共工具函数；本来项目有统一错误处理，它又加了一套局部判断。这些问题短期看不明显，长期会让项目越来越乱。</p><p>&emsp;&emsp;所以使用 AI 写代码，第一件事不是急着让它开写，而是先划定边界。你要告诉它：这次只改哪些文件，不改哪些文件；新增逻辑放在哪一层；是否允许改公共接口；是否需要兼容旧数据；错误应该如何返回；测试覆盖到什么程度。边界越清楚，AI 越像一个高效工程师；边界越模糊，AI 越像一个精力充沛但方向不稳定的实习生。</p><p>&emsp;&emsp;第二件事，是把任务拆成可验证的小块。不要直接说“帮我实现一个完整系统”，而是先让它理解现有结构，再让它实现其中一部分。比如先补数据模型，再补服务逻辑，再补接口，再补测试。每一步都有输入、输出和验收标准。这样做不是为了限制 AI，而是为了让它始终在正确轨道上推进。</p><p>&emsp;&emsp;第三件事，是人要做最终判断。AI 可以写代码，但不能替你承担架构责任。它不知道这个项目未来会不会扩展，不知道哪些模块是历史包袱，不知道哪些接口已经被外部依赖，也不知道团队的维护习惯。它只能根据当前上下文推断，而架构判断需要经验、取舍和长期视角。</p><p>&emsp;&emsp;以前我们常说，程序员要从“写代码的人”变成“解决问题的人”。AI 出现后，这句话变得更具体了：程序员要从“亲自实现每一行代码的人”，变成“定义问题、拆解系统、设定边界、验收结果的人”。真正拉开差距的，不再只是手速，而是你能不能把一个模糊需求拆成清晰结构。</p><p>&emsp;&emsp;AI 会让代码生成越来越便宜，但不会让架构变得便宜。相反，代码越容易生成，架构越重要。因为糟糕的代码过去写得慢，破坏速度有限；现在 AI 可以很快写出大量代码，如果没有人控制方向，系统变坏的速度也会变快。</p><p>&emsp;&emsp;所以我现在使用 AI 写代码时，先想清楚目标，再描述边界，再让 AI 实现，最后审查它是否符合项目结构。AI 负责把砖搬得更快，人负责决定墙应该建在哪里。只有这样，AI 才是在提高生产力，而不是在制造新的技术债。</p>]]></content>
-    
-    
-    <summary type="html">使用 Codex、DeepSeek、Claude 写代...</summary>
-    
-    
-    
-    <category term="AI" scheme="https://baiyangzuoshu.github.io/categories/AI/"/>
-    
-    
-    <category term="AI" scheme="https://baiyangzuoshu.github.io/tags/AI/"/>
-    
-    <category term="编程" scheme="https://baiyangzuoshu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="架构" scheme="https://baiyangzuoshu.github.io/tags/%E6%9E%B6%E6%9E%84/"/>
     
   </entry>
   

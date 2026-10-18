@@ -86,6 +86,259 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-AI/DeepSeek-Reasonix终端版与桌面版安装指南" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/06/20/AI/DeepSeek-Reasonix%E7%BB%88%E7%AB%AF%E7%89%88%E4%B8%8E%E6%A1%8C%E9%9D%A2%E7%89%88%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/" class="article-date">
+  <time class="dt-published" datetime="2026-06-20T02:00:00.000Z" itemprop="datePublished">2026-06-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2026/06/20/AI/DeepSeek-Reasonix%E7%BB%88%E7%AB%AF%E7%89%88%E4%B8%8E%E6%A1%8C%E9%9D%A2%E7%89%88%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/">DeepSeek-Reasonix：终端版与桌面版安装指南</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>&emsp;&emsp;最近看了 <a target="_blank" rel="noopener" href="https://github.com/esengine/DeepSeek-Reasonix/blob/main-v2/README.zh-CN.md">DeepSeek-Reasonix</a> 的中文 README。它的定位很明确：一个面向终端的 DeepSeek 原生 AI coding agent。和普通聊天工具不同，Reasonix 更强调长会话、低成本和项目内持续工作。它围绕 DeepSeek 的 prefix cache 做了设计，让长时间会话可以复用大量上下文，从而降低输入 token 成本。</p>
+<p>&emsp;&emsp;Reasonix 现在主要有两种使用方式：一种是终端版，也就是 CLI；另一种是桌面版，适合不想长期待在命令行里的用户。两者使用的是同一套核心能力，只是入口不同。</p>
+<h3 id="版本选择"><a href="#版本选择" class="headerlink" title="版本选择"></a>版本选择</h3><p>&emsp;&emsp;Reasonix 1.0 之后已经改成 Go 重写版，旧的 0.x TypeScript 版本属于 legacy。这里需要特别注意：官网安装区提示，<code>latest</code> 标签仍可能指向旧的 0.53 版本，因此如果用 npm 安装，建议明确使用 <code>@next</code>，避免装到旧版。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -g reasonix@next</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;安装后可以检查版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reasonix --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="终端版安装"><a href="#终端版安装" class="headerlink" title="终端版安装"></a>终端版安装</h3><p>&emsp;&emsp;终端版最适合在项目目录、远程服务器、WSL 或 SSH 环境中使用。它不依赖 IDE，直接把终端当成工作面板。常见安装方式有三种。</p>
+<p>&emsp;&emsp;第一种是 npm，全平台可用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -g reasonix@next</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;第二种是 Homebrew，适合 macOS，也支持 Linux：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install esengine/reasonix/reasonix</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;第三种是 GitHub Releases。官方提供 darwin、linux、windows，以及 amd64、arm64 的预构建包。你可以直接下载对应系统的压缩包，解压后把 <code>reasonix</code> 放到 <code>PATH</code> 里。</p>
+<p>&emsp;&emsp;如果你想从源码构建，需要 Go 环境。仓库提供了 Makefile：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make build</span><br><span class="line">make cross</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;其中 <code>make build</code> 会生成本机二进制，<code>make cross</code> 会交叉编译多平台版本。</p>
+<h3 id="终端版初始化"><a href="#终端版初始化" class="headerlink" title="终端版初始化"></a>终端版初始化</h3><p>&emsp;&emsp;安装完成后，进入项目目录，先运行初始化向导：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reasonix setup</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;它会生成或更新 <code>reasonix.toml</code>，用于声明模型、provider、工具和插件等配置。DeepSeek API Key 可以通过环境变量提供：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DEEPSEEK_API_KEY=sk-...</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;也可以让 setup 引导你把密钥保存到系统凭据存储中。最小配置大致如下：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">default_model</span> = <span class="string">&quot;deepseek-flash&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[providers]]</span></span><br><span class="line"><span class="attr">name</span>        = <span class="string">&quot;deepseek-flash&quot;</span></span><br><span class="line"><span class="attr">kind</span>        = <span class="string">&quot;openai&quot;</span></span><br><span class="line"><span class="attr">base_url</span>    = <span class="string">&quot;https://api.deepseek.com&quot;</span></span><br><span class="line"><span class="attr">model</span>       = <span class="string">&quot;deepseek-v4-flash&quot;</span></span><br><span class="line"><span class="attr">api_key_env</span> = <span class="string">&quot;DEEPSEEK_API_KEY&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;然后在项目根目录启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reasonix</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;首次进入项目后，可以执行 <code>/init</code> 生成 <code>AGENTS.md</code>，作为项目记忆。也可以直接用一次性命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reasonix run <span class="string">&quot;implement the TODOs in main.go&quot;</span></span><br><span class="line">reasonix run --model mimo-pro <span class="string">&quot;add unit tests for this function&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;explain this code&quot;</span> | reasonix run</span><br></pre></td></tr></table></figure>
+
+<h3 id="桌面版安装"><a href="#桌面版安装" class="headerlink" title="桌面版安装"></a>桌面版安装</h3><p>&emsp;&emsp;如果你不想完全在终端里工作，可以安装 Reasonix 桌面版。官网提供 macOS、Windows、Linux 三类安装包。</p>
+<p>&emsp;&emsp;macOS 用户可以下载 Universal DMG，支持 Apple Silicon 和 Intel。也可以分别下载 Apple Silicon zip 或 Intel zip。安装方式和普通 macOS 应用一样，打开 DMG 后把 Reasonix 拖到 <code>/Applications</code>。</p>
+<p>&emsp;&emsp;如果 macOS 提示应用无法打开，且你确认文件来自官方渠道并已放入 <code>/Applications</code>，可以退出 Reasonix 后执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> xattr -rd com.apple.quarantine /Applications/Reasonix.app</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;Windows 用户可以下载 Installer，支持 Windows 10+，并提供 x64 和 ARM64 版本。如果不想安装，也可以使用 portable zip。</p>
+<p>&emsp;&emsp;Linux 用户可以下载 Debian&#x2F;Ubuntu 的 <code>.deb</code> 包，也可以使用通用 <code>tar.gz</code>。例如 <code>.deb</code> 包可以这样安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> dpkg -i reasonix*.deb</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;桌面版内置自动更新，并且和 CLI 使用同一套 Reasonix 引擎。它更适合本机长期运行、查看会话、管理任务；终端版则更适合项目目录、脚本、服务器和 SSH 场景。</p>
+<h3 id="我会怎么用"><a href="#我会怎么用" class="headerlink" title="我会怎么用"></a>我会怎么用</h3><p>&emsp;&emsp;如果只是体验 Reasonix，我建议先装终端版。原因很简单：CLI 最贴近它的设计目标。进入项目目录，<code>reasonix setup</code>，配置 API Key，再启动 <code>reasonix</code>，整个流程很直接。</p>
+<p>&emsp;&emsp;如果你已经确定要长期使用，可以再装桌面版。桌面版的优势是入口更稳定，不用每次打开终端找会话，也更适合把 Reasonix 当成常驻工具。尤其是本地多个项目同时处理时，桌面版会更舒服。</p>
+<p>&emsp;&emsp;不过不管用哪一种安装方式，最重要的还是先把边界讲清楚。Reasonix 是 coding agent，不是普通问答机器人。让它改代码前，最好说明目标、允许修改的文件、测试命令和验收标准。工具越强，越需要人把方向定准。</p>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/esengine/DeepSeek-Reasonix/blob/main-v2/README.zh-CN.md">DeepSeek-Reasonix 中文 README</a></li>
+<li><a target="_blank" rel="noopener" href="https://reasonix.io/">Reasonix 官网安装页</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/esengine/DeepSeek-Reasonix/releases">Reasonix GitHub Releases</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/06/20/AI/DeepSeek-Reasonix%E7%BB%88%E7%AB%AF%E7%89%88%E4%B8%8E%E6%A1%8C%E9%9D%A2%E7%89%88%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/" data-id="cmr7sez6l0009od77hs1f21my" data-title="DeepSeek-Reasonix：终端版与桌面版安装指南" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-AI/cc-switch：用DeepSeek驱动Codex的本地路由方案" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/" class="article-date">
+  <time class="dt-published" datetime="2026-06-14T02:00:00.000Z" itemprop="datePublished">2026-06-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/">cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>&emsp;&emsp;近半年我一直在探索一个低成本高效果的 AI 编程工作流：用 Codex 做架构设计和代码审查，用 DeepSeek 做细节实现。但实际操作时会碰到一个技术障碍——新版 Codex CLI 对接的是 OpenAI Responses API，而 DeepSeek 暴露的是 OpenAI Chat Completions API（也就是 <code>/chat/completions</code>）。两种协议的请求体、流式事件和返回结构都不一样，直接往 Codex 配置里填 DeepSeek 的接口地址，轻则模型列表不对，重则请求 404 或 400。</p>
+<p>&emsp;&emsp;社区里已经有不少人碰到同样的问题，直到我发现了 <a target="_blank" rel="noopener" href="https://github.com/farion1231/cc-switch">cc-switch</a>——一个专门为 AI 编程工具设计的桌面端管理器，内置了针对 Codex + Chat API 供应商的本地路由方案。本文就是记录这个方案的来龙去脉和配置步骤。</p>
+<h3 id="cc-switch-是什么"><a href="#cc-switch-是什么" class="headerlink" title="cc-switch 是什么"></a>cc-switch 是什么</h3><p>&emsp;&emsp;cc-switch 是一个跨平台桌面应用（Windows&#x2F;macOS&#x2F;Linux，基于 Tauri 2），定位是 AI 编程工具的”全能管理器”。它支持 Claude Code、Claude Desktop、Codex、Gemini CLI、OpenCode、OpenClaw、Hermes 七个主流工具，在 UI 里统一管理供应商、一键切换模型、同步 MCP 和 Skills。</p>
+<p>&emsp;&emsp;对 Codex 用户来说，cc-switch 最核心的功能是<strong>本地路由</strong>：它在 <code>127.0.0.1:15721</code> 上拉起一个本地代理，让 Codex 始终连接本地路由（仍以 Responses API 发请求），路由内部判断当前供应商是否是 Chat 格式，如果是就做协议转换。整个过程对 Codex 透明，不需要你修改任何 <code>config.toml</code>。</p>
+<p>&emsp;&emsp;cc-switch 内置了 50+ 供应商预设，包括 DeepSeek、Kimi、MiniMax、SiliconFlow、阿里百炼、字节豆包等，填个 API Key 就能直接用。GitHub 上目前已有 100k+ star，开源协议宽松。</p>
+<h3 id="为什么需要本地路由"><a href="#为什么需要本地路由" class="headerlink" title="为什么需要本地路由"></a>为什么需要本地路由</h3><p>&emsp;&emsp;问题出在协议层。Codex CLI（新版本）面向的是 OpenAI Responses API，请求路径是 <code>/responses</code> 或 <code>/v1/responses</code>，而 DeepSeek 的 API 兼容的是传统的 Chat Completions 格式，路径是 <code>/chat/completions</code>。两者的请求体结构和 SSE 事件格式完全不同。</p>
+<p>&emsp;&emsp;cc-switch 的本地路由方案用一个四步链路解决这个问题：</p>
+<ol>
+<li><strong>Codex 接管</strong>：路由启用后，cc-switch 把 Codex 的 live 配置指向 <code>http://127.0.0.1:15721/v1</code>，并保持 <code>wire_api = &quot;responses&quot;</code>。</li>
+<li><strong>供应商标记</strong>：DeepSeek 预设的 <code>meta.apiFormat = &quot;openai_chat&quot;</code> 告诉路由——真实上游是 Chat Completions。</li>
+<li><strong>请求改写</strong>：路由把 Codex 发来的 <code>/responses</code> 路径改写成 <code>/chat/completions</code>，同时把 Responses 请求体转换为 Chat 请求体。</li>
+<li><strong>响应回译</strong>：上游返回后，路由再把 Chat 的 JSON 或 SSE 流转回 Codex 能理解的 Responses 格式。</li>
+</ol>
+<p>&emsp;&emsp;这个方案的精妙之处在于，真正的 DeepSeek API Key 始终保存在 cc-switch 的 Provider 配置里，由本地路由在转发时注入。Codex 的 live 配置里只会看到一个占位符，不用担心 Key 泄露。</p>
+<h3 id="配置步骤"><a href="#配置步骤" class="headerlink" title="配置步骤"></a>配置步骤</h3><p>&emsp;&emsp;前提条件：已安装 cc-switch 并启动、已安装 Codex CLI 并至少运行过一次（确保 <code>~/.codex/config.toml</code> 目录结构存在）、有 DeepSeek API Key。</p>
+<h4 id="第一步：添加-Codex-供应商"><a href="#第一步：添加-Codex-供应商" class="headerlink" title="第一步：添加 Codex 供应商"></a>第一步：添加 Codex 供应商</h4><p>&emsp;&emsp;打开 cc-switch，切换到顶部的 <code>Codex</code> 标签，点击右上角加号添加供应商。在弹出的表单中选择内置预设 <code>DeepSeek</code>，只需要做两件事：填入你的 DeepSeek API Key，然后保存。</p>
+<p>&emsp;&emsp;预设里已经内置了 DeepSeek 的请求基地址 <code>https://api.deepseek.com</code>、默认模型（如 <code>DeepSeek-V4-Flash</code>）、模型列表和 thinking&#x2F;reasoning 参数，并且自动开启了”需要本地路由映射”。你不需要手动拼接口路径，协议转换全部交给路由层。</p>
+<h4 id="第二步：开启本地路由并接管-Codex"><a href="#第二步：开启本地路由并接管-Codex" class="headerlink" title="第二步：开启本地路由并接管 Codex"></a>第二步：开启本地路由并接管 Codex</h4><p>&emsp;&emsp;进入 cc-switch 设置里的”路由”页面，展开”本地路由”。完成两个开关操作：</p>
+<ul>
+<li>打开”路由总开关”，启动本地服务，默认地址是 <code>127.0.0.1:15721</code>。</li>
+<li>在”路由启用”中打开 <code>Codex</code> 开关。如果只想让 Codex 走路由，Claude 和 Gemini 的开关可以保持关闭。</li>
+</ul>
+<p>&emsp;&emsp;接管后 cc-switch 会自动修改 Codex 的 live 配置，把认证信息替换为占位符。这一步很快，配置会被原子写入，不会出现写一半崩掉的情况。</p>
+<h4 id="第三步：切换供应商并重启-Codex"><a href="#第三步：切换供应商并重启-Codex" class="headerlink" title="第三步：切换供应商并重启 Codex"></a>第三步：切换供应商并重启 Codex</h4><p>&emsp;&emsp;回到 Codex 供应商列表，点击 DeepSeek 供应商的”启用”按钮。如果看到”需要路由”标记，说明这个供应商必须在路由运行时使用——没有启动路由的话 cc-switch 会弹出提示。</p>
+<p>&emsp;&emsp;切换后建议重启当前 Codex 终端会话。原因是 Codex 进程可能已经读取过旧的 <code>config.toml</code>，而 <code>model_catalog_json</code> 生成的模型目录通常需要新进程才能刷新。</p>
+<p>&emsp;&emsp;进入 Codex 后可以用 <code>/model</code> 查看当前加载的模型，应该能看到 DeepSeek 预设的模型名。目前 Codex app 不支持多模型选择，会默认使用配置里的第一个模型。发一个小问题测试一下，观察路由面板的请求数有没有增长，确认请求确实经过了本地路由。</p>
+<h3 id="其它-Chat-供应商的支持"><a href="#其它-Chat-供应商的支持" class="headerlink" title="其它 Chat 供应商的支持"></a>其它 Chat 供应商的支持</h3><p>&emsp;&emsp;cc-switch 对 Chat 格式供应商的支持覆盖很广。DeepSeek、Kimi、MiniMax、SiliconFlow 等主流供应商都有内置预设，按上述流程直接用就行。预设里没覆盖的供应商，选择自定义配置，按对方文档填 API Key、base URL 和模型名，把”API 格式”选为 <code>OpenAI Chat Completions (需开启路由)</code> 即可。</p>
+<p>&emsp;&emsp;如果你的上游供应商直接支持 OpenAI Responses API（比如 OpenRouter 的某些模型），就不需要打开”需要本地路由映射”，cc-switch 可以 Responses 直连，不走 Chat 转换。</p>
+<h3 id="常见问题排查"><a href="#常见问题排查" class="headerlink" title="常见问题排查"></a>常见问题排查</h3><p>&emsp;&emsp;<strong>Codex 报 404 或找不到 <code>/responses</code></strong>：通常是没有开启 Codex 接管，或者手动把上游 Chat 地址直接写给了 Codex。检查 <code>~/.codex/config.toml</code> 是否指向 <code>http://127.0.0.1:15721/v1</code>。</p>
+<p>&emsp;&emsp;<strong>DeepSeek 上游报 404</strong>：确认当前供应商来自内置预设（不是手动自定义的），并且 Codex 路由已启用。如果是自定义供应商，检查 base URL 是否为服务根地址，而不是带 <code>/chat/completions</code> 的完整路径。</p>
+<p>&emsp;&emsp;<strong><code>/model</code> 看不到 DeepSeek 模型</strong>：保存供应商后重启 Codex。cc-switch 会生成 <code>cc-switch-model-catalog.json</code> 并写入 <code>model_catalog_json</code> 路径，但正在运行的 Codex 进程不会热加载模型目录。</p>
+<p>&emsp;&emsp;<strong>开了路由但请求走错供应商</strong>：确认三处状态一致：Codex 标签下当前供应商是 DeepSeek、本地路由服务正在运行、”路由启用”里的 Codex 开关已打开。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>&emsp;&emsp;cc-switch 解决了一个实际且高频的问题：协议不兼容。它的本地路由方案让 Codex 可以用 DeepSeek、Kimi、MiniMax 等 Chat 格式供应商，不需要改 Codex 源码，也不需要手动维护复杂的代理脚本。</p>
+<p>&emsp;&emsp;对我自己的工作流意义更大：Codex 负责规划，DeepSeek 负责执行，cc-switch 在中间做无缝的协议转换。三个工具各司其职，一个 GUI 统一管理，配置成本降到最低。</p>
+<p>&emsp;&emsp;参考链接：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/farion1231/cc-switch">cc-switch GitHub 仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://ccswitch.io/">cc-switch 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/farion1231/cc-switch/blob/main/docs/guides/codex-deepseek-routing-guide-zh.md">Codex + DeepSeek 路由指南（官方文档）</a></li>
+<li><a target="_blank" rel="noopener" href="https://api-docs.deepseek.com/">DeepSeek API 文档</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/06/14/AI/cc-switch%E7%94%A8DeepSeek%E9%A9%B1%E5%8A%A8Codex/" data-id="cmr7sez6n000ood774hhe676p" data-title="cc-switch：用 DeepSeek 驱动 Codex 的本地路由方案" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-week/2026/week72" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/06/13/week/2026/week72/" class="article-date">
+  <time class="dt-published" datetime="2026-06-13T01:01:43.000Z" itemprop="datePublished">2026-06-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2026/06/13/week/2026/week72/">每周见闻 - 第72 期</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img loading="lazy" decoding="async" src="/images/2026/100m.webp"></p>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Dp80LJWTJu0HkrZ2I2prXQ">1.中国政府债券余额首次突破100万亿元</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tuoQfCFsIt">2.首日市值站上2万亿！SpaceX超特斯拉成马斯克最具价值公司</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ttgS2apVBJ">3.华为发布HarmonyOS 7：鸿蒙空间计算+Agent架构演进</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/g_u8SorPT1qwAHR5d-yMqA">4.男子意外离世欠下27万元贷款，银行起诉其妻女及父母要求还钱，法庭上妻女决定自愿放弃继承遗产，法院：她们无须承担还款责任</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/cO-yM1QPk13Ik7yDFnOJHQ">5.5个月神话破灭！“全球首款可量产的全固态电池”造假实锤</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WUW4G4_RvhEnFiAPInz7GQ?from=singlemessage&isappinstalled=0&scene=1&clicktime=1781393698&enterid=1781393698">6.公职人员离婚争九千多万元，发现巨额财产来源不明谁该上报</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BQbWcPzPKv7gn1sGbR3ixw">7.Claude最强模型Fable 5发布：性能爆炸，价格翻倍</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8to7kOpit2g">8.TP-Link深圳大量裁员 转签遭员工抵制背后：昔日中国路由器霸主已被华为、小米击落</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tm0Z8tlaC2">9.重磅！OpenAI正式启动IPO，官宣交表</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tn6VFGd2vp">10.微信开放平台推AI生态接入指引：提供自动与开发双模式</a></p>
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://blog.codingnow.com/2026/06/powersort.html#more">1.对基本有序的序列排序算法</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TM9lv6b-9AH8O9ZiApgTBA">2.代码定义结构，权重存储知识</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/XDMwTbQYcGxv2-A3Z6UTng">3.西海岸之声</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/QNhFCoSIwbvSJwxZdV3b5w">4.开放世界游戏中的据点设计【完整版】</a></p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tvOboxwveI">1.智谱宣布GLM-5.2面向GLM Coding Plan全量用户开放</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tuzMzmlEAO">2.Anthropic全球停用Claude 5</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tunezVk0Zv">3.MiniMax M3发布并开源：摩尔线程MTT S5000完成Day-0极速适配</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/b-7PtpT2TXoyB8xY5UOB2Q">4.Kimi K2.7 Code 开源，代码能力全面提升，token 省30%</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HODI2AKFsLdGVhTwUUcUwg">5.商汤Seko全量上线无限画布，稳定出好图、持续出好剧</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/aL8nAz6SsG4dqpsNTGLEsw">6.小米推出UltraSpeed，1T参数1000 tokens&#x2F;s</a></p>
+<h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tvPsG3m6Rm">1.机器人伴侣来了！10天预售3800台 搭载养成系情感大模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8ttT99S1otS">2.腾讯云：DatabaseClaw正式商业化计费</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8tsGDX2pGYQ">3.京东发布中国首个智能体自主支付协议，划分L0至L5六级</a></p>
+<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p><img loading="lazy" decoding="async" src="/images/2026/tangshi.jpeg"></p>
+<p>《唐诗三百首》是一部流传甚广的唐诗选集，编者是清朝的孙洙（蘅塘退士）与其夫人徐兰英，成书于乾隆年间（公元1763年）时[1]。道光年间，上元女史陈婉俊（字伯英）与其弟陈晋蕃补注。共收录了77位作家的311首诗。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/06/13/week/2026/week72/" data-id="cmr7sez79008tod77akgv0nwe" data-title="每周见闻 - 第72 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-week/2026/week71" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2026/06/06/week/2026/week71/" class="article-date">
@@ -528,225 +781,11 @@
 
 
   
-    <article id="post-AI/DeepSeek-TUI：在终端里使用DeepSeek写代码" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/" class="article-date">
-  <time class="dt-published" datetime="2026-05-14T02:00:00.000Z" itemprop="datePublished">2026-05-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/AI/">AI</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/">DeepSeek-TUI：在终端里使用 DeepSeek 写代码</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>&emsp;&emsp;最近我在思考一个更省成本的 AI 编程工作流：让 Codex 负责架构设计、任务拆解和代码审查，让 DeepSeek 负责具体实现。沿着这个思路，我看到了一个项目：<a target="_blank" rel="noopener" href="https://github.com/Hmbown/DeepSeek-TUI">DeepSeek-TUI</a>。它的定位很直接：把 DeepSeek 变成一个运行在终端里的 coding agent。</p>
-<p>&emsp;&emsp;简单说，DeepSeek-TUI 不是网页聊天工具，而是一个面向本地代码库的终端助手。你可以在项目目录里启动它，让它读取上下文、解释代码、修改文件、运行命令，并通过终端界面和你交互。对习惯命令行开发的人来说，这种方式比来回复制代码更自然。</p>
-<h3 id="DeepSeek-TUI-是什么"><a href="#DeepSeek-TUI-是什么" class="headerlink" title="DeepSeek-TUI 是什么"></a>DeepSeek-TUI 是什么</h3><p>&emsp;&emsp;DeepSeek-TUI 的入口命令是 <code>deepseek</code>。根据官方 README，它由两个 Rust 二进制组成：一个是调度命令 <code>deepseek</code>，另一个是 TUI 运行时 <code>deepseek-tui</code>。npm 包本身更像安装器和包装器，会下载对应平台的预编译二进制，而不是用 Node.js 实现整个 agent。</p>
-<p>&emsp;&emsp;它比较适合几类场景：在终端里让 AI 阅读当前项目；让 AI 按要求修改代码；用一次性命令解释某个函数；在自动化脚本里调用 <code>deepseek exec</code>；或者在已有工作区里恢复历史会话。它也提供 Plan、Agent、YOLO 等模式，分别对应只读规划、默认交互和自动批准工具调用。</p>
-<h3 id="安装方式"><a href="#安装方式" class="headerlink" title="安装方式"></a>安装方式</h3><p>&emsp;&emsp;如果你已经安装了 Node.js，最简单的方式是 npm：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g deepseek-tui</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如果在国内访问 npm 慢，可以使用镜像源：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g deepseek-tui --registry=https://registry.npmmirror.com</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如果你更喜欢 Rust 工具链，也可以用 Cargo 安装。注意官方说明里两个二进制都需要安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cargo install deepseek-tui-cli --locked</span><br><span class="line">cargo install deepseek-tui --locked</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;macOS 用户也可以走 Homebrew：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap Hmbown/deepseek-tui</span><br><span class="line">brew install deepseek-tui</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;Windows 用户可以通过 Scoop 安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scoop update</span><br><span class="line">scoop install deepseek-tui</span><br><span class="line">deepseek --version</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如果不想依赖包管理器，可以直接到 GitHub Releases 下载预编译文件。官方提供 Linux x64、Linux ARM64、macOS x64、macOS ARM64、Windows x64 等平台构建。还有一种方式是 Docker，适合临时体验或隔离环境：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -it \</span><br><span class="line">  -e DEEPSEEK_API_KEY \</span><br><span class="line">  -v <span class="string">&quot;<span class="variable">$PWD</span>:/workspace&quot;</span> \</span><br><span class="line">  ghcr.io/hmbown/deepseek-tui:latest</span><br></pre></td></tr></table></figure>
-
-<h3 id="配置-API-Key"><a href="#配置-API-Key" class="headerlink" title="配置 API Key"></a>配置 API Key</h3><p>&emsp;&emsp;第一次启动 <code>deepseek</code> 时，它会提示你输入 DeepSeek API Key，并保存到 <code>~/.deepseek/config.toml</code>。也可以提前手动设置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deepseek auth <span class="built_in">set</span> --provider deepseek</span><br><span class="line">deepseek auth status</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如果你不想写入配置文件，也可以使用环境变量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DEEPSEEK_API_KEY=<span class="string">&quot;YOUR_KEY&quot;</span></span><br><span class="line">deepseek</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;配置完成后，建议先跑一次诊断：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek doctor</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;这个命令会检查配置和连通性。遇到 key 不生效时，也可以用 <code>deepseek auth status</code> 看当前凭据来自配置文件、系统 keyring，还是环境变量。</p>
-<h3 id="基本运行"><a href="#基本运行" class="headerlink" title="基本运行"></a>基本运行</h3><p>&emsp;&emsp;最常用的方式是在项目根目录启动交互界面：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如果希望它自动选择模型和思考强度，可以这样启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek --model auto</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;也可以直接执行一次性任务：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepseek <span class="string">&quot;explain this function&quot;</span></span><br><span class="line">deepseek --model deepseek-v4-flash <span class="string">&quot;summarize this project&quot;</span></span><br><span class="line">deepseek --model auto <span class="string">&quot;fix this bug&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如果想用于脚本或自动化流程，可以使用非交互模式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deepseek <span class="built_in">exec</span> --auto --output-format stream-json <span class="string">&quot;fix this bug&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;已有会话可以继续恢复：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepseek sessions</span><br><span class="line">deepseek resume --last</span><br><span class="line">deepseek resume &lt;SESSION_ID&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用建议"><a href="#使用建议" class="headerlink" title="使用建议"></a>使用建议</h3><p>&emsp;&emsp;DeepSeek-TUI 真正有价值的地方，不只是“能在终端聊天”，而是它能贴近本地项目工作流。但正因为它能改文件、跑命令，使用时更应该给清楚边界。比如让它只修改某几个文件，只实现一个明确功能，先输出方案再动手，最后要求给出测试命令和变更说明。</p>
-<p>&emsp;&emsp;我比较推荐的方式是：让 Codex 或自己先做架构拆解，明确模块边界、文件范围和验收标准，然后把具体实现交给 DeepSeek-TUI。完成后再看 git diff，确认它有没有越界修改、重复实现或者破坏原有结构。</p>
-<p>&emsp;&emsp;AI 写代码的成本正在下降，但软件维护成本不会自动下降。DeepSeek-TUI 这类工具能提高实现速度，前提是人要把目标、约束和审查做好。把它当成一个终端里的执行工程师，而不是一个可以无限放权的架构负责人，使用体验会更稳定。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2026/05/14/AI/DeepSeek-TUI%E5%9C%A8%E7%BB%88%E7%AB%AF%E9%87%8C%E4%BD%BF%E7%94%A8DeepSeek%E5%86%99%E4%BB%A3%E7%A0%81/" data-id="cmr7sez6m000dod772ksh58q4" data-title="DeepSeek-TUI：在终端里使用 DeepSeek 写代码" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-week/2026/week68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/05/10/week/2026/week68/" class="article-date">
-  <time class="dt-published" datetime="2026-05-09T23:45:51.000Z" itemprop="datePublished">2026-05-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/05/10/week/2026/week68/">每周见闻 - 第68 期</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><img loading="lazy" decoding="async" src="/images/2026/hunan.webp"></p>
-<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ur6MAAt1ipV6fS4--GXoIw">1.浏阳烟花厂爆炸已致26死61伤</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tI9uSWoI89ftagztkFYhMg">2.豆包新增付费订阅，标准版每月68元、加强版200元、专业版500元</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TJs_LzkFaBxAD0rbrUXLxA">3.“DeepSeek版Claude Code”，Github 2.3k星</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/28N81q7JHWN5wiRpwHf4xQ">4.三星突然公告：停止在中国大陆市场销售所有家电产品，含电视、冰箱、显示器，手机仍正常销售</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G1vTAf9WM_caY_4nNydqsg?scene=1">5.月之暗面（Kimi）完成新一轮约20亿美元（约合人民币136.22亿元）融资</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szT8dH9G1X">6.新国标要来了，国产手机再也不能乱吹AI了</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szaxR8a35O">7.滴滴公布2026五一假期出行数据：异地订单上涨33%、文旅赛事热度攀升</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szLfILzJ45">8.最新中国合资品牌3年保值率排名来了 日系依然坚挺</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8szITA3JXo9">9.甲骨文被曝裁员2-3万人，并拒绝向员工提供更高遣散费</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8sz156IQ2iX">10.“泰国孕妇坠崖案”王暖暖控诉无忧传媒：长期霸凌、PUA</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8swDy3FRsfc">11.抖音电商试水自营旗舰店，大厂新战事卷向深水区</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8syFVP5IJUJ">12.消息称英特尔将为部分苹果设备代工芯片，正式协议近期已敲定</a></p>
-<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/GBaPrVWMGpV7Z6bVuEXhSA">1.详解 DeepSeek V4：Infra 巨鲸 “四连击”，百万上下文走进现实</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/tmB55HT18ZZ1bUXnc7lSzw">2.游戏项目系统工程手册</a></p>
-<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8sxNYj3WjjQ">1.OpenAI发布了三款音频模型：GPT-Realtime-2、GPT-Realtime-Translate和GPT-Realtime-Whisper</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8sx3t9trf7D">2.OpenAI为ChatGPT推出“可信联系人”，应对AI对话中的自残风险</a></p>
-<p><a target="_blank" rel="noopener" href="https://tech.ifeng.com/c/8st3INLxzpR">3.GPT-5.5 Instant发布</a></p>
-<h2 id="科技"><a href="#科技" class="headerlink" title="科技"></a>科技</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G2h_WeTCSp5lQLnFcdGVIw">1.Redis 之父实测：DeepSeek V4 把 KV cache 压到不足 10GB！MacBook SSD 直接当推理缓存，”旧观念彻底过时了”</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BzkvS4OAod4xXqFDg_5BFA">2.OpenAI发布MRC超算协议，重塑10万GPU集群通信，AMD等合作推进</a></p>
-<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>叶湘伦（周杰伦 饰）是淡江艺术高中的一名插班生，父亲（黄秋生 饰）是该校的一名教师。这天同学晴依（曾恺玹 饰）带他参观学校，接着他独自来到了学校的旧琴房，本身弹得一首好曲的他被某处传来的一首钢琴曲吸引住了。他来到其中一间旧琴房，遇到了路小雨（桂纶镁 饰），纯纯的爱情故事由此发生了。一直以来，叶湘伦都觉得小雨充满了神秘，却无法进一步了解她。叶湘伦约小雨到琴房见面，叶湘伦以为晴依是小雨，跟晴依接吻时被小雨看到，自此之后叶湘伦就没有再看到小雨。叶湘伦到处寻找小雨，发现了那个小雨所说“不能说的秘密”的全部真相。<br><img loading="lazy" decoding="async" src="/images/2026/p2167453893.webp"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2026/05/10/week/2026/week68/" data-id="cmr7sez79008eod7789g2crox" data-title="每周见闻 - 第68 期" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-AI/AI写代码后更需要架构师能力" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/" class="article-date">
-  <time class="dt-published" datetime="2026-05-06T02:00:00.000Z" itemprop="datePublished">2026-05-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/AI/">AI</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/">AI 写代码后，更需要架构师能力</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>&emsp;&emsp;这段时间使用 Codex、DeepSeek、Claude 这些 AI 工具写代码后，我越来越明显地感觉到：AI 并没有降低对程序员能力的要求，反而把要求往上提了一层。以前写代码，很多时间花在具体实现上；现在具体实现可以交给 AI，但你必须知道要让它做什么、做到哪里、不能碰哪里。</p>
-<p>&emsp;&emsp;换句话说，AI 写代码之后，更需要人具备架构师的能力。</p>
-<p>&emsp;&emsp;AI 很擅长执行。你让它写一个接口、补一个组件、改一段逻辑、生成一组测试，它往往能很快给出结果。尤其是在需求边界清楚、上下文完整、约束明确的时候，它的效率非常高。过去半天才能完成的重复性开发，现在可能十几分钟就能推进到可运行状态。</p>
-<p>&emsp;&emsp;但问题也在这里。AI 太擅长执行了。如果你没有给它清楚的目标，它也会继续执行；如果你没有告诉它边界，它就可能扩大修改范围；如果你没有说明项目里的分层、模块职责、数据流和异常处理方式，它就会按照自己“看起来合理”的方式实现功能。代码表面上跑通了，实际上却给系统埋下了维护成本。</p>
-<p>&emsp;&emsp;很多时候，AI 写出来的问题不是语法错，也不是功能完全不能用，而是架构上不干净。比如本来应该在 service 层处理的逻辑，被它塞进了 controller；本来应该复用已有组件，它重新写了一套类似实现；本来只是改一个小功能，它顺手改了公共工具函数；本来项目有统一错误处理，它又加了一套局部判断。这些问题短期看不明显，长期会让项目越来越乱。</p>
-<p>&emsp;&emsp;所以使用 AI 写代码，第一件事不是急着让它开写，而是先划定边界。你要告诉它：这次只改哪些文件，不改哪些文件；新增逻辑放在哪一层；是否允许改公共接口；是否需要兼容旧数据；错误应该如何返回；测试覆盖到什么程度。边界越清楚，AI 越像一个高效工程师；边界越模糊，AI 越像一个精力充沛但方向不稳定的实习生。</p>
-<p>&emsp;&emsp;第二件事，是把任务拆成可验证的小块。不要直接说“帮我实现一个完整系统”，而是先让它理解现有结构，再让它实现其中一部分。比如先补数据模型，再补服务逻辑，再补接口，再补测试。每一步都有输入、输出和验收标准。这样做不是为了限制 AI，而是为了让它始终在正确轨道上推进。</p>
-<p>&emsp;&emsp;第三件事，是人要做最终判断。AI 可以写代码，但不能替你承担架构责任。它不知道这个项目未来会不会扩展，不知道哪些模块是历史包袱，不知道哪些接口已经被外部依赖，也不知道团队的维护习惯。它只能根据当前上下文推断，而架构判断需要经验、取舍和长期视角。</p>
-<p>&emsp;&emsp;以前我们常说，程序员要从“写代码的人”变成“解决问题的人”。AI 出现后，这句话变得更具体了：程序员要从“亲自实现每一行代码的人”，变成“定义问题、拆解系统、设定边界、验收结果的人”。真正拉开差距的，不再只是手速，而是你能不能把一个模糊需求拆成清晰结构。</p>
-<p>&emsp;&emsp;AI 会让代码生成越来越便宜，但不会让架构变得便宜。相反，代码越容易生成，架构越重要。因为糟糕的代码过去写得慢，破坏速度有限；现在 AI 可以很快写出大量代码，如果没有人控制方向，系统变坏的速度也会变快。</p>
-<p>&emsp;&emsp;所以我现在使用 AI 写代码时，先想清楚目标，再描述边界，再让 AI 实现，最后审查它是否符合项目结构。AI 负责把砖搬得更快，人负责决定墙应该建在哪里。只有这样，AI 才是在提高生产力，而不是在制造新的技术债。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://baiyangzuoshu.github.io/2026/05/06/AI/AI%E5%86%99%E4%BB%A3%E7%A0%81%E5%90%8E%E6%9B%B4%E9%9C%80%E8%A6%81%E6%9E%B6%E6%9E%84%E5%B8%88%E8%83%BD%E5%8A%9B/" data-id="cmr7sez6l0008od77affsfqaw" data-title="AI 写代码后，更需要架构师能力" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">下一页 &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/3/">下一页 &raquo;</a>
   </nav>
 
 </section>
@@ -767,7 +806,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2-4-15/" rel="tag">2.4.15</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FrameWork/" rel="tag">FrameWork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/token/" rel="tag">token</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="tag">上下文</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag">启动流程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" rel="tag">项目迁移</a></li></ul>
     </div>
   </div>
 
@@ -777,7 +816,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 12px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 14px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 10px;">Skill</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 14px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 14px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 18px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a>
+      <a href="/tags/2-4-15/" style="font-size: 10px;">2.4.15</a> <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18.33px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/Agent/" style="font-size: 10px;">Agent</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocos-Creator/" style="font-size: 11.67px;">Cocos Creator</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 11.67px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 13.33px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/FrameWork/" style="font-size: 10px;">FrameWork</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 11.67px;">Skill</a> <a href="/tags/UI/" style="font-size: 10px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/token/" style="font-size: 10px;">token</a> <a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" style="font-size: 10px;">上下文</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 13.33px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 13.33px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">启动流程</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.67px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15px;">编程</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 13.33px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" style="font-size: 10px;">项目迁移</a>
     </div>
   </div>
 
@@ -786,7 +825,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/10/">十月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
     </div>
   </div>
 
@@ -799,23 +838,23 @@
       <ul>
         
           <li>
+            <a href="/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/">给 Agent 做一次上下文减重：从工具按需加载到历史压缩</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/">Cocos Creator 2.4.15 启动流程：从引擎装配到首帧</a>
+          </li>
+        
+          <li>
+            <a href="/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/">用 Skill 驱动 Cocos Creator 项目迁移：从飞机大战实践到可复用工作流</a>
+          </li>
+        
+          <li>
             <a href="/2026/09/24/AI/%E4%BB%8EAGENTS-md%E5%88%B0Skill%E8%AE%A9AI%E6%8C%89%E8%A7%84%E8%8C%83%E5%81%9A%E4%BA%8B%E5%B9%B6%E9%AA%8C%E8%AF%81%E6%95%88%E6%9E%9C/">从 AGENTS.md 到 Skill：让 AI 按规范做事并验证效果</a>
           </li>
         
           <li>
             <a href="/2026/07/05/week/2026/week75/">每周见闻 - 第 75期</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/29/thoughts/%E6%98%94%E6%97%A5%E7%99%BE%E5%BA%A6%E9%9D%A0%E7%9D%80%E8%8A%AF%E7%89%87%E6%B4%BB%E4%B8%8B%E6%9D%A5/">昔日百度靠着芯片活下来</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/28/AI/MCP-skill-agent%E4%B8%89%E8%80%85%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">MCP、skill、agent：三者到底是什么</a>
-          </li>
-        
-          <li>
-            <a href="/2026/06/28/week/2026/week74/">每周见闻 - 第 74期</a>
           </li>
         
       </ul>
