@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-cli-testing-acceptance-loop/</loc>
+    
+    <lastmod>2026-10-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/</loc>
     
     <lastmod>2026-10-26</lastmod>
@@ -1465,6 +1474,20 @@
   
   <url>
     <loc>https://baiyangzuoshu.github.io/tags/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://baiyangzuoshu.github.io/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://baiyangzuoshu.github.io/tags/%E9%AA%8C%E6%94%B6/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

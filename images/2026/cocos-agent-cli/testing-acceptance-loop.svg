@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Cocos Creator CLI 自动测试与修复闭环</title>
+  <desc id="desc">UI 或脚本修改后选择测试适配器，执行测试并判断断言；通过则保存报告，失败则读取报告、Console 和截图，Agent 修复后重跑失败或受影响测试。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#60758b"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#159883"/></marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c95d4c"/></marker>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#19324d}
+      .title{font-size:29px;font-weight:700}.sub{font-size:16px;fill:#62758a}
+      .head{font-size:17px;font-weight:700}.body{font-size:14px;fill:#53677d}
+      .card{stroke:#d5dfeb;stroke-width:1.5}.num{font-size:13px;font-weight:700;fill:#fff}
+      .arrow{stroke:#60758b;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
+      .green{stroke:#159883;stroke-width:2.5;fill:none;marker-end:url(#arrow-green)}
+      .red{stroke:#c95d4c;stroke-width:2.5;fill:none;marker-end:url(#arrow-red)}
+      .small{font-size:13px;fill:#53677d}
+    </style>
+  </defs>
+  <rect width="1200" height="700" rx="22" fill="#f7f9fc"/>
+  <text class="title" x="42" y="55">CLI 的价值：把 UI 修改接上自动验证闭环</text>
+  <text class="sub" x="42" y="85">测试给出可复核的反馈；Agent 或开发者分析失败并修复，再运行回归检查</text>
+
+  <rect class="card" x="40" y="155" width="190" height="118" rx="16" fill="#eaf2ff"/>
+  <circle cx="65" cy="180" r="14" fill="#3975d7"/><text class="num" x="65" y="185" text-anchor="middle">1</text>
+  <text class="head" x="135" y="213" text-anchor="middle">修改 UI / 脚本</text>
+  <text class="body" x="135" y="242" text-anchor="middle">结构、事件或逻辑</text>
+
+  <rect class="card" x="280" y="155" width="205" height="118" rx="16" fill="#eef0ff"/>
+  <circle cx="305" cy="180" r="14" fill="#5869d8"/><text class="num" x="305" y="185" text-anchor="middle">2</text>
+  <text class="head" x="382" y="213" text-anchor="middle">选择验证适配器</text>
+  <text class="body" x="382" y="242" text-anchor="middle">Node · Editor · Preview</text>
+
+  <rect class="card" x="535" y="155" width="210" height="118" rx="16" fill="#f3efff"/>
+  <circle cx="560" cy="180" r="14" fill="#7957c8"/><text class="num" x="560" y="185" text-anchor="middle">3</text>
+  <text class="head" x="640" y="213" text-anchor="middle">运行 test / watch</text>
+  <text class="body" x="640" y="242" text-anchor="middle">断言、交互、Console</text>
+
+  <path class="arrow" d="M230 214 H270"/>
+  <path class="arrow" d="M485 214 H525"/>
+  <path class="arrow" d="M745 214 H790"/>
+
+  <polygon points="870,155 950,214 870,273 790,214" fill="#fff7e9" stroke="#efd6ad" stroke-width="1.8"/>
+  <text class="head" x="870" y="209" text-anchor="middle">断言</text>
+  <text class="head" x="870" y="232" text-anchor="middle">通过？</text>
+
+  <path class="green" d="M950 214 H980"/>
+  <text class="small" x="960" y="198" text-anchor="middle">通过</text>
+  <rect class="card" x="990" y="155" width="175" height="118" rx="16" fill="#e8f8f5" stroke="#b9e6dc"/>
+  <text class="head" x="1077" y="204" text-anchor="middle">保存验收报告</text>
+  <text class="body" x="1077" y="233" text-anchor="middle">JSON / JUnit</text>
+  <text class="body" x="1077" y="255" text-anchor="middle">记录工程与运行环境</text>
+
+  <path class="red" d="M870 273 V360"/>
+  <text class="small" x="892" y="326">失败</text>
+  <rect class="card" x="760" y="370" width="300" height="118" rx="16" fill="#fff0ed" stroke="#efc9c3"/>
+  <circle cx="790" cy="395" r="14" fill="#c95d4c"/><text class="num" x="790" y="400" text-anchor="middle">4</text>
+  <text class="head" x="910" y="426" text-anchor="middle">读取失败证据</text>
+  <text class="body" x="910" y="454" text-anchor="middle">失败断言 · Console · 布局数值 · 截图</text>
+  <text class="body" x="910" y="477" text-anchor="middle">先定位原因，不盲目重生成</text>
+
+  <path class="arrow" d="M760 429 H700"/>
+  <rect class="card" x="390" y="370" width="300" height="118" rx="16" fill="#fff7e9" stroke="#efd6ad"/>
+  <circle cx="420" cy="395" r="14" fill="#d38a20"/><text class="num" x="420" y="400" text-anchor="middle">5</text>
+  <text class="head" x="540" y="426" text-anchor="middle">Agent / 开发者修复</text>
+  <text class="body" x="540" y="454" text-anchor="middle">按 CLI 合同修改脚本或场景</text>
+  <text class="body" x="540" y="477" text-anchor="middle">核对计划与保存读回</text>
+
+  <path class="arrow" d="M390 429 H330"/>
+  <rect class="card" x="40" y="370" width="280" height="118" rx="16" fill="#eaf2ff"/>
+  <circle cx="70" cy="395" r="14" fill="#3975d7"/><text class="num" x="70" y="400" text-anchor="middle">6</text>
+  <text class="head" x="180" y="426" text-anchor="middle">重跑失败或受影响套件</text>
+  <text class="body" x="180" y="454" text-anchor="middle">rerun-failed / watch --affected</text>
+  <text class="body" x="180" y="477" text-anchor="middle">新建报告，保留回归记录</text>
+  <path class="arrow" d="M180 370 V315 H640 V283"/>
+
+  <rect x="40" y="545" width="1125" height="92" rx="16" fill="#19324d"/>
+  <text x="70" y="579" font-size="16" font-weight="700" fill="#fff">边界</text>
+  <text x="145" y="579" font-size="14" fill="#e6edf5">测试计划需要项目自己维护；Node 测试不证明 Creator 场景正确；Preview 脚本运行于实时页面，失败或超时需要人工复核。</text>
+  <text x="145" y="608" font-size="14" fill="#e6edf5">报告只证明对应工程、Creator 版本与预览会话中的检查结果；设备行为仍需目标平台验收。</text>
+</svg>
