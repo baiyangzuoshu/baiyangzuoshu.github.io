@@ -16,6 +16,8 @@ tags:
 
 &emsp;&emsp;先说明范围：这里的 `cocos-creator-agent` 是 CocosAgent 项目提供的 Creator 2.x Agent CLI，不是 Cocos 官方 `cocos` 命令行工具。CLI 当前接受 Creator 2.4.1–2.4.16；项目现有实机验收证据主要来自 2.4.15。开始前仍要核对自己工程的精确 Creator 版本。
 
+![Cocos Creator Agent CLI 的环境准备、Host 配置与 Creator 工程接入流程](/images/2026/cocos-agent-cli/install-guide.svg)
+
 ### 1. 准备环境并选择发布版本
 
 &emsp;&emsp;CLI 需要 Node.js 20 或更新版本。它通过 GitHub Release 的版本化 tarball 安装，不是从 npm 公共 registry 安装。下面的版本号以仓库 README 当前写明的 1.0.2 为例：

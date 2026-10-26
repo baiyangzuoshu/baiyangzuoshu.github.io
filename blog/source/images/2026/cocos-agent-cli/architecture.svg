@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">Cocos Creator Agent CLI 调用链</title>
+  <desc id="desc">从用户任务到 AI Host、CLI 的 MCP 与命令执行层、本机桥接、Creator 项目扩展，再到编辑器 API、AssetDB 和活动场景。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#60758b"/></marker>
+    <marker id="arrow-dash" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7957c8"/></marker>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#19324d}
+      .title{font-size:29px;font-weight:700}.sub{font-size:16px;fill:#62758a}
+      .card{stroke:#d5dfeb;stroke-width:1.5}.step{font-size:13px;font-weight:700;fill:#fff}
+      .head{font-size:18px;font-weight:700}.body{font-size:14px;fill:#53677d}
+      .arrow{stroke:#60758b;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
+      .dashed{stroke:#7957c8;stroke-width:2;stroke-dasharray:7 6;fill:none;marker-end:url(#arrow-dash)}
+      .note{font-size:15px;font-weight:600}.small{font-size:14px;fill:#53677d}
+    </style>
+  </defs>
+  <rect width="1200" height="660" rx="22" fill="#f7f9fc"/>
+  <text class="title" x="42" y="55">一条完整的 Creator Agent 调用链</text>
+  <text class="sub" x="42" y="85">Host 负责调度，CLI 提供统一工具入口，Creator 扩展在目标编辑器里执行</text>
+
+  <g>
+    <rect class="card" x="30" y="165" width="160" height="165" rx="16" fill="#eaf2ff"/>
+    <circle cx="53" cy="190" r="14" fill="#3975d7"/><text class="step" x="53" y="195" text-anchor="middle">01</text>
+    <text class="head" x="110" y="230" text-anchor="middle">用户任务</text>
+    <text class="body" x="110" y="260" text-anchor="middle">描述目标与约束</text>
+    <text class="body" x="110" y="284" text-anchor="middle">选择要修改的工程</text>
+
+    <rect class="card" x="225" y="165" width="160" height="165" rx="16" fill="#eef0ff"/>
+    <circle cx="248" cy="190" r="14" fill="#5869d8"/><text class="step" x="248" y="195" text-anchor="middle">02</text>
+    <text class="head" x="305" y="230" text-anchor="middle">AI Host</text>
+    <text class="body" x="305" y="260" text-anchor="middle">Codex · Claude Code</text>
+    <text class="body" x="305" y="284" text-anchor="middle">Cursor · VS Code</text>
+
+    <rect class="card" x="420" y="165" width="160" height="165" rx="16" fill="#f3efff"/>
+    <circle cx="443" cy="190" r="14" fill="#7957c8"/><text class="step" x="443" y="195" text-anchor="middle">03</text>
+    <text class="head" x="500" y="230" text-anchor="middle">CLI 内 MCP</text>
+    <text class="body" x="500" y="260" text-anchor="middle">stdio 工具发现</text>
+    <text class="body" x="500" y="284" text-anchor="middle">参数与结果封装</text>
+
+    <rect class="card" x="615" y="165" width="160" height="165" rx="16" fill="#f3efff"/>
+    <circle cx="638" cy="190" r="14" fill="#7957c8"/><text class="step" x="638" y="195" text-anchor="middle">04</text>
+    <text class="head" x="695" y="230" text-anchor="middle">CLI 执行层</text>
+    <text class="body" x="695" y="260" text-anchor="middle">命令合同与校验</text>
+    <text class="body" x="695" y="284" text-anchor="middle">终端与 MCP 共用</text>
+
+    <rect class="card" x="810" y="165" width="160" height="165" rx="16" fill="#e8f8f5"/>
+    <circle cx="833" cy="190" r="14" fill="#159883"/><text class="step" x="833" y="195" text-anchor="middle">05</text>
+    <text class="head" x="890" y="230" text-anchor="middle">本机桥接</text>
+    <text class="body" x="890" y="260" text-anchor="middle">127.0.0.1 loopback</text>
+    <text class="body" x="890" y="284" text-anchor="middle">令牌与实例校验</text>
+
+    <rect class="card" x="1005" y="165" width="160" height="165" rx="16" fill="#fff4e2"/>
+    <circle cx="1028" cy="190" r="14" fill="#d38a20"/><text class="step" x="1028" y="195" text-anchor="middle">06</text>
+    <text class="head" x="1085" y="230" text-anchor="middle">Creator 扩展</text>
+    <text class="body" x="1085" y="260" text-anchor="middle">Editor API · AssetDB</text>
+    <text class="body" x="1085" y="284" text-anchor="middle">活动场景与工程状态</text>
+  </g>
+  <path class="arrow" d="M190 247 H215"/>
+  <path class="arrow" d="M385 247 H410"/>
+  <path class="arrow" d="M580 247 H605"/>
+  <path class="arrow" d="M775 247 H800"/>
+  <path class="arrow" d="M970 247 H995"/>
+
+  <rect class="card" x="215" y="390" width="180" height="112" rx="14" fill="#fff"/>
+  <text class="head" x="305" y="423" text-anchor="middle">Creator Skills</text>
+  <text class="body" x="305" y="450" text-anchor="middle">告诉 Agent 如何完成任务</text>
+  <text class="body" x="305" y="474" text-anchor="middle">提供方法，不直接执行</text>
+  <path class="dashed" d="M305 385 V340"/>
+
+  <path d="M1085 330 V548" stroke="#159883" stroke-width="2.2" fill="none" marker-end="url(#arrow)"/>
+  <rect x="430" y="548" width="610" height="70" rx="16" fill="#e8f8f5" stroke="#b9e6dc" stroke-width="1.5"/>
+  <text class="note" x="735" y="578" text-anchor="middle">结果沿调用链返回 Host：操作状态 + 当前命令支持的读回证据</text>
+  <text class="small" x="735" y="601" text-anchor="middle">源码、Creator 保存、构建与运行时是不同层次的验证</text>
+</svg>

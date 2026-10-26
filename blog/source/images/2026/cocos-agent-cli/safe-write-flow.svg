@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1060" viewBox="0 0 1200 1060" role="img" aria-labelledby="title desc">
+  <title id="title">Creator AI 写入的计划与验证流程</title>
+  <desc id="desc">确认工程后路由 Skill、只读检查、生成并审阅计划，commit 立即执行，使用原操作 ID reconcile，最后分层报告源码、Creator 保存、构建和运行时证据。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#60758b"/></marker>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#19324d}
+      .title{font-size:29px;font-weight:700}.sub{font-size:16px;fill:#62758a}
+      .head{font-size:17px;font-weight:700}.body{font-size:14px;fill:#53677d}
+      .step{font-size:14px;font-weight:700;fill:#fff}.arrow{stroke:#60758b;stroke-width:2.2;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#d38a20;stroke-width:2;stroke-dasharray:7 6;fill:none}
+      .foot{font-size:14px;font-weight:600}
+    </style>
+  </defs>
+  <rect width="1200" height="1060" rx="22" fill="#f7f9fc"/>
+  <text class="title" x="42" y="55">写入流程：先看计划，再执行，最后读回</text>
+  <text class="sub" x="42" y="85">commit 是实际写入边界；遇到不确定结果，用同一 operationId 核对</text>
+
+  <rect x="205" y="120" width="620" height="76" rx="15" fill="#eaf2ff" stroke="#cad9ee" stroke-width="1.5"/>
+  <circle cx="240" cy="158" r="15" fill="#3975d7"/><text class="step" x="240" y="163" text-anchor="middle">1</text>
+  <text class="head" x="520" y="153" text-anchor="middle">确认工程身份与 Creator 补丁版</text>
+  <text class="body" x="520" y="178" text-anchor="middle">明确绝对路径、活动实例、场景与目标对象</text>
+  <path class="arrow" d="M515 196 V215"/>
+
+  <rect x="205" y="220" width="620" height="76" rx="15" fill="#eef0ff" stroke="#d9def4" stroke-width="1.5"/>
+  <circle cx="240" cy="258" r="15" fill="#5869d8"/><text class="step" x="240" y="263" text-anchor="middle">2</text>
+  <text class="head" x="520" y="253" text-anchor="middle">Skill 路由 + 只读检查</text>
+  <text class="body" x="520" y="278" text-anchor="middle">确认工具可用，读出现状和该命令的限制</text>
+  <path class="arrow" d="M515 296 V315"/>
+
+  <rect x="205" y="320" width="620" height="76" rx="15" fill="#f3efff" stroke="#d9cff2" stroke-width="1.5"/>
+  <circle cx="240" cy="358" r="15" fill="#7957c8"/><text class="step" x="240" y="363" text-anchor="middle">3</text>
+  <text class="head" x="520" y="353" text-anchor="middle">plan：绑定目标、前置状态与变更</text>
+  <text class="body" x="520" y="378" text-anchor="middle">取得 operationId / planHash，检查对象没有漂移</text>
+  <path class="arrow" d="M515 396 V415"/>
+
+  <rect x="205" y="420" width="620" height="76" rx="15" fill="#fff7e9" stroke="#efd6ad" stroke-width="1.5"/>
+  <circle cx="240" cy="458" r="15" fill="#d38a20"/><text class="step" x="240" y="463" text-anchor="middle">4</text>
+  <text class="head" x="520" y="453" text-anchor="middle">审阅计划与副作用</text>
+  <text class="body" x="520" y="478" text-anchor="middle">确认改的是正确工程、对象和字段</text>
+  <path class="arrow" d="M515 496 V515"/>
+
+  <rect x="205" y="520" width="620" height="76" rx="15" fill="#fff0ed" stroke="#efc9c3" stroke-width="1.5"/>
+  <circle cx="240" cy="558" r="15" fill="#c95d4c"/><text class="step" x="240" y="563" text-anchor="middle">5</text>
+  <text class="head" x="520" y="553" text-anchor="middle">commit：调用时立即写入</text>
+  <text class="body" x="520" y="578" text-anchor="middle">Creator 不会再弹额外批准框；提交前必须完成审阅</text>
+  <path class="arrow" d="M515 596 V615"/>
+
+  <rect x="205" y="620" width="620" height="76" rx="15" fill="#e8f8f5" stroke="#b9e6dc" stroke-width="1.5"/>
+  <circle cx="240" cy="658" r="15" fill="#159883"/><text class="step" x="240" y="663" text-anchor="middle">6</text>
+  <text class="head" x="520" y="653" text-anchor="middle">reconcile：用原 operationId 读回结果</text>
+  <text class="body" x="520" y="678" text-anchor="middle">核对命令支持的状态或文件；不重放写入</text>
+
+  <rect x="865" y="318" width="285" height="104" rx="14" fill="#fff" stroke="#d9cff2" stroke-width="1.5"/>
+  <text class="head" x="1007" y="351" text-anchor="middle">计划记录</text>
+  <text class="body" x="1007" y="378" text-anchor="middle">对象身份 · 前态 · 拟议值</text>
+  <text class="body" x="1007" y="400" text-anchor="middle">operationId · planHash</text>
+  <path d="M825 358 H855" stroke="#7957c8" stroke-width="2" stroke-dasharray="6 5"/>
+
+  <rect x="865" y="518" width="285" height="104" rx="14" fill="#fff" stroke="#efc9c3" stroke-width="1.5"/>
+  <text class="head" x="1007" y="551" text-anchor="middle">风险边界</text>
+  <text class="body" x="1007" y="578" text-anchor="middle">MCP 标记写入工具有破坏性</text>
+  <text class="body" x="1007" y="600" text-anchor="middle">标记本身不等于完成审批</text>
+  <path d="M825 558 H855" stroke="#c95d4c" stroke-width="2" stroke-dasharray="6 5"/>
+
+  <rect x="205" y="724" width="945" height="70" rx="14" fill="#fff7e9" stroke="#efd6ad" stroke-width="1.5"/>
+  <text class="head" x="235" y="754">若超时或连接中断：</text>
+  <text class="body" x="445" y="754">只用原 operationId 执行 reconcile；结果仍不确定就标明未确认，不自动重试。</text>
+  <text class="body" x="235" y="780">不要把 commit 超时当成“没有写入”。</text>
+
+  <text class="head" x="205" y="838">分别报告实际拿到的证据</text>
+  <rect x="205" y="860" width="210" height="76" rx="13" fill="#eaf2ff" stroke="#cad9ee"/>
+  <text class="head" x="310" y="891" text-anchor="middle">源码</text><text class="body" x="310" y="916" text-anchor="middle">文件内容已修改？</text>
+  <rect x="430" y="860" width="210" height="76" rx="13" fill="#e8f8f5" stroke="#b9e6dc"/>
+  <text class="head" x="535" y="891" text-anchor="middle">Creator</text><text class="body" x="535" y="916" text-anchor="middle">编辑器保存读回？</text>
+  <rect x="655" y="860" width="210" height="76" rx="13" fill="#f3efff" stroke="#d9cff2"/>
+  <text class="head" x="760" y="891" text-anchor="middle">构建</text><text class="body" x="760" y="916" text-anchor="middle">目标平台构建通过？</text>
+  <rect x="880" y="860" width="270" height="76" rx="13" fill="#fff4e2" stroke="#efd6ad"/>
+  <text class="head" x="1015" y="891" text-anchor="middle">运行时</text><text class="body" x="1015" y="916" text-anchor="middle">目标设备行为验证？</text>
+  <rect x="205" y="960" width="945" height="58" rx="14" fill="#19324d"/>
+  <text class="foot" x="677" y="995" text-anchor="middle" fill="#fff">只报告已验证到的层级；源码、编辑器、构建和运行时不能互相替代</text>
+</svg>

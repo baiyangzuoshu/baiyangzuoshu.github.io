@@ -17,6 +17,8 @@ tags:
 
 &emsp;&emsp;Cocos Creator Agent CLI 把这件事拆成两层：Skills 指导 Agent 如何处理任务；CLI 与 Creator 扩展执行有明确合同的命令。下面先看 Skills 怎样路由，再看一次写入应当如何收尾。
 
+![Creator AI 写入的计划审阅、提交、读回与证据报告流程](/images/2026/cocos-agent-cli/safe-write-flow.svg)
+
 ### Skill 是流程说明，不是执行权限
 
 &emsp;&emsp;仓库中的 Creator Skill 从通用入口开始。`cocos-agent` 先识别工程和 Creator 版本、盘点 Host 真正可用的工具，再把任务路由到一个匹配的领域工作流，例如 UI、Prefab、脚本、运行时或构建。领域 Skill 再指向必要的专项说明，避免每个任务一开始就把整套知识加载进上下文。

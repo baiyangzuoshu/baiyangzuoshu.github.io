@@ -18,18 +18,7 @@ tags:
 
 ### 先看一条完整链路
 
-~~~text
-Codex / Claude Code / Cursor / VS Code
-             │ MCP 配置 + Skills
-             ▼
-       cocos-creator-agent CLI
-       ├─ stdio MCP server 与命令合同
-       ├─ Skills 安装和 CLI 命令
-       └─ 127.0.0.1 本机桥接
-             │
-             ▼
- Cocos Creator 项目扩展 → Editor API / AssetDB / 活动场景
-~~~
+![Cocos Creator Agent CLI 从 Host 到 Creator 编辑器的调用链](/images/2026/cocos-agent-cli/architecture.svg)
 
 &emsp;&emsp;用户在 Host 里提出任务。Host 根据上下文选择 Skill 和工具；MCP 把工具描述、参数和回执接进 Host；CLI 负责命令目录、输入校验和桥接；项目扩展则在对应 Creator 实例中执行有编辑器上下文的操作。
 

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850" role="img" aria-labelledby="title desc">
+  <title id="title">Cocos Creator Agent CLI 安装与接入流程</title>
+  <desc id="desc">准备 Node.js 和 Creator，安装 CLI 后分别配置 AI Host 的 MCP 与 Skills、安装 Creator 项目扩展，最后检查工具目录和编辑器连接。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#60758b"/></marker>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#19324d}
+      .title{font-size:29px;font-weight:700}.sub{font-size:16px;fill:#62758a}
+      .head{font-size:18px;font-weight:700}.body{font-size:15px;fill:#53677d}
+      .step{font-size:14px;font-weight:700;fill:#fff}.arrow{stroke:#60758b;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="850" rx="22" fill="#f7f9fc"/>
+  <text class="title" x="42" y="55">安装与接入：两条配置线，最后汇合验收</text>
+  <text class="sub" x="42" y="85">先安装 CLI，再分别接入 AI Host 与 Creator 工程</text>
+
+  <rect x="340" y="115" width="520" height="92" rx="16" fill="#eaf2ff" stroke="#cad9ee" stroke-width="1.5"/>
+  <circle cx="370" cy="145" r="15" fill="#3975d7"/><text class="step" x="370" y="150" text-anchor="middle">1</text>
+  <text class="head" x="600" y="151" text-anchor="middle">准备环境</text>
+  <text class="body" x="600" y="181" text-anchor="middle">Node.js 20+ · Creator 2.4.x · 核对工程绝对路径与补丁版</text>
+
+  <path class="arrow" d="M600 207 V235"/>
+  <rect x="340" y="240" width="520" height="86" rx="16" fill="#f2efff" stroke="#d9cff2" stroke-width="1.5"/>
+  <circle cx="370" cy="270" r="15" fill="#7957c8"/><text class="step" x="370" y="275" text-anchor="middle">2</text>
+  <text class="head" x="600" y="276" text-anchor="middle">安装 Cocos Creator Agent CLI</text>
+  <text class="body" x="600" y="304" text-anchor="middle">使用版本化 GitHub Release tarball，随后运行 version / doctor</text>
+
+  <path class="arrow" d="M600 326 V352 H310 V372"/>
+  <path class="arrow" d="M600 352 H890 V372"/>
+
+  <rect x="55" y="372" width="510" height="315" rx="20" fill="#fff" stroke="#d5dfeb" stroke-width="1.5"/>
+  <rect x="55" y="372" width="510" height="58" rx="20" fill="#eef0ff"/>
+  <path d="M55 410 V430 H565 V410" fill="#eef0ff"/>
+  <text class="head" x="310" y="408" text-anchor="middle">A · 接入 AI Host</text>
+
+  <rect x="100" y="455" width="420" height="58" rx="12" fill="#f7f8ff" stroke="#d9def4"/>
+  <circle cx="130" cy="484" r="13" fill="#5869d8"/><text class="step" x="130" y="489" text-anchor="middle">3</text>
+  <text class="body" x="325" y="490" text-anchor="middle">mcp configure：注册 CLI 工具入口</text>
+  <path class="arrow" d="M310 513 V532"/>
+  <rect x="100" y="535" width="420" height="58" rx="12" fill="#f7f8ff" stroke="#d9def4"/>
+  <circle cx="130" cy="564" r="13" fill="#5869d8"/><text class="step" x="130" y="569" text-anchor="middle">4</text>
+  <text class="body" x="325" y="570" text-anchor="middle">skill install：安装 Creator 工作流</text>
+  <path class="arrow" d="M310 593 V612"/>
+  <rect x="100" y="615" width="420" height="52" rx="12" fill="#f7f8ff" stroke="#d9def4"/>
+  <text class="body" x="310" y="647" text-anchor="middle">重启 Host，再检查 mcp status</text>
+
+  <rect x="635" y="372" width="510" height="315" rx="20" fill="#fff" stroke="#d5dfeb" stroke-width="1.5"/>
+  <rect x="635" y="372" width="510" height="58" rx="20" fill="#e8f8f5"/>
+  <path d="M635 410 V430 H1145 V410" fill="#e8f8f5"/>
+  <text class="head" x="890" y="408" text-anchor="middle">B · 接入 Creator 工程</text>
+
+  <rect x="680" y="455" width="420" height="58" rx="12" fill="#f2fbf8" stroke="#c8e8df"/>
+  <circle cx="710" cy="484" r="13" fill="#159883"/><text class="step" x="710" y="489" text-anchor="middle">3</text>
+  <text class="body" x="895" y="490" text-anchor="middle">Dashboard 核对名称、路径与版本</text>
+  <path class="arrow" d="M890 513 V532"/>
+  <rect x="680" y="535" width="420" height="58" rx="12" fill="#f2fbf8" stroke="#c8e8df"/>
+  <circle cx="710" cy="564" r="13" fill="#159883"/><text class="step" x="710" y="569" text-anchor="middle">4</text>
+  <text class="body" x="895" y="570" text-anchor="middle">extension install：安装项目扩展</text>
+  <path class="arrow" d="M890 593 V612"/>
+  <rect x="680" y="615" width="420" height="52" rx="12" fill="#f2fbf8" stroke="#c8e8df"/>
+  <text class="body" x="890" y="647" text-anchor="middle">project open，再检查 extension status</text>
+
+  <path class="arrow" d="M310 687 V718 H600 V735"/>
+  <path class="arrow" d="M890 687 V718 H600"/>
+  <rect x="300" y="740" width="600" height="76" rx="16" fill="#fff4e2" stroke="#efd6ad" stroke-width="1.5"/>
+  <text class="head" x="600" y="772" text-anchor="middle">最后验收</text>
+  <text class="body" x="600" y="798" text-anchor="middle">doctor + catalog；确认 Host 可见工具，Creator 返回匹配的工程身份</text>
+</svg>
