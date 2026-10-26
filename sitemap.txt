@@ -1,3 +1,6 @@
+https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/
+https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/
+https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-architecture/
 https://baiyangzuoshu.github.io/2026/10/18/AI/%E7%BB%99Agent%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%8A%E4%B8%8B%E6%96%87%E5%87%8F%E9%87%8D/
 https://baiyangzuoshu.github.io/2026/10/17/cocos/CocosCreator-2.4.15%E5%90%AF%E5%8A%A8%E4%B8%8E%E9%A6%96%E5%B8%A7/
 https://baiyangzuoshu.github.io/2026/09/27/cocos/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%8E%A5%E5%85%A5FrameWork%E8%BF%81%E7%A7%BB%E5%A4%8D%E7%9B%98/
@@ -169,6 +172,9 @@ https://baiyangzuoshu.github.io/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/
 https://baiyangzuoshu.github.io/tags/Agent/
 https://baiyangzuoshu.github.io/tags/token/
 https://baiyangzuoshu.github.io/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/
+https://baiyangzuoshu.github.io/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/
+https://baiyangzuoshu.github.io/tags/CLI/
+https://baiyangzuoshu.github.io/tags/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/
 https://baiyangzuoshu.github.io/categories/%E7%AE%97%E6%B3%95/
 https://baiyangzuoshu.github.io/categories/AI/
 https://baiyangzuoshu.github.io/categories/%E8%97%8F%E4%B9%A6/
