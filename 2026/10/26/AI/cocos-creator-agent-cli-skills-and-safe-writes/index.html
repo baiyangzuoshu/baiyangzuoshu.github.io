@@ -11,6 +11,7 @@
 <meta property="og:site_name" content="白杨左书">
 <meta property="og:description" content="从 Creator Skills 的分层路由，到场景写...">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://baiyangzuoshu.github.io/images/2026/cocos-agent-cli/safe-write-flow.svg">
 <meta property="article:published_time" content="2026-10-26T02:40:00.000Z">
 <meta property="article:modified_time" content="2026-10-26T02:40:00.000Z">
 <meta property="article:author" content="白杨左书">
@@ -21,6 +22,7 @@
 <meta property="article:tag" content="工程实践">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:description" content="从 Creator Skills 的分层路由，到场景写...">
+<meta name="twitter:image" content="https://baiyangzuoshu.github.io/images/2026/cocos-agent-cli/safe-write-flow.svg">
   
     <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
   
@@ -46,7 +48,7 @@
   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 })(window, document, "clarity", "script", "w2upclgnjh");
 </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
-  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Cocos Creator AI 操作，怎样做到计划可查、结果可核对","description":"从 Creator Skills 的分层路由，到场景写...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/","datePublished":"2026-10-26T02:40:00.000Z","dateModified":"2026-10-26T02:40:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","articleSection":["AI"],"keywords":"MCP, Skill, Cocos Creator, Agent, 工程实践"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"Cocos Creator AI 操作，怎样做到计划可查、结果可核对","item":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/"}]}]</script>
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Cocos Creator AI 操作，怎样做到计划可查、结果可核对","description":"从 Creator Skills 的分层路由，到场景写...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/","datePublished":"2026-10-26T02:40:00.000Z","dateModified":"2026-10-26T02:40:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2026/cocos-agent-cli/safe-write-flow.svg"],"articleSection":["AI"],"keywords":"MCP, Skill, Cocos Creator, Agent, 工程实践"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"Cocos Creator AI 操作，怎样做到计划可查、结果可核对","item":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/"}]}]</script>
   <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/">
 </head>
 
@@ -118,6 +120,7 @@
       
         <p>  AI 能调用 Creator 工具，不代表它自然知道应该选哪一个，也不代表调用成功就意味着工程已经正确保存。把编辑器接进 Host 之后，真正决定可靠性的，是操作前能不能看清范围、操作后能不能读回，以及最后有没有准确说明证据到哪一步。</p>
 <p>  Cocos Creator Agent CLI 把这件事拆成两层：Skills 指导 Agent 如何处理任务；CLI 与 Creator 扩展执行有明确合同的命令。下面先看 Skills 怎样路由，再看一次写入应当如何收尾。</p>
+<p><img loading="lazy" decoding="async" src="/images/2026/cocos-agent-cli/safe-write-flow.svg" alt="Creator AI 写入的计划审阅、提交、读回与证据报告流程"></p>
 <h3 id="Skill-是流程说明，不是执行权限"><a href="#Skill-是流程说明，不是执行权限" class="headerlink" title="Skill 是流程说明，不是执行权限"></a>Skill 是流程说明，不是执行权限</h3><p>  仓库中的 Creator Skill 从通用入口开始。<code>cocos-agent</code> 先识别工程和 Creator 版本、盘点 Host 真正可用的工具，再把任务路由到一个匹配的领域工作流，例如 UI、Prefab、脚本、运行时或构建。领域 Skill 再指向必要的专项说明，避免每个任务一开始就把整套知识加载进上下文。</p>
 <p>  项目文档把核心 Creator 工作流拆为 51 项：一个总入口、11 个领域路由和 39 个专项 Skill。另有 CLI 使用引导；广告、内购、联网和语音等厂商 SDK 流程放在独立的可选包中。这样做的目的，是把每次任务真正用得到的工作步骤带进上下文，而不是把所有领域的规则一次性铺开。</p>
 <p>  Skill 不会创建 MCP 工具，也不会因为写了某个操作步骤就获得 Creator 权限。实际工具必须由 Host 当前会话和 CLI 暴露；涉及场景、Prefab、导入设置或运行状态时，还要确认 Creator-aware 工具是否连接。没有对应工具时，Skill 应该说清楚哪些状态无法安全验证，并给出手动编辑器步骤。</p>

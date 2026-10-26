@@ -11,6 +11,7 @@
 <meta property="og:site_name" content="白杨左书">
 <meta property="og:description" content="用一条可复核的流程安装 Cocos Creator A...">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://baiyangzuoshu.github.io/images/2026/cocos-agent-cli/install-guide.svg">
 <meta property="article:published_time" content="2026-10-26T02:20:00.000Z">
 <meta property="article:modified_time" content="2026-10-26T02:20:00.000Z">
 <meta property="article:author" content="白杨左书">
@@ -20,6 +21,7 @@
 <meta property="article:tag" content="安装指南">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:description" content="用一条可复核的流程安装 Cocos Creator A...">
+<meta name="twitter:image" content="https://baiyangzuoshu.github.io/images/2026/cocos-agent-cli/install-guide.svg">
   
     <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
   
@@ -45,7 +47,7 @@
   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 })(window, document, "clarity", "script", "w2upclgnjh");
 </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
-  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"从安装到接入：Cocos Creator Agent CLI 配置实录","description":"用一条可复核的流程安装 Cocos Creator A...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/","datePublished":"2026-10-26T02:20:00.000Z","dateModified":"2026-10-26T02:20:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","articleSection":["AI"],"keywords":"MCP, Cocos Creator, CLI, 安装指南"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"从安装到接入：Cocos Creator Agent CLI 配置实录","item":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/"}]}]</script>
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"从安装到接入：Cocos Creator Agent CLI 配置实录","description":"用一条可复核的流程安装 Cocos Creator A...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/","datePublished":"2026-10-26T02:20:00.000Z","dateModified":"2026-10-26T02:20:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","image":["https://baiyangzuoshu.github.io/images/2026/cocos-agent-cli/install-guide.svg"],"articleSection":["AI"],"keywords":"MCP, Cocos Creator, CLI, 安装指南"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"从安装到接入：Cocos Creator Agent CLI 配置实录","item":"https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/"}]}]</script>
   <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/">
 </head>
 
@@ -117,6 +119,7 @@
       
         <p>  上一篇介绍了 Cocos Creator Agent CLI 的组成。这一篇直接走安装流程：准备 Node.js，安装 CLI，配置一个 AI Host，再把 CLI 项目扩展接入 Creator 工程。</p>
 <p>  先说明范围：这里的 <code>cocos-creator-agent</code> 是 CocosAgent 项目提供的 Creator 2.x Agent CLI，不是 Cocos 官方 <code>cocos</code> 命令行工具。CLI 当前接受 Creator 2.4.1–2.4.16；项目现有实机验收证据主要来自 2.4.15。开始前仍要核对自己工程的精确 Creator 版本。</p>
+<p><img loading="lazy" decoding="async" src="/images/2026/cocos-agent-cli/install-guide.svg" alt="Cocos Creator Agent CLI 的环境准备、Host 配置与 Creator 工程接入流程"></p>
 <h3 id="1-准备环境并选择发布版本"><a href="#1-准备环境并选择发布版本" class="headerlink" title="1. 准备环境并选择发布版本"></a>1. 准备环境并选择发布版本</h3><p>  CLI 需要 Node.js 20 或更新版本。它通过 GitHub Release 的版本化 tarball 安装，不是从 npm 公共 registry 安装。下面的版本号以仓库 README 当前写明的 1.0.2 为例：</p>
 <figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VERSION=1.0.2</span><br><span class="line">npm install --global <span class="string">"https://github.com/baiyangzuoshu/CocosAgent/releases/download/cocos-creator-agent-cli-v<span class="variable">${VERSION}</span>/cocos-creator-agent-cli-v<span class="variable">${VERSION}</span>.tgz"</span></span><br></pre></td></tr></tbody></table></figure>
 
