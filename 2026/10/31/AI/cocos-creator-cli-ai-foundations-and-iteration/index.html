@@ -1,0 +1,299 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  
+  
+  <title>Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续 | 白杨左书</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="结合 Cocos Creator Agent CLI ...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续">
+<meta property="og:url" content="https://baiyangzuoshu.github.io/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/index.html">
+<meta property="og:site_name" content="白杨左书">
+<meta property="og:description" content="结合 Cocos Creator Agent CLI ...">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-10-31T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-31T02:00:00.000Z">
+<meta property="article:author" content="白杨左书">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Cocos Creator">
+<meta property="article:tag" content="工程实践">
+<meta property="article:tag" content="CLI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="结合 Cocos Creator Agent CLI ...">
+  
+    <link rel="alternate" href="/atom.xml" title="白杨左书" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/2024/favicon32.ico">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="/css/site-enhancements.css">
+<script>
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "w2upclgnjh");
+</script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0">
+  <script type="application/ld+json" data-schema="post-structured-data">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续","description":"结合 Cocos Creator Agent CLI ...","mainEntityOfPage":"https://baiyangzuoshu.github.io/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/","datePublished":"2026-10-31T02:00:00.000Z","dateModified":"2026-10-31T02:00:00.000Z","author":{"@type":"Person","name":"白杨左书"},"publisher":{"@type":"Organization","name":"白杨左书"},"inLanguage":"zh-CN","articleSection":["AI"],"keywords":"AI, Cocos Creator, 工程实践, CLI"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://baiyangzuoshu.github.io"},{"@type":"ListItem","position":2,"name":"AI","item":"https://baiyangzuoshu.github.io/categories/AI/"},{"@type":"ListItem","position":3,"name":"Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续","item":"https://baiyangzuoshu.github.io/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/"}]}]</script>
+  <link rel="canonical" href="https://baiyangzuoshu.github.io/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">白杨左书</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有品性的丰满，知识就是伪装</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://baiyangzuoshu.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-AI/Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续" class="h-entry article article-type-post" itemprop="blogPost" itemscope="" itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/" class="article-date">
+  <time class="dt-published" datetime="2026-10-31T02:00:00.000Z" itemprop="datePublished">2026-10-31</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>  这段时间围绕 Cocos Creator Agent CLI 做了不少实践。它能安装、能接入 Host，也能通过命令操作 Creator 工程；但如果问我整体体验是否已经达到预期，我的答案是不尽如人意。</p>
+<p>  这里说的 Cocos CLI，指的是我参与实践的 Cocos Creator Agent CLI，不是 Cocos 官方的 <code>cocos</code> 命令行工具。回头看这套东西，我越来越确定一件事：AI 能把功能很快写出来，却不能替代扎实的工程理论。没有对引擎、编辑器和工具链的理解，AI 功能很容易只搭起一个看上去完整的架子。</p>
+<h3 id="能运行，不代表架构已经站稳"><a href="#能运行，不代表架构已经站稳" class="headerlink" title="能运行，不代表架构已经站稳"></a>能运行，不代表架构已经站稳</h3><p>  这套 CLI 的不少实现由 AI 协助完成，整体产品思路也借鉴了 Unity CLI 的一些做法，例如独立安装、MCP server 和 Skill 分发。借鉴成熟方案本身没有问题，真正的问题是：我们有没有把它重新落到 Cocos Creator 自己的工作模型上？</p>
+<p>  在我的实践判断里，如果只把一套外部工具的产品形状搬过来，再让 AI 按需求补齐命令，最后很容易得到一个“看上去像产品”的东西。它有入口、有命令、有回执，演示时也能跑通；可一旦遇到真实工程里的资源导入、场景与 Prefab 保存、Creator 版本差异、运行时行为和异常恢复，底下的模型是否可靠就会暴露出来。</p>
+<p>  Cocos Creator 不是一组可以随意改写的 JSON 文件。资源身份、AssetDB、<code>.meta</code> 和 UUID，场景序列化与编辑器保存，预览运行时和目标设备，都有各自的规则。要让 CLI 真正成为 Cocos 工具，架构就得从这些领域事实出发。否则所谓“自己的东西”只是在命令名称和界面上换了外壳，核心行为还没有经过足够的领域打磨。</p>
+<h3 id="AI-会补代码，不能替你补齐理论"><a href="#AI-会补代码，不能替你补齐理论" class="headerlink" title="AI 会补代码，不能替你补齐理论"></a>AI 会补代码，不能替你补齐理论</h3><p>  AI 很擅长根据已有接口生成代码、铺开重复实现、补齐常见分支。但它不会因为代码写得多，就自动知道某个 Creator 保存接口是否真的完成落盘，也不会因为一次命令返回成功，就知道场景是否能重新打开、预览是否运行正确。</p>
+<p>  这些判断来自基础理论和工程经验：知道资源数据库如何管理身份，理解编辑器进程与游戏运行时的边界，区分命令回执、文件读回、构建结果和实际运行效果，也知道一次失败后哪些操作可以安全重试、哪些必须停下来人工核对。没有这些概念，AI 生成的实现即使结构漂亮，也可能只是把不确定性包装成了一个成功状态。</p>
+<p>  所以我不认为“代码是 AI 写的”就天然意味着它不好。问题在于，如果开发者自己也没有能力解释设计依据、判断证据强弱和发现边界条件，那整个项目就会依赖模型当时猜得准不准。这样的东西往往能勉强使用，却很难让人放心地长期依赖。</p>
+<h3 id="测试不是收尾，是设计的一部分"><a href="#测试不是收尾，是设计的一部分" class="headerlink" title="测试不是收尾，是设计的一部分"></a>测试不是收尾，是设计的一部分</h3><p>  AI 做出来的 CLI 仍然要靠自己不断测试、不断迭代。测试也不能只停留在命令返回 0 或一个示例工程成功运行。CLI 的输入校验、Creator 实例身份、AssetDB 读写、场景保存、编译诊断、预览交互和错误恢复，应该分别有清楚的检查方式。</p>
+<p>  这个项目目前通过工程测试清单组织 Node、Creator Provider、Editor 脚本和 Preview 等不同测试适配器，并生成结构化报告。这些测试能帮助我们重复检查，也能把失败保留下来；但它们不是 Creator 官方内建的完整单元测试体系，更不能互相替代。Node 测试通过，不代表编辑器里的场景已保存；Web 预览断言通过，也不代表目标手机上的触控和布局已经验收。</p>
+<p>  实际迭代应该形成一条清楚的链路：先明确要验证的行为和证据，再实现最小改动；随后在对应的 Creator 工程和版本里运行测试，查看报告、日志和文件读回；失败时先定位原因，再修复并重跑受影响的检查。每一轮都要回答“这次改动证明了什么，还有什么没有证明”，而不是只留下一个绿色结果。</p>
+<h3 id="从勉强可用，走向可信赖"><a href="#从勉强可用，走向可信赖" class="headerlink" title="从勉强可用，走向可信赖"></a>从勉强可用，走向可信赖</h3><p>  以目前的实践来看，我更愿意把这套 CLI 看成一项仍在打磨中的工程，而不是已经成熟的 AI 开发产品。它能做什么，要看具体命令和对应证据；源码实现、自动化测试、Creator 实机验收和目标运行时结果，必须分开描述。仓库里的实机记录也主要覆盖 Creator 2.4.15，不能因为 CLI 接受其他 2.4 补丁版本，就把验收范围一并扩大。</p>
+<p>  这不是否定 AI 的价值。AI 确实能缩短实现周期，让一个人更快搭起 CLI、MCP 和自动化测试的骨架。但基础理论决定我们搭的骨架是否符合引擎，测试决定功能是否真的成立，反复迭代则把“勉强可以用”一点点推向“可解释、可复现、可依赖”。</p>
+<p>  如果没有扎实的基础理论，AI 功能很难做好；如果做完之后不持续测试和修复，它也只能停留在“好像能用”。这大概是我这段 Cocos CLI 实践里最直接的体会：AI 可以参与建造，但工程质量仍要靠理解、验证和一轮轮迭代来负责。</p>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/baiyangzuoshu/CocosAgent/blob/main/cocos-creator-agent-cli/README.md">Cocos Creator Agent CLI README</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/baiyangzuoshu/CocosAgent/blob/main/docs/agent-foundation/cocos-creator-third-party-integration-mvp-0.1.md">第三方 Host 接入实现：Unity CLI 参考与 Cocos 领域适配</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/baiyangzuoshu/CocosAgent/blob/main/cocos-creator-agent-cli/references/2x/14-project-test-runner.md">Creator 项目测试运行器说明</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/baiyangzuoshu/CocosAgent/blob/main/docs/agent-foundation/cocos-agent-skill-system-creator-2x.md">Creator 2.x Skill 系统与版本验收边界</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://baiyangzuoshu.github.io/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/" data-id="cmvvmnmcv0000w3770n3gaiim" data-title="Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a href="#comments" class="article-comment-link"><span class="fa fa-comment">评论</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CLI/" rel="tag">CLI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" rel="tag">工程实践</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<section class="article-related-section">  <div class="article-related-head">    <div><p class="topic-kicker">延伸阅读</p><h2>相关阅读</h2></div>  </div>  <div class="article-related-grid"><article class="article-related-card">  <a class="article-related-card-link" href="/2026/10/26/AI/cocos-creator-cli-testing-acceptance-loop/">    <div class="article-related-meta"><time>2026-10-26</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">别把 Cocos Creator CLI 当成 UI 拼装器：自动化测试、验收和修复闭环更重要</h3>    <p class="article-related-excerpt">Cocos Creator CLI 可以创建和修改 U...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/">    <div class="article-related-meta"><time>2026-10-26</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">Cocos Creator AI 操作，怎样做到计划可查、结果可核对</h3>    <p class="article-related-excerpt">从 Creator Skills 的分层路由，到场景写...</p>  </a></article><article class="article-related-card">  <a class="article-related-card-link" href="/2026/10/26/AI/cocos-creator-agent-cli-install-guide/">    <div class="article-related-meta"><time>2026-10-26</time><span class="topic-pill topic-pill--static">AI</span></div>    <h3 class="article-related-title">从安装到接入：Cocos Creator Agent CLI 配置实录</h3>    <p class="article-related-excerpt">用一条可复核的流程安装 Cocos Creator A...</p>  </a></article>  </div></section><nav id="article-nav">
+  
+  
+    <a href="/2026/10/26/AI/cocos-creator-cli-testing-acceptance-loop/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">别把 Cocos Creator CLI 当成 UI 拼装器：自动化测试、验收和修复闭环更重要</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments" class="comments-panel">
+  <div class="comments-panel-head">
+    <p class="comments-panel-kicker">GitHub Discussions</p>
+    <h2>评论</h2>
+    <p class="comments-panel-note">欢迎继续交流，也可以直接在 GitHub Discussions 中参与讨论。</p>
+  </div>
+  <div class="giscus"></div>
+  <noscript>请启用 JavaScript 查看评论内容。</noscript>
+  <script src="https://giscus.app/client.js" data-repo="baiyangzuoshu/baiyangzuoshu.github.io" data-repo-id="R_kgDOM2uYIA" data-category="Announcements" data-category-id="DIC_kwDOM2uYIM4C5eW1" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async=""></script>
+</section>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cocoscreator/">Cocoscreator</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E5%88%8A/">周刊</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%80%9D%E8%80%83/">思考</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%97%8F%E4%B9%A6/">藏书</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2-4-15/" rel="tag">2.4.15</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGENTS-md/" rel="tag">AGENTS.md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BC%96%E7%A8%8B/" rel="tag">AI编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CLI/" rel="tag">CLI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ChatGPT/" rel="tag">ChatGPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocos-Creator/" rel="tag">Cocos Creator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cocoscreator/" rel="tag">Cocoscreator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Codex/" rel="tag">Codex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C%E8%AF%AD%E8%A8%80/" rel="tag">C语言</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DeepSeek/" rel="tag">DeepSeek</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECS/" rel="tag">ECS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FrameWork/" rel="tag">FrameWork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPT/" rel="tag">GPT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LeanCloud/" rel="tag">LeanCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PageAssist/" rel="tag">PageAssist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasonix/" rel="tag">Reasonix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Skill/" rel="tag">Skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UI/" rel="tag">UI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/agent/" rel="tag">agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cc-switch/" rel="tag">cc-switch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skill/" rel="tag">skill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/token/" rel="tag">token</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="tag">上下文</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" rel="tag">中国经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" rel="tag">云服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E4%B8%9A/" rel="tag">产业</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96/" rel="tag">优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8E%8B%E7%BC%A9/" rel="tag">压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" rel="tag">古文观止</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%A4%E7%B1%8D/" rel="tag">古籍</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B2%E8%AE%B0/" rel="tag">史记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag">启动流程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/" rel="tag">安装指南</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" rel="tag">宏观经济</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" rel="tag">工程实践</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" rel="tag">微信支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" rel="tag">抖音支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98/" rel="tag">支付</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" rel="tag">支付宝</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" rel="tag">文学回忆录</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" rel="tag">昆仑芯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B1%89%E4%B9%A6/" rel="tag">汉书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E5%BA%A6/" rel="tag">百度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" rel="tag">碰撞检测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" rel="tag">自动化测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8A%AF%E7%89%87/" rel="tag">芯片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%8F%E4%B9%A6/" rel="tag">藏书</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%81%E9%97%BB/" rel="tag">见闻</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" rel="tag">计算机历史</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E4%BC%B0/" rel="tag">评估</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%97%E7%BB%8F/" rel="tag">诗经</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" rel="tag">项目笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" rel="tag">项目迁移</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%AA%8C%E6%94%B6/" rel="tag">验收</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/2-4-15/" style="font-size: 10px;">2.4.15</a> <a href="/tags/AGENTS-md/" style="font-size: 10px;">AGENTS.md</a> <a href="/tags/AI/" style="font-size: 18.57px;">AI</a> <a href="/tags/AI%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">AI编程</a> <a href="/tags/Agent/" style="font-size: 12.86px;">Agent</a> <a href="/tags/BFS/" style="font-size: 10px;">BFS</a> <a href="/tags/CLI/" style="font-size: 14.29px;">CLI</a> <a href="/tags/ChatGPT/" style="font-size: 10px;">ChatGPT</a> <a href="/tags/Cocos-Creator/" style="font-size: 17.14px;">Cocos Creator</a> <a href="/tags/Cocoscreator/" style="font-size: 10px;">Cocoscreator</a> <a href="/tags/Codex/" style="font-size: 11.43px;">Codex</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">C语言</a> <a href="/tags/DeepSeek/" style="font-size: 12.86px;">DeepSeek</a> <a href="/tags/ECS/" style="font-size: 10px;">ECS</a> <a href="/tags/FrameWork/" style="font-size: 10px;">FrameWork</a> <a href="/tags/GPT/" style="font-size: 10px;">GPT</a> <a href="/tags/LeanCloud/" style="font-size: 10px;">LeanCloud</a> <a href="/tags/MCP/" style="font-size: 14.29px;">MCP</a> <a href="/tags/PageAssist/" style="font-size: 10px;">PageAssist</a> <a href="/tags/Reasonix/" style="font-size: 10px;">Reasonix</a> <a href="/tags/Skill/" style="font-size: 12.86px;">Skill</a> <a href="/tags/UI/" style="font-size: 11.43px;">UI</a> <a href="/tags/agent/" style="font-size: 10px;">agent</a> <a href="/tags/cc-switch/" style="font-size: 10px;">cc-switch</a> <a href="/tags/skill/" style="font-size: 10px;">skill</a> <a href="/tags/token/" style="font-size: 10px;">token</a> <a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87/" style="font-size: 10px;">上下文</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">中国经济</a> <a href="/tags/%E4%BA%91%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">云服务</a> <a href="/tags/%E4%BA%A7%E4%B8%9A/" style="font-size: 10px;">产业</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 10px;">人工智能</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 12.86px;">优化</a> <a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">压缩</a> <a href="/tags/%E5%8F%A4%E6%96%87%E8%A7%82%E6%AD%A2/" style="font-size: 10px;">古文观止</a> <a href="/tags/%E5%8F%A4%E7%B1%8D/" style="font-size: 12.86px;">古籍</a> <a href="/tags/%E5%8F%B2%E8%AE%B0/" style="font-size: 10px;">史记</a> <a href="/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" style="font-size: 10px;">启动流程</a> <a href="/tags/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/" style="font-size: 10px;">安装指南</a> <a href="/tags/%E5%AE%8F%E8%A7%82%E7%BB%8F%E6%B5%8E/" style="font-size: 10px;">宏观经济</a> <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" style="font-size: 11.43px;">工程实践</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/" style="font-size: 10px;">微信支付</a> <a href="/tags/%E6%8A%96%E9%9F%B3%E6%94%AF%E4%BB%98/" style="font-size: 10px;">抖音支付</a> <a href="/tags/%E6%94%AF%E4%BB%98/" style="font-size: 10px;">支付</a> <a href="/tags/%E6%94%AF%E4%BB%98%E5%AE%9D/" style="font-size: 10px;">支付宝</a> <a href="/tags/%E6%96%87%E5%AD%A6%E5%9B%9E%E5%BF%86%E5%BD%95/" style="font-size: 10px;">文学回忆录</a> <a href="/tags/%E6%98%86%E4%BB%91%E8%8A%AF/" style="font-size: 10px;">昆仑芯</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">架构</a> <a href="/tags/%E6%B1%89%E4%B9%A6/" style="font-size: 10px;">汉书</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 11.43px;">源码</a> <a href="/tags/%E7%99%BE%E5%BA%A6/" style="font-size: 10px;">百度</a> <a href="/tags/%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B/" style="font-size: 10px;">碰撞检测</a> <a href="/tags/%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" style="font-size: 10px;">科技公司</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 15.71px;">编程</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">自动化测试</a> <a href="/tags/%E8%8A%AF%E7%89%87/" style="font-size: 10px;">芯片</a> <a href="/tags/%E8%97%8F%E4%B9%A6/" style="font-size: 12.86px;">藏书</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 20px;">见闻</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%86%E5%8F%B2/" style="font-size: 10px;">计算机历史</a> <a href="/tags/%E8%AF%84%E4%BC%B0/" style="font-size: 10px;">评估</a> <a href="/tags/%E8%AF%97%E7%BB%8F/" style="font-size: 10px;">诗经</a> <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" style="font-size: 17.14px;">读书笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" style="font-size: 10px;">项目笔记</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB/" style="font-size: 10px;">项目迁移</a> <a href="/tags/%E9%AA%8C%E6%94%B6/" style="font-size: 10px;">验收</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/10/">十月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/09/">九月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">九月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">八月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">六月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">五月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">四月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/">Cocos Creator CLI 的空中楼阁：AI 写出了功能，工程验证还要继续</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/26/AI/cocos-creator-cli-testing-acceptance-loop/">别把 Cocos Creator CLI 当成 UI 拼装器：自动化测试、验收和修复闭环更重要</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/">Cocos Creator AI 操作，怎样做到计划可查、结果可核对</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/26/AI/cocos-creator-agent-cli-install-guide/">从安装到接入：Cocos Creator Agent CLI 配置实录</a>
+          </li>
+        
+          <li>
+            <a href="/2026/10/26/AI/cocos-creator-agent-cli-architecture/">让 AI 真正进入 Cocos Creator：CLI、MCP 与编辑器扩展如何分工</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      © 2026 白杨左书<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<!-- hexo injector body_end start -->
+<script src="/js/local-search.js"></script>
+<script src="/js/site-interactions.js"></script><!-- hexo injector body_end end -->
+</body></html>

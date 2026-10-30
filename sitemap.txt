@@ -1,3 +1,4 @@
+https://baiyangzuoshu.github.io/2026/10/31/AI/cocos-creator-cli-ai-foundations-and-iteration/
 https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-cli-testing-acceptance-loop/
 https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-skills-and-safe-writes/
 https://baiyangzuoshu.github.io/2026/10/26/AI/cocos-creator-agent-cli-install-guide/
